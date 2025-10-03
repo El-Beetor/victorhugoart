@@ -60,8 +60,8 @@ export default function About() {
               className="space-y-6"
             >
               <p className="text-lg text-white/80 leading-relaxed">
-                Welcome! I'm Victor Hugo, an artist passionate about creating unique and meaningful works of art.
-                My journey in art began years ago, and since then, I've been exploring different styles and mediums
+                Welcome! I&apos;m Victor Hugo, an artist passionate about creating unique and meaningful works of art.
+                My journey in art began years ago, and since then, I&apos;ve been exploring different styles and mediums
                 to express my creativity.
               </p>
               <p className="text-lg text-white/80 leading-relaxed">
@@ -107,7 +107,7 @@ export default function About() {
             transition={{ delay: 0.8 }}
             className="bg-white/5 backdrop-blur-sm rounded-lg p-8 border border-white/10 text-center"
           >
-            <h2 className="text-3xl font-bold text-white mb-4">Let's Connect</h2>
+            <h2 className="text-3xl font-bold text-white mb-4">Let&apos;s Connect</h2>
             <p className="text-white/70 mb-6">
               Interested in commissioning a piece or learning more about my work?
             </p>

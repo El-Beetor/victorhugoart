@@ -150,7 +150,7 @@ export default function Gallery() {
                     <div className="w-full h-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center border-2 border-gray-300">
                       <div className="text-center text-gray-600">
                         <div className="text-7xl mb-4">🎨</div>
-                        <p className="text-sm font-medium">"{art.title}"</p>
+                        <p className="text-sm font-medium">&quot;{art.title}&quot;</p>
                       </div>
                     </div>
 
@@ -179,7 +179,7 @@ export default function Gallery() {
                     {art.category} • {art.year}
                   </p>
                   <p className="text-white/80 leading-relaxed italic">
-                    "{art.description}"
+                    &quot;{art.description}&quot;
                   </p>
                 </motion.div>
               </motion.div>
