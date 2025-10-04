@@ -1,75 +1,172 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
+  const [currentImage, setCurrentImage] = useState(1);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const totalImages = 21;
+
+  // Slideshow effect - change image every 10 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImage((prev) => (prev === totalImages ? 1 : prev + 1));
+    }, 10000); // 10 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Mouse tracking for parallax effect
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 20; // ±10px movement
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      setMousePosition({ x, y });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+  // Petal button data
+  const petals = [
+    { name: 'Paintings', href: '/gallery', angle: 0 },
+    { name: 'Shop', href: '/shop', angle: 72 },
+    { name: 'About', href: '/about', angle: 144 },
+    { name: 'Contact', href: '/contact', angle: 216 },
+    { name: 'Comics', href: '/comics', angle: 288 },
+  ];
+
+  // Calculate position for each petal button in a circle
+  const radius = 450; // Distance from center
+
+  const getPetalPosition = (angle: number) => {
+    const radians = (angle * Math.PI) / 180;
+    return {
+      x: Math.cos(radians) * radius,
+      y: Math.sin(radians) * radius,
+    };
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-black/20 backdrop-blur-md z-50 border-b border-white/10">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Background Slideshow */}
+      <div className="fixed inset-0 -z-10">
+        <AnimatePresence>
+          <motion.div
+            key={currentImage}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{
+              opacity: 1,
+              scale: [1.05, 1.08, 1.06, 1.07, 1.05],
+              x: mousePosition.x,
+              y: mousePosition.y
+            }}
+            exit={{ opacity: 0 }}
+            transition={{
+              opacity: { duration: 5 },
+              scale: { duration: 25, repeat: Infinity, ease: "easeInOut" },
+              x: { duration: 0.5, ease: "easeOut" },
+              y: { duration: 0.5, ease: "easeOut" }
+            }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={`/bg_wallpapers/image_${currentImage}.png`}
+              alt={`Background ${currentImage}`}
+              fill
+              className="object-cover"
+              priority={currentImage === 1}
+            />
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Top Navigation Bar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#4B352A] backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold text-white">
+          {/* Left: Site Title */}
+          <Link href="/" className="text-2xl font-bold text-[#FEFAE0]">
             Victor Hugo Art
           </Link>
-          <div className="flex gap-8">
-            <Link href="/gallery" className="text-white/80 hover:text-white transition-colors">
-              Gallery
-            </Link>
-            <Link href="/about" className="text-white/80 hover:text-white transition-colors">
-              About
-            </Link>
-            <Link href="/shop" className="text-white/80 hover:text-white transition-colors">
-              Shop
-            </Link>
-            <Link href="/blog" className="text-white/80 hover:text-white transition-colors">
-              Blog
-            </Link>
-          </div>
+
+          {/* Right: Menu Button */}
+          <button className="w-10 h-10 flex flex-col justify-center items-center gap-1.5 hover:opacity-70 transition-opacity">
+            <span className="w-6 h-0.5 bg-[#FEFAE0] rounded-full"></span>
+            <span className="w-6 h-0.5 bg-[#FEFAE0] rounded-full"></span>
+            <span className="w-6 h-0.5 bg-[#FEFAE0] rounded-full"></span>
+          </button>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <main className="flex flex-col items-center justify-center min-h-screen px-6">
+      {/* Main Content */}
+      <main className="relative flex items-center justify-center min-h-screen">
+        {/* Center Logo */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="relative z-10 w-[576px] h-[576px] rounded-full flex items-center justify-center shadow-2xl"
         >
-          <h1 className="text-6xl md:text-8xl font-bold text-white mb-6">
-            Victor Hugo Art
-          </h1>
-          <p className="text-xl md:text-2xl text-white/70 mb-12 max-w-2xl">
-            Explore a collection of unique artworks that blend creativity, passion, and vision.
-          </p>
-
-          <div className="flex gap-6 justify-center">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Link
-                href="/gallery"
-                className="px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-white/90 transition-colors"
-              >
-                View Gallery
-              </Link>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Link
-                href="/shop"
-                className="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-full hover:bg-white/10 transition-colors"
-              >
-                Shop Art
-              </Link>
-            </motion.div>
-          </div>
+          <Image
+            src="/images/victorhugoartlogo.png"
+            alt="Victor Hugo Art Logo"
+            width={576}
+            height={576}
+            className="rounded-full object-cover"
+            priority
+          />
         </motion.div>
+
+        {/* Petal Buttons in Circle */}
+        {petals.map((petal, index) => {
+          const position = getPetalPosition(petal.angle);
+
+          return (
+            <motion.div
+              key={petal.name}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+              }}
+              transition={{
+                duration: 0.6,
+                delay: 0.8 + index * 0.1,
+                type: 'spring',
+                stiffness: 100
+              }}
+              className="absolute"
+              style={{
+                left: `calc(50% + ${position.x}px - 64px)`,
+                top: `calc(50% + ${position.y}px - 64px)`,
+                transform: 'translate(-50%, -50%)',
+              }}
+            >
+              <Link href={petal.href}>
+                <motion.div
+                  whileHover={{ scale: 1.15, rotate: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-32 h-32 bg-[#FEFAE0]/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-xl cursor-pointer hover:bg-[#B99470] transition-colors group"
+                >
+                  <span className="text-[#4B352A] group-hover:text-[#FEFAE0] font-semibold text-lg text-center px-4 transition-colors">
+                    {petal.name}
+                  </span>
+                </motion.div>
+              </Link>
+            </motion.div>
+          );
+        })}
+
+        {/* Decorative Background Glow */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 0.25, scale: 1 }}
+          transition={{ duration: 2, delay: 0.5 }}
+          className="absolute w-96 h-96 bg-[#E2A16F]/40 rounded-full blur-3xl -z-10"
+        />
       </main>
     </div>
   );
