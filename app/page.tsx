@@ -10,11 +10,11 @@ export default function Home() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const totalImages = 21;
 
-  // Slideshow effect - change image every 10 seconds
+  // Slideshow effect - change image every 30 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev === totalImages ? 1 : prev + 1));
-    }, 10000); // 10 seconds
+    }, 30000); // 30 seconds
 
     return () => clearInterval(interval);
   }, []);
@@ -87,9 +87,16 @@ export default function Home() {
       {/* Top Navigation Bar */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[#4B352A] backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          {/* Left: Site Title */}
-          <Link href="/" className="text-2xl font-bold text-[#FEFAE0]">
-            Victor Hugo Art
+          {/* Left: Site Logo */}
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/images/victorhugoartlogohorizontal.png"
+              alt="Victor Hugo Art"
+              width={200}
+              height={50}
+              className="object-contain"
+              priority
+            />
           </Link>
 
           {/* Right: Menu Button */}
@@ -106,16 +113,18 @@ export default function Home() {
         {/* Center Logo */}
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="relative z-10 w-[576px] h-[576px] rounded-full flex items-center justify-center shadow-2xl"
+          animate={{ scale: 0.9, opacity: 1 }}
+          whileHover={{ scale: 0.95}}
+          transition={{ duration: 1.8, delay: 0.2 }}
+          className="relative z-10 w-[700px] h-[700px] rounded-full flex items-center justify-center shadow-2xl bg-[#4B352A] cursor-pointer"
         >
           <Image
             src="/images/victorhugoartlogo.png"
             alt="Victor Hugo Art Logo"
-            width={576}
-            height={576}
+            width={700}
+            height={700}
             className="rounded-full object-cover"
+           
             priority
           />
         </motion.div>
