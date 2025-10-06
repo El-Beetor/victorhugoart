@@ -134,7 +134,7 @@ export default function Contact() {
               Get in Touch
             </h1>
             <p className="text-xl sm:text-2xl text-[#2e1705]/70">
-              I'd love to hear from you
+              I&apos;d love to hear from you
             </p>
           </motion.div>
 

@@ -34,9 +34,10 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ sessionId: session.id });
-  } catch (err: any) {
+  } catch (err) {
+    const error = err as Error;
     return NextResponse.json(
-      { error: err.message },
+      { error: error.message },
       { status: 500 }
     );
   }

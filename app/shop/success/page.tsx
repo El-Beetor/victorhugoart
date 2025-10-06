@@ -27,11 +27,11 @@ export default function Success() {
         </div>
 
         <div className="bg-[#2e1705]/5 rounded-lg p-6 mb-8">
-          <h2 className="text-lg font-semibold text-[#2e1705] mb-3">What's Next?</h2>
+          <h2 className="text-lg font-semibold text-[#2e1705] mb-3">What&apos;s Next?</h2>
           <ul className="text-left text-[#2e1705]/70 space-y-2">
-            <li>✓ You'll receive a confirmation email shortly</li>
+            <li>✓ You&apos;ll receive a confirmation email shortly</li>
             <li>✓ Your artwork will be carefully packaged and shipped</li>
-            <li>✓ You'll receive a certificate of authenticity</li>
+            <li>✓ You&apos;ll receive a certificate of authenticity</li>
             <li>✓ Tracking information will be sent to your email</li>
           </ul>
         </div>

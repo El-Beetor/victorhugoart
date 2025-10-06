@@ -155,8 +155,8 @@ export default function About() {
               className="space-y-6"
             >
               <p className="text-lg text-[#2e1705]/80 leading-relaxed">
-                Welcome! I'm Victor Hugo, an artist passionate about creating unique and meaningful works of art.
-                My journey in art began years ago, and since then, I've been exploring different styles and mediums
+                Welcome! I&apos;m Victor Hugo, an artist passionate about creating unique and meaningful works of art.
+                My journey in art began years ago, and since then, I&apos;ve been exploring different styles and mediums
                 to express my creativity.
               </p>
               <p className="text-lg text-[#2e1705]/80 leading-relaxed">
