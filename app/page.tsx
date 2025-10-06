@@ -5,8 +5,6 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
-const basePath = process.env.NODE_ENV === 'production' ? '/victorhugoart' : '';
-
 const artworks = [
   {
     id: 1,
@@ -106,16 +104,6 @@ export default function Home() {
     setIsMenuOpen(false);
   };
 
-  // Calculate position for each petal button in a circle
-  const radius = 420; // Distance from center (adjusted for larger logo)
-
-  const getPetalPosition = (angle: number) => {
-    const radians = (angle * Math.PI) / 180;
-    return {
-      x: Math.cos(radians) * radius,
-      y: Math.sin(radians) * radius,
-    };
-  };
 
   const getFrameSize = (size: string) => {
     switch(size) {
@@ -166,7 +154,7 @@ export default function Home() {
             className="absolute inset-0"
           >
             <Image
-              src={`${basePath}/bg_wallpapers/image_${currentImage}.png`}
+              src={`/bg_wallpapers/image_${currentImage}.png`}
               alt={`Background ${currentImage}`}
               fill
               className="object-cover blur-[2px]"
@@ -194,7 +182,7 @@ export default function Home() {
           {/* Center: Site Logo */}
           <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 flex items-center">
             <Image
-              src={`${basePath}/images/victorhugoartlogohorizontal.png`}
+              src="/images/victorhugoartlogohorizontal.png"
               alt="Victor Hugo Art"
               width={150}
               height={38}
@@ -298,7 +286,7 @@ export default function Home() {
           className="relative z-10 w-[375px] h-[375px] sm:w-[450px] sm:h-[450px] md:w-[525px] md:h-[525px] rounded-full flex items-center justify-center shadow-[0_20px_60px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-[#fffff7]/55 cursor-pointer"
         >
           <Image
-            src={`${basePath}/images/victorhugoartlogo.png`}
+            src="/images/victorhugoartlogo.png"
             alt="Victor Hugo Art Logo"
             width={525}
             height={525}
@@ -308,68 +296,12 @@ export default function Home() {
           />
         </motion.div>
 
-        {/* Petal Buttons in Circle - Hidden on mobile */}
-        <div className="hidden md:block">
-          {petals.map((petal, index) => {
-            const position = getPetalPosition(petal.angle);
-
-            return (
-              <motion.div
-                key={petal.name}
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{
-                  scale: 1,
-                  opacity: 1,
-                  rotate: [0, -15, 15, -15, 15, 0],
-                }}
-                transition={{
-                  scale: {
-                    duration: 0.6,
-                    delay: 0.8 + index * 0.1,
-                    type: 'spring',
-                    stiffness: 100
-                  },
-                  opacity: {
-                    duration: 0.6,
-                    delay: 0.8 + index * 0.1,
-                  },
-                  rotate: {
-                    duration: 1.5,
-                    delay: 2 + index * 0.5,
-                    repeat: Infinity,
-                    repeatDelay: 4,
-                    ease: "easeInOut"
-                  }
-                }}
-                className="absolute"
-                style={{
-                  left: `calc(50% + ${position.x}px - 64px)`,
-                  top: `calc(50% + ${position.y}px - 64px)`,
-                  transform: 'translate(-50%, -50%)',
-                }}
-              >
-                <Link href={petal.href} onClick={petal.name === 'Portfolio' ? scrollToPortfolio : undefined}>
-                  <motion.div
-                    whileHover={{ scale: 1.15, rotate: 5 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-32 h-32 bg-[#fffff7]/55 backdrop-blur-md rounded-full flex items-center justify-center shadow-xl cursor-pointer hover:bg-[#B99470] transition-colors group"
-                  >
-                    <span className="text-[#2e1705] group-hover:text-[#FEFAE0] font-semibold text-lg text-center px-4 transition-colors">
-                      {petal.name}
-                    </span>
-                  </motion.div>
-                </Link>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* Mobile Navigation - Shown on small screens */}
+        {/* Navigation Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1 }}
-          className="md:hidden absolute bottom-20 left-0 right-0 flex flex-wrap gap-3 justify-center px-6"
+          className="absolute bottom-20 left-0 right-0 flex flex-wrap gap-3 justify-center px-6"
         >
           {petals.map((petal, index) => (
             <Link key={petal.name} href={petal.href} onClick={petal.name === 'Portfolio' ? scrollToPortfolio : undefined}>

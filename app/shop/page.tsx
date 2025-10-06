@@ -1,7 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const products = [
   {
@@ -55,27 +60,151 @@ const products = [
 ];
 
 export default function Shop() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    window.location.href = '/#portfolio';
+    setIsMenuOpen(false);
+  };
+
+  const handlePurchase = async (productId: number, title: string, price: number) => {
+    try {
+      // Create checkout session
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId,
+          title,
+          price,
+        }),
+      });
+
+      const { sessionId } = await response.json();
+
+      // Redirect to Stripe Checkout
+      const stripe = await stripePromise;
+      const { error } = await stripe!.redirectToCheckout({ sessionId });
+
+      if (error) {
+        console.error('Error:', error);
+        alert('Something went wrong. Please try again or contact victorhugoart@pm.me');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Something went wrong. Please try again or contact victorhugoart@pm.me');
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-b from-[#fffff7] to-[#2E1705]">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-black/20 backdrop-blur-md z-50 border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold text-white">
-            Victor Hugo Art
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#fffff7]/55 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+          {/* Left: Menu Button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="w-10 h-10 flex flex-col justify-center items-center gap-1.5 hover:opacity-70 transition-opacity"
+          >
+            <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
+            <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
+            <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
+          </button>
+
+          {/* Center: Site Logo */}
+          <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 flex items-center">
+            <Image
+              src="/images/victorhugoartlogohorizontal.png"
+              alt="Victor Hugo Art"
+              width={150}
+              height={38}
+              className="object-contain sm:w-[200px] sm:h-[50px] brightness-0"
+              priority
+              style={{ filter: 'brightness(0) saturate(100%) invert(8%) sepia(39%) saturate(1890%) hue-rotate(358deg) brightness(95%) contrast(97%)' }}
+            />
           </Link>
-          <div className="flex gap-8">
-            <Link href="/gallery" className="text-white/80 hover:text-white transition-colors">
-              Gallery
-            </Link>
-            <Link href="/about" className="text-white/80 hover:text-white transition-colors">
-              About
-            </Link>
-            <Link href="/shop" className="text-white font-semibold transition-colors">
-              Shop
-            </Link>
-          </div>
+
+          {/* Right: Empty space for symmetry */}
+          <div className="w-10 h-10"></div>
         </div>
       </nav>
+
+      {/* Menu Overlay */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMenuOpen(false)}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+            />
+
+            {/* Menu Panel */}
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed left-0 top-0 h-full w-80 bg-[#fffff7] shadow-2xl z-50 flex flex-col"
+            >
+              {/* Close Button */}
+              <div className="flex justify-start p-6">
+                <button
+                  onClick={() => setIsMenuOpen(false)}
+                  className="w-10 h-10 flex items-center justify-center hover:opacity-70 transition-opacity"
+                >
+                  <span className="text-3xl text-[#2e1705]">×</span>
+                </button>
+              </div>
+
+              {/* Menu Links */}
+              <nav className="flex flex-col gap-6 px-8 py-4">
+                <Link
+                  href="/"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                >
+                  Home
+                </Link>
+                <Link
+                  href="/#portfolio"
+                  onClick={scrollToPortfolio}
+                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                >
+                  Portfolio
+                </Link>
+                <Link
+                  href="/shop"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                >
+                  Shop
+                </Link>
+                <Link
+                  href="/about"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                >
+                  About
+                </Link>
+                <Link
+                  href="/contact"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                >
+                  Contact
+                </Link>
+              </nav>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Shop Content */}
       <main className="pt-24 pb-16 px-6">
@@ -85,10 +214,10 @@ export default function Shop() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
+            <h1 className="text-5xl md:text-6xl font-bold text-[#2e1705] mb-4">
               Shop
             </h1>
-            <p className="text-xl text-white/70 mb-12">
+            <p className="text-xl text-[#2e1705]/70 mb-12">
               Original artworks available for purchase
             </p>
           </motion.div>
@@ -100,16 +229,16 @@ export default function Shop() {
             transition={{ delay: 0.3 }}
             className="flex gap-4 mb-12 flex-wrap"
           >
-            <button className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors">
+            <button className="px-6 py-2 bg-[#2e1705]/10 hover:bg-[#2e1705]/20 text-[#2e1705] rounded-full transition-colors">
               All Available
             </button>
-            <button className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors">
+            <button className="px-6 py-2 bg-[#2e1705]/10 hover:bg-[#2e1705]/20 text-[#2e1705] rounded-full transition-colors">
               Abstract
             </button>
-            <button className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors">
+            <button className="px-6 py-2 bg-[#2e1705]/10 hover:bg-[#2e1705]/20 text-[#2e1705] rounded-full transition-colors">
               Portrait
             </button>
-            <button className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors">
+            <button className="px-6 py-2 bg-[#2e1705]/10 hover:bg-[#2e1705]/20 text-[#2e1705] rounded-full transition-colors">
               Landscape
             </button>
           </motion.div>
@@ -124,8 +253,8 @@ export default function Shop() {
                 transition={{ delay: 0.1 * index }}
                 className="group"
               >
-                <div className="relative aspect-square bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-lg overflow-hidden border border-white/10 group-hover:border-white/30 transition-all">
-                  <div className="w-full h-full flex items-center justify-center text-white/50">
+                <div className="relative aspect-square bg-gradient-to-br from-[#2e1705]/20 to-[#0B3826]/20 rounded-lg overflow-hidden border border-[#2e1705]/20 group-hover:border-[#2e1705]/40 transition-all">
+                  <div className="w-full h-full flex items-center justify-center text-[#2e1705]/50">
                     {/* Placeholder - replace with actual images */}
                     <div className="text-center">
                       <div className="text-6xl mb-4">🎨</div>
@@ -134,8 +263,8 @@ export default function Shop() {
                   </div>
 
                   {!product.available && (
-                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                      <span className="text-white font-semibold text-lg">SOLD</span>
+                    <div className="absolute inset-0 bg-[#2e1705]/80 flex items-center justify-center">
+                      <span className="text-[#fffff7] font-semibold text-lg">SOLD</span>
                     </div>
                   )}
                 </div>
@@ -143,11 +272,11 @@ export default function Shop() {
                 <div className="mt-4">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <h3 className="text-xl font-semibold text-white">{product.title}</h3>
-                      <p className="text-white/60 text-sm">{product.category} • {product.size}</p>
+                      <h3 className="text-xl font-semibold text-[#2e1705]">{product.title}</h3>
+                      <p className="text-[#2e1705]/60 text-sm">{product.category} • {product.size}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold text-white">${product.price}</p>
+                      <p className="text-2xl font-bold text-[#2e1705]">${product.price}</p>
                     </div>
                   </div>
 
@@ -155,14 +284,15 @@ export default function Shop() {
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="w-full mt-3 px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-white/90 transition-colors"
+                      onClick={() => handlePurchase(product.id, product.title, product.price)}
+                      className="w-full mt-3 px-6 py-3 bg-[#2e1705] text-[#fffff7] font-semibold rounded-lg hover:bg-[#2e1705]/80 transition-colors"
                     >
-                      Purchase
+                      Purchase with Stripe
                     </motion.button>
                   ) : (
                     <button
                       disabled
-                      className="w-full mt-3 px-6 py-3 bg-white/10 text-white/40 font-semibold rounded-lg cursor-not-allowed"
+                      className="w-full mt-3 px-6 py-3 bg-[#2e1705]/10 text-[#2e1705]/40 font-semibold rounded-lg cursor-not-allowed"
                     >
                       Sold Out
                     </button>
@@ -177,25 +307,25 @@ export default function Shop() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="mt-16 bg-white/5 backdrop-blur-sm rounded-lg p-8 border border-white/10"
+            className="mt-16 bg-[#fffff7]/80 backdrop-blur-sm rounded-lg p-8 border border-[#2e1705]/20"
           >
-            <h2 className="text-2xl font-bold text-white mb-4">Purchase Information</h2>
-            <div className="grid md:grid-cols-2 gap-6 text-white/70">
+            <h2 className="text-2xl font-bold text-[#2e1705] mb-4">Purchase Information</h2>
+            <div className="grid md:grid-cols-2 gap-6 text-[#2e1705]/70">
               <div>
-                <h3 className="text-white font-semibold mb-2">Shipping</h3>
+                <h3 className="text-[#2e1705] font-semibold mb-2">Shipping</h3>
                 <p>All artworks are carefully packaged and shipped with insurance. Shipping costs calculated at checkout.</p>
               </div>
               <div>
-                <h3 className="text-white font-semibold mb-2">Authenticity</h3>
+                <h3 className="text-[#2e1705] font-semibold mb-2">Authenticity</h3>
                 <p>Each piece comes with a certificate of authenticity signed by the artist.</p>
               </div>
               <div>
-                <h3 className="text-white font-semibold mb-2">Returns</h3>
+                <h3 className="text-[#2e1705] font-semibold mb-2">Returns</h3>
                 <p>14-day return policy for all purchases. Artwork must be returned in original condition.</p>
               </div>
               <div>
-                <h3 className="text-white font-semibold mb-2">Questions?</h3>
-                <p>Contact us at <a href="mailto:shop@victorhugoart.com" className="text-white hover:underline">shop@victorhugoart.com</a></p>
+                <h3 className="text-[#2e1705] font-semibold mb-2">Questions?</h3>
+                <p>Contact us at <a href="mailto:victorhugoart@pm.me" className="text-[#2e1705] hover:underline">victorhugoart@pm.me</a></p>
               </div>
             </div>
           </motion.div>

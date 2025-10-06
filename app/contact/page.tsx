@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 
-export default function About() {
+export default function Contact() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -121,72 +121,85 @@ export default function About() {
         )}
       </AnimatePresence>
 
-      {/* About Content */}
+      {/* Main Content */}
       <main className="pt-24 pb-16 px-4 sm:px-6">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
+            className="text-center mb-16"
           >
-            <h1 className="text-5xl md:text-6xl font-bold text-[#2e1705] mb-8 text-center">
-              About the Artist
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-[#2e1705] mb-6">
+              Get in Touch
             </h1>
+            <p className="text-xl sm:text-2xl text-[#2e1705]/70">
+              I'd love to hear from you
+            </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-            >
-              <div className="aspect-square bg-gradient-to-br from-[#2e1705]/20 to-[#0B3826]/20 rounded-lg border border-[#2e1705]/20 flex items-center justify-center shadow-xl">
-                <div className="text-center text-[#2e1705]/50">
-                  <div className="text-8xl mb-4">👨‍🎨</div>
-                  <p className="text-sm">Your photo here</p>
+          {/* Contact Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="bg-[#fffff7]/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 sm:p-12 border border-[#2e1705]/10"
+          >
+            <div className="space-y-8">
+              {/* Email Section */}
+              <div className="text-center">
+                <h2 className="text-2xl sm:text-3xl font-bold text-[#2e1705] mb-4">
+                  Email Me
+                </h2>
+                <p className="text-[#2e1705]/70 mb-6">
+                  For inquiries, commissions, or just to say hello
+                </p>
+                <a
+                  href="mailto:victorhugoart@pm.me"
+                  className="inline-block px-8 py-4 bg-[#2e1705] text-[#fffff7] font-semibold text-lg rounded-full hover:bg-[#2e1705]/80 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                >
+                  victorhugoart@pm.me
+                </a>
+              </div>
+
+              {/* Divider */}
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-[#2e1705]/20"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-4 bg-[#fffff7] text-[#2e1705]/50">or</span>
                 </div>
               </div>
-            </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="space-y-6"
-            >
-              <p className="text-lg text-[#2e1705]/80 leading-relaxed">
-                Welcome! I'm Victor Hugo, an artist passionate about creating unique and meaningful works of art.
-                My journey in art began years ago, and since then, I've been exploring different styles and mediums
-                to express my creativity.
-              </p>
-              <p className="text-lg text-[#2e1705]/80 leading-relaxed">
-                Each piece I create tells a story and carries a piece of my vision. Through my work, I aim to
-                evoke emotions, spark imagination, and bring beauty into the world.
-              </p>
-              <p className="text-lg text-[#2e1705]/80 leading-relaxed">
-                Thank you for visiting my portfolio. I hope you enjoy exploring my collection as much as I
-                enjoyed creating it.
-              </p>
-            </motion.div>
-          </div>
+              {/* Quick Links */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Link
+                  href="/"
+                  className="p-4 bg-[#2e1705]/5 hover:bg-[#2e1705]/10 rounded-xl transition-colors text-center"
+                >
+                  <span className="text-[#2e1705] font-semibold">← Back to Home</span>
+                </Link>
+                <Link
+                  href="/#portfolio"
+                  className="p-4 bg-[#2e1705]/5 hover:bg-[#2e1705]/10 rounded-xl transition-colors text-center"
+                >
+                  <span className="text-[#2e1705] font-semibold">View Portfolio →</span>
+                </Link>
+              </div>
+            </div>
+          </motion.div>
 
-          {/* Contact CTA */}
+          {/* Additional Info */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="bg-[#fffff7]/80 backdrop-blur-sm rounded-lg p-8 border border-[#2e1705]/20 text-center shadow-xl"
+            transition={{ delay: 0.6, duration: 0.6 }}
+            className="mt-12 text-center"
           >
-            <h2 className="text-3xl font-bold text-[#2e1705] mb-4">Let's Connect</h2>
-            <p className="text-[#2e1705]/70 mb-6">
-              Interested in commissioning a piece or learning more about my work?
+            <p className="text-[#fffff7]/80 text-sm">
+              I typically respond within 24-48 hours
             </p>
-            <Link
-              href="/contact"
-              className="inline-block px-8 py-3 bg-[#2e1705] text-[#fffff7] font-semibold rounded-full hover:bg-[#2e1705]/80 transition-all duration-300 transform hover:scale-105 shadow-lg"
-            >
-              Get in Touch
-            </Link>
           </motion.div>
         </div>
       </main>
