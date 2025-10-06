@@ -5,6 +5,8 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
+const basePath = process.env.NODE_ENV === 'production' ? '/victorhugoart' : '';
+
 export default function Home() {
   const [currentImage, setCurrentImage] = useState(1);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -74,7 +76,7 @@ export default function Home() {
             className="absolute inset-0"
           >
             <Image
-              src={`/bg_wallpapers/image_${currentImage}.png`}
+              src={`${basePath}/bg_wallpapers/image_${currentImage}.png`}
               alt={`Background ${currentImage}`}
               fill
               className="object-cover"
@@ -90,7 +92,7 @@ export default function Home() {
           {/* Left: Site Logo */}
           <Link href="/" className="flex items-center">
             <Image
-              src="/images/victorhugoartlogohorizontal.png"
+              src={`${basePath}/images/victorhugoartlogohorizontal.png`}
               alt="Victor Hugo Art"
               width={200}
               height={50}
@@ -119,12 +121,12 @@ export default function Home() {
           className="relative z-10 w-[700px] h-[700px] rounded-full flex items-center justify-center shadow-2xl bg-[#4B352A] cursor-pointer"
         >
           <Image
-            src="/images/victorhugoartlogo.png"
+            src={`${basePath}/images/victorhugoartlogo.png`}
             alt="Victor Hugo Art Logo"
             width={700}
             height={700}
             className="rounded-full object-cover"
-           
+
             priority
           />
         </motion.div>
