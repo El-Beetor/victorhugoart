@@ -177,7 +177,7 @@ export default function About() {
             transition={{ delay: 0.8 }}
             className="bg-[#fffff7]/80 backdrop-blur-sm rounded-lg p-8 border border-[#2e1705]/20 text-center shadow-xl"
           >
-            <h2 className="text-3xl font-bold text-[#2e1705] mb-4">Let's Connect</h2>
+            <h2 className="text-3xl font-bold text-[#2e1705] mb-4">Let&apos;s Connect</h2>
             <p className="text-[#2e1705]/70 mb-6">
               Interested in commissioning a piece or learning more about my work?
             </p>
