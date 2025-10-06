@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ sessionId: session.id });
+    return NextResponse.json({ url: session.url });
   } catch (err) {
     const error = err as Error;
     return NextResponse.json(

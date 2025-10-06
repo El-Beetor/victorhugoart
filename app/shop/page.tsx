@@ -4,9 +4,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const products = [
   {
@@ -83,15 +80,17 @@ export default function Shop() {
         }),
       });
 
-      const { sessionId } = await response.json();
+      const data = await response.json();
 
-      // Redirect to Stripe Checkout
-      const stripe = await stripePromise;
-      const { error } = await stripe!.redirectToCheckout({ sessionId });
-
-      if (error) {
-        console.error('Error:', error);
+      if (data.error) {
+        console.error('Error:', data.error);
         alert('Something went wrong. Please try again or contact victorhugoart@pm.me');
+        return;
+      }
+
+      // Redirect to Stripe Checkout using the session URL
+      if (data.url) {
+        window.location.href = data.url;
       }
     } catch (error) {
       console.error('Error:', error);
