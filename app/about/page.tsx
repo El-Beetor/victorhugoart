@@ -22,7 +22,7 @@ export default function About() {
           {/* Left: Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="w-10 h-10 flex flex-col justify-center items-center gap-1.5 hover:opacity-70 transition-opacity"
+            className="w-10 h-10 flex flex-col justify-center items-center gap-1.5 hover:opacity-70 transition-opacity relative z-10"
           >
             <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
             <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
@@ -30,13 +30,13 @@ export default function About() {
           </button>
 
           {/* Center: Site Logo */}
-          <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 flex items-center">
+          <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 inline-flex items-center pointer-events-auto z-0">
             <Image
               src="/images/victorhugoartlogohorizontal.png"
               alt="Victor Hugo Art"
               width={150}
               height={38}
-              className="object-contain sm:w-[200px] sm:h-[50px] brightness-0"
+              className="object-contain !w-[120px] !h-auto sm:!w-[200px] brightness-0"
               priority
               style={{ filter: 'brightness(0) saturate(100%) invert(8%) sepia(39%) saturate(1890%) hue-rotate(358deg) brightness(95%) contrast(97%)' }}
             />
@@ -79,7 +79,7 @@ export default function About() {
               </div>
 
               {/* Menu Links */}
-              <nav className="flex flex-col gap-6 px-8 py-4">
+              <nav className="flex flex-col gap-6 px-8 py-4 max-h-[750px]:mt-16">
                 <Link
                   href="/"
                   onClick={() => setIsMenuOpen(false)}
@@ -140,11 +140,15 @@ export default function About() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
             >
-              <div className="aspect-square bg-gradient-to-br from-[#2e1705]/20 to-[#0B3826]/20 rounded-lg border border-[#2e1705]/20 flex items-center justify-center shadow-xl">
-                <div className="text-center text-[#2e1705]/50">
-                  <div className="text-8xl mb-4">👨‍🎨</div>
-                  <p className="text-sm">Your photo here</p>
-                </div>
+              <div className="aspect-square rounded-lg overflow-hidden shadow-xl border border-[#2e1705]/20">
+                <Image
+                  src="/images/profile.jpg"
+                  alt="Victor Hugo - Artist"
+                  width={600}
+                  height={600}
+                  className="object-cover w-full h-full"
+                  priority
+                />
               </div>
             </motion.div>
 

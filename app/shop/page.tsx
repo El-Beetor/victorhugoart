@@ -106,7 +106,7 @@ export default function Shop() {
           {/* Left: Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="w-10 h-10 flex flex-col justify-center items-center gap-1.5 hover:opacity-70 transition-opacity"
+            className="w-10 h-10 flex flex-col justify-center items-center gap-1.5 hover:opacity-70 transition-opacity relative z-10"
           >
             <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
             <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
@@ -114,13 +114,13 @@ export default function Shop() {
           </button>
 
           {/* Center: Site Logo */}
-          <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 flex items-center">
+          <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 inline-flex items-center pointer-events-auto z-0">
             <Image
               src="/images/victorhugoartlogohorizontal.png"
               alt="Victor Hugo Art"
               width={150}
               height={38}
-              className="object-contain sm:w-[200px] sm:h-[50px] brightness-0"
+              className="object-contain !w-[120px] !h-auto sm:!w-[200px] brightness-0"
               priority
               style={{ filter: 'brightness(0) saturate(100%) invert(8%) sepia(39%) saturate(1890%) hue-rotate(358deg) brightness(95%) contrast(97%)' }}
             />
@@ -163,7 +163,7 @@ export default function Shop() {
               </div>
 
               {/* Menu Links */}
-              <nav className="flex flex-col gap-6 px-8 py-4">
+              <nav className="flex flex-col gap-6 px-8 py-4 max-h-[750px]:mt-16">
                 <Link
                   href="/"
                   onClick={() => setIsMenuOpen(false)}

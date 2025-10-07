@@ -172,7 +172,7 @@ export default function Home() {
           {/* Left: Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="w-10 h-10 flex flex-col justify-center items-center gap-1.5 hover:opacity-70 transition-opacity"
+            className="w-10 h-10 flex flex-col justify-center items-center gap-1.5 hover:opacity-70 transition-opacity relative z-10"
           >
             <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
             <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
@@ -180,13 +180,13 @@ export default function Home() {
           </button>
 
           {/* Center: Site Logo */}
-          <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 flex items-center">
+          <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 inline-flex items-center pointer-events-auto z-0">
             <Image
               src="/images/victorhugoartlogohorizontal.png"
               alt="Victor Hugo Art"
               width={150}
               height={38}
-              className="object-contain sm:w-[200px] sm:h-[50px] brightness-0"
+              className="object-contain !w-[120px] !h-auto sm:!w-[200px] brightness-0"
               priority
               style={{ filter: 'brightness(0) saturate(100%) invert(8%) sepia(39%) saturate(1890%) hue-rotate(358deg) brightness(95%) contrast(97%)' }}
             />
@@ -229,7 +229,7 @@ export default function Home() {
               </div>
 
               {/* Menu Links */}
-              <nav className="flex flex-col gap-6 px-8 py-4">
+              <nav className="flex flex-col gap-6 px-8 py-4 max-h-[750px]:mt-16">
                 <Link
                   href="/"
                   onClick={() => setIsMenuOpen(false)}
@@ -276,14 +276,24 @@ export default function Home() {
         {/* Center Logo */}
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
+          animate={{
+            scale: 1,
+            opacity: [1, 0.7, 1]
+          }}
           whileHover={{ scale: 1.05 }}
           transition={{
-            duration: 1.2,
-            delay: 0.2,
-            ease: "easeOut"
+            scale: {
+              duration: 1.2,
+              delay: 0.2,
+              ease: "easeOut"
+            },
+            opacity: {
+              duration: 14,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }
           }}
-          className="relative z-10 w-[375px] h-[375px] sm:w-[450px] sm:h-[450px] md:w-[525px] md:h-[525px] rounded-full flex items-center justify-center shadow-[0_20px_60px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-[#fffff7]/55 cursor-pointer"
+          className="relative z-10 w-[200px] h-[200px] sm:w-[450px] sm:h-[450px] md:w-[525px] md:h-[525px] rounded-full flex items-center justify-center shadow-[0_20px_60px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-[#fffff7]/55 cursor-pointer"
         >
           <Image
             src="/images/victorhugoartlogo.png"
