@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function Success() {
+function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
 
@@ -64,5 +65,17 @@ export default function Success() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function Success() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-b from-[#fffff7] to-[#2E1705] flex items-center justify-center">
+        <div className="text-[#2e1705] text-xl">Loading...</div>
+      </div>
+    }>
+      <SuccessContent />
+    </Suspense>
   );
 }
