@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const artworks = [
   {
@@ -57,36 +57,72 @@ const artworks = [
 ];
 
 export default function Home() {
-  const [currentImage, setCurrentImage] = useState(1);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [cursorTrail, setCursorTrail] = useState<Array<{ x: number; y: number; id: number }>>([]);
+  const [cursorTrail, setCursorTrail] = useState<Array<{ x: number; y: number; id: string }>>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const totalImages = 21;
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [brushImage, setBrushImage] = useState<HTMLImageElement | null>(null);
+  const [maskUrl, setMaskUrl] = useState<string>('');
 
-  // Slideshow effect - change image every 30 seconds
+  // Load brushstroke image
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImage((prev) => (prev === totalImages ? 1 : prev + 1));
-    }, 30000); // 30 seconds
-
-    return () => clearInterval(interval);
+    const img = new window.Image();
+    img.src = '/test_new_feature/brushstroke.png';
+    img.onload = () => {
+      setBrushImage(img);
+    };
   }, []);
 
-  // Mouse tracking for parallax effect and cursor trail
+  // Initialize canvas
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 20; // ±10px movement
-      const y = (e.clientY / window.innerHeight - 0.5) * 20;
-      setMousePosition({ x, y });
+    const canvas = document.createElement('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvasRef.current = canvas;
 
-      // Add cursor trail
-      const newTrail = { x: e.clientX, y: e.clientY, id: Date.now() };
-      setCursorTrail((prev) => [...prev, newTrail].slice(-15)); // Keep last 15 positions
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Mouse tracking for painting effect
+  useEffect(() => {
+    let counter = 0;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+
+      // Add cursor trail with unique ID
+      const newTrail = { x: e.clientX, y: e.clientY, id: `${Date.now()}-${counter++}` };
+      setCursorTrail((prev) => [...prev, newTrail].slice(-15));
+
+      // Paint on canvas - now always painting on hover
+      if (canvasRef.current && brushImage) {
+        const ctx = canvasRef.current.getContext('2d');
+        if (ctx) {
+          const brushSize = 100; // Adjust size as needed
+          ctx.drawImage(
+            brushImage,
+            e.clientX - brushSize / 2,
+            e.clientY - brushSize / 2,
+            brushSize,
+            brushSize
+          );
+          // Update mask URL
+          setMaskUrl(canvasRef.current.toDataURL());
+        }
+      }
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [brushImage]);
   // Petal button data
   const petals = [
     { name: 'Portfolio', href: '#portfolio', angle: 0 },
@@ -132,38 +168,36 @@ export default function Home() {
         />
       ))}
 
-      {/* Background Slideshow */}
+      {/* Static Background with Color Reveal */}
       <div className="fixed inset-0 -z-10">
-        <AnimatePresence>
-          <motion.div
-            key={currentImage}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{
-              opacity: 1,
-              scale: [1.05, 1.08, 1.06, 1.07, 1.05],
-              x: mousePosition.x,
-              y: mousePosition.y
-            }}
-            exit={{ opacity: 0 }}
-            transition={{
-              opacity: { duration: 5 },
-              scale: { duration: 25, repeat: Infinity, ease: "easeInOut" },
-              x: { duration: 0.5, ease: "easeOut" },
-              y: { duration: 0.5, ease: "easeOut" }
-            }}
-            className="absolute inset-0"
-          >
-            <Image
-              src={`/bg_wallpapers/image_${currentImage}.png`}
-              alt={`Background ${currentImage}`}
-              fill
-              className="object-cover blur-[2px]"
-              priority={currentImage === 1}
-            />
-            {/* Color Tint Overlay */}
-            <div className="absolute inset-0 bg-[#fffff7] opacity-40 mix-blend-multiply"></div>
-          </motion.div>
-        </AnimatePresence>
+        {/* Monochromatic base layer */}
+        <div className="absolute inset-0">
+          <Image
+            src="/test_new_feature/monochromatic.png"
+            alt="Background"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+        {/* Color reveal layer */}
+        <div
+          className="absolute inset-0"
+          style={{
+            maskImage: maskUrl ? `url(${maskUrl})` : 'none',
+            WebkitMaskImage: maskUrl ? `url(${maskUrl})` : 'none',
+            maskSize: '100% 100%',
+            WebkitMaskSize: '100% 100%',
+          }}
+        >
+          <Image
+            src="/test_new_feature/color.png"
+            alt="Background Color"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
       </div>
 
       {/* Top Navigation Bar */}
