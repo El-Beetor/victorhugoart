@@ -60,35 +60,70 @@ export default function Home() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [cursorTrail, setCursorTrail] = useState<Array<{ x: number; y: number; id: string }>>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [brushImage, setBrushImage] = useState<HTMLImageElement | null>(null);
-  const [maskUrl, setMaskUrl] = useState<string>('');
+  const [isLogoVisible, setIsLogoVisible] = useState(true);
+  const [currentImagePath, setCurrentImagePath] = useState('/test_new_feature/color.png');
+  const [revealPercentage, setRevealPercentage] = useState(0);
+  const revealCanvasRef = useRef<HTMLCanvasElement>(null);
+  const colorImageRef = useRef<HTMLImageElement | null>(null);
+  const brushImageRef = useRef<HTMLImageElement | null>(null);
+  const lastPercentageCheckRef = useRef(0);
+  const isTransitioningRef = useRef(false);
 
-  // Load brushstroke image
+  // Load color image and brushstroke
   useEffect(() => {
-    const img = new window.Image();
-    img.src = '/test_new_feature/brushstroke.png';
-    img.onload = () => {
-      setBrushImage(img);
+    const colorImg = new window.Image();
+    colorImg.src = currentImagePath;
+    colorImg.onload = () => {
+      colorImageRef.current = colorImg;
+      // Reset transitioning flag once image is loaded
+      isTransitioningRef.current = false;
     };
-  }, []);
 
-  // Initialize canvas
+    const brushImg = new window.Image();
+    brushImg.src = '/test_new_feature/brushstroke.png';
+    brushImg.onload = () => {
+      brushImageRef.current = brushImg;
+    };
+  }, [currentImagePath]);
+
+  // Initialize reveal canvas
   useEffect(() => {
-    const canvas = document.createElement('canvas');
+    if (!revealCanvasRef.current) return;
+
+    const canvas = revealCanvasRef.current;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    canvasRef.current = canvas;
+
+    // Start with transparent canvas (cream background shows through)
+    const ctx = canvas.getContext('2d', { willReadFrequently: false });
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
 
     const handleResize = () => {
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvas.width;
+      tempCanvas.height = canvas.height;
+      const tempCtx = tempCanvas.getContext('2d');
+      if (tempCtx) {
+        tempCtx.drawImage(canvas, 0, 0);
+      }
+
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(tempCanvas, 0, 0);
+      }
     };
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Mouse tracking for painting effect
+  // Mouse tracking for cursor trail and painting
   useEffect(() => {
     let counter = 0;
 
@@ -99,20 +134,93 @@ export default function Home() {
       const newTrail = { x: e.clientX, y: e.clientY, id: `${Date.now()}-${counter++}` };
       setCursorTrail((prev) => [...prev, newTrail].slice(-15));
 
-      // Paint on canvas - now always painting on hover
-      if (canvasRef.current && brushImage) {
-        const ctx = canvasRef.current.getContext('2d');
+      // Paint color image using brushstroke alpha as mask (skip if transitioning)
+      if (revealCanvasRef.current && colorImageRef.current && brushImageRef.current && !isTransitioningRef.current) {
+        const ctx = revealCanvasRef.current.getContext('2d', { willReadFrequently: false });
         if (ctx) {
-          const brushSize = 100; // Adjust size as needed
-          ctx.drawImage(
-            brushImage,
-            e.clientX - brushSize / 2,
-            e.clientY - brushSize / 2,
-            brushSize,
-            brushSize
-          );
-          // Update mask URL
-          setMaskUrl(canvasRef.current.toDataURL());
+          const brushSize = 100;
+
+          // Create temporary canvas to compose the brushstroke-shaped color reveal
+          const tempCanvas = document.createElement('canvas');
+          tempCanvas.width = brushSize;
+          tempCanvas.height = brushSize;
+          const tempCtx = tempCanvas.getContext('2d');
+
+          if (tempCtx) {
+            // Draw the section of color image at this position
+            tempCtx.drawImage(
+              colorImageRef.current,
+              -(e.clientX - brushSize / 2),
+              -(e.clientY - brushSize / 2),
+              window.innerWidth,
+              window.innerHeight
+            );
+
+            // Use brushstroke alpha as mask
+            tempCtx.globalCompositeOperation = 'destination-in';
+            tempCtx.drawImage(brushImageRef.current, 0, 0, brushSize, brushSize);
+
+            // Paint the result onto main canvas
+            ctx.drawImage(
+              tempCanvas,
+              e.clientX - brushSize / 2,
+              e.clientY - brushSize / 2,
+              brushSize,
+              brushSize
+            );
+
+            // Calculate actual revealed percentage (throttled to every 100ms)
+            const now = Date.now();
+            if (now - lastPercentageCheckRef.current > 100) {
+              lastPercentageCheckRef.current = now;
+
+              // Sample every 10th pixel to improve performance
+              const canvasImageData = ctx.getImageData(0, 0, revealCanvasRef.current.width, revealCanvasRef.current.height);
+              let revealedCount = 0;
+              let sampledCount = 0;
+              for (let i = 3; i < canvasImageData.data.length; i += 40) { // Sample every 10th pixel (4 channels * 10)
+                sampledCount++;
+                if (canvasImageData.data[i] > 0) {
+                  revealedCount++;
+                }
+              }
+              const percentRevealed = (revealedCount / sampledCount) * 100;
+              setRevealPercentage(Math.min(percentRevealed, 100));
+
+              if (percentRevealed >= 90 && !isTransitioningRef.current) {
+                isTransitioningRef.current = true;
+
+                // Reveal the full image
+                if (colorImageRef.current) {
+                  ctx.drawImage(
+                    colorImageRef.current,
+                    0,
+                    0,
+                    revealCanvasRef.current.width,
+                    revealCanvasRef.current.height
+                  );
+                }
+
+                // Wait 3 seconds then switch to new image
+                setTimeout(() => {
+                  // Pick random image from bg_wallpapers
+                  const images = ['image_1.png', 'image_3.png', 'image_4.png', 'image_5.png', 'image_6.png', 'image_7.png', 'image_8.png', 'image_9.png', 'image_10.png', 'image_11.png', 'image_12.png', 'image_13.png', 'image_14.png', 'image_15.png', 'image_17.png', 'image_19.png', 'image_21.png'];
+                  const randomImage = images[Math.floor(Math.random() * images.length)];
+
+                  // Clear canvas and reset
+                  if (revealCanvasRef.current) {
+                    const resetCtx = revealCanvasRef.current.getContext('2d');
+                    if (resetCtx) {
+                      resetCtx.clearRect(0, 0, revealCanvasRef.current.width, revealCanvasRef.current.height);
+                    }
+                  }
+                  setRevealPercentage(0);
+                  setCurrentImagePath(`/bg_wallpapers/${randomImage}`);
+                  // Don't reset flag here - wait for image to load (see useEffect above)
+                }, 3000);
+              }
+            }
+          }
         }
       }
     };
@@ -122,7 +230,7 @@ export default function Home() {
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [brushImage]);
+  }, []);
   // Petal button data
   const petals = [
     { name: 'Portfolio', href: '#portfolio', angle: 0 },
@@ -152,6 +260,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      {/* Debug: Reveal Percentage */}
+      <div className="fixed top-24 right-4 z-50 bg-black/70 text-white px-4 py-2 rounded-lg font-mono">
+        Revealed: {revealPercentage.toFixed(1)}%
+      </div>
+
       {/* Cursor Trail */}
       {cursorTrail.map((trail, index) => (
         <motion.div
@@ -168,36 +281,13 @@ export default function Home() {
         />
       ))}
 
-      {/* Static Background with Color Reveal */}
-      <div className="fixed inset-0 -z-10">
-        {/* Monochromatic base layer */}
-        <div className="absolute inset-0">
-          <Image
-            src="/test_new_feature/monochromatic.png"
-            alt="Background"
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
-        {/* Color reveal layer */}
-        <div
-          className="absolute inset-0"
-          style={{
-            maskImage: maskUrl ? `url(${maskUrl})` : 'none',
-            WebkitMaskImage: maskUrl ? `url(${maskUrl})` : 'none',
-            maskSize: '100% 100%',
-            WebkitMaskSize: '100% 100%',
-          }}
-        >
-          <Image
-            src="/test_new_feature/color.png"
-            alt="Background Color"
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
+      {/* Static Background - cream color with canvas overlay */}
+      <div className="fixed inset-0 -z-10 bg-[#fffff7]">
+        {/* Canvas that reveals color image on mouse move */}
+        <canvas
+          ref={revealCanvasRef}
+          className="absolute inset-0 pointer-events-none"
+        />
       </div>
 
       {/* Top Navigation Bar */}
@@ -310,30 +400,38 @@ export default function Home() {
         {/* Center Logo */}
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
-          animate={{
+          animate={isLogoVisible ? {
             scale: 1,
             opacity: [1, 0.7, 1]
+          } : {
+            scale: 0,
+            opacity: 0
           }}
-          whileHover={{ scale: 1.05 }}
+          onHoverStart={() => {
+            setIsLogoVisible(false);
+            setTimeout(() => {
+              setIsLogoVisible(true);
+            }, 500);
+          }}
           transition={{
             scale: {
-              duration: 1.2,
-              delay: 0.2,
-              ease: "easeOut"
+              duration: isLogoVisible ? 1.2 : 0.3,
+              delay: isLogoVisible ? 0.2 : 0,
+              ease: isLogoVisible ? "easeOut" : "easeIn"
             },
             opacity: {
-              duration: 14,
-              repeat: Infinity,
+              duration: isLogoVisible ? 14 : 0.3,
+              repeat: isLogoVisible ? Infinity : 0,
               ease: "easeInOut"
             }
           }}
-          className="relative z-10 w-[200px] h-[200px] sm:w-[450px] sm:h-[450px] md:w-[525px] md:h-[525px] rounded-full flex items-center justify-center shadow-[0_20px_60px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-[#fffff7]/55 cursor-pointer"
+          className="relative z-10 w-[100px] h-[100px] sm:w-[225px] sm:h-[225px] md:w-[262px] md:h-[262px] rounded-full flex items-center justify-center shadow-[0_20px_60px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-[#fffff7]/95 cursor-pointer"
         >
           <Image
             src="/images/victorhugoartlogo.png"
             alt="Victor Hugo Art Logo"
-            width={525}
-            height={525}
+            width={262}
+            height={262}
             className="rounded-full object-cover"
             priority
             style={{ filter: 'brightness(0) saturate(100%) invert(8%) sepia(39%) saturate(1890%) hue-rotate(358deg) brightness(95%) contrast(97%)' }}
@@ -356,6 +454,11 @@ export default function Home() {
                   opacity: 1,
                   rotate: [0, -10, 10, -10, 10, 0],
                 }}
+                whileHover={{
+                  scale: 1.1,
+                  rotate: 5,
+                  transition: { duration: 0.2 }
+                }}
                 transition={{
                   scale: { duration: 0.4, delay: 1.2 + index * 0.1 },
                   opacity: { duration: 0.4, delay: 1.2 + index * 0.1 },
@@ -368,7 +471,7 @@ export default function Home() {
                   }
                 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 bg-[#fffff7]/55 backdrop-blur-md rounded-full shadow-lg"
+                className="px-6 py-3 bg-[#fffff7]/55 backdrop-blur-md rounded-full shadow-lg hover:bg-[#fffff7]/95"
               >
                 <span className="text-[#2e1705] font-semibold text-sm">
                   {petal.name}
