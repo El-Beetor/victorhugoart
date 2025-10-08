@@ -63,6 +63,7 @@ export default function Home() {
   const [isLogoVisible, setIsLogoVisible] = useState(true);
   const [currentImagePath, setCurrentImagePath] = useState('/test_new_feature/color.png');
   const [revealPercentage, setRevealPercentage] = useState(0);
+  const [isPaintingComplete, setIsPaintingComplete] = useState(false);
   const revealCanvasRef = useRef<HTMLCanvasElement>(null);
   const colorImageRef = useRef<HTMLImageElement | null>(null);
   const brushImageRef = useRef<HTMLImageElement | null>(null);
@@ -85,6 +86,30 @@ export default function Home() {
       brushImageRef.current = brushImg;
     };
   }, [currentImagePath]);
+
+  // Helper function to calculate cover dimensions (maintains aspect ratio)
+  const getCoverDimensions = (img: HTMLImageElement) => {
+    const windowRatio = window.innerWidth / window.innerHeight;
+    const imageRatio = img.naturalWidth / img.naturalHeight;
+
+    let width, height, offsetX, offsetY;
+
+    if (windowRatio > imageRatio) {
+      // Window is wider - fit to width
+      width = window.innerWidth;
+      height = window.innerWidth / imageRatio;
+      offsetX = 0;
+      offsetY = -(height - window.innerHeight) / 2;
+    } else {
+      // Window is taller - fit to height
+      width = window.innerHeight * imageRatio;
+      height = window.innerHeight;
+      offsetX = -(width - window.innerWidth) / 2;
+      offsetY = 0;
+    }
+
+    return { width, height, offsetX, offsetY };
+  };
 
   // Initialize reveal canvas
   useEffect(() => {
@@ -138,7 +163,7 @@ export default function Home() {
       if (revealCanvasRef.current && colorImageRef.current && brushImageRef.current && !isTransitioningRef.current) {
         const ctx = revealCanvasRef.current.getContext('2d', { willReadFrequently: false });
         if (ctx) {
-          const brushSize = 100;
+          const brushSize = Math.min(window.innerWidth, window.innerHeight) * 0.2;
 
           // Create temporary canvas to compose the brushstroke-shaped color reveal
           const tempCanvas = document.createElement('canvas');
@@ -147,13 +172,17 @@ export default function Home() {
           const tempCtx = tempCanvas.getContext('2d');
 
           if (tempCtx) {
+            // Calculate cover dimensions to maintain aspect ratio
+            const { width, height, offsetX, offsetY } = getCoverDimensions(colorImageRef.current);
+
             // Draw the section of color image at this position
+            // We need to offset by the image position to sample the correct portion
             tempCtx.drawImage(
               colorImageRef.current,
-              -(e.clientX - brushSize / 2),
-              -(e.clientY - brushSize / 2),
-              window.innerWidth,
-              window.innerHeight
+              offsetX - (e.clientX - brushSize / 2),
+              offsetY - (e.clientY - brushSize / 2),
+              width,
+              height
             );
 
             // Use brushstroke alpha as mask
@@ -189,15 +218,17 @@ export default function Home() {
 
               if (percentRevealed >= 90 && !isTransitioningRef.current) {
                 isTransitioningRef.current = true;
+                setIsPaintingComplete(true);
 
                 // Reveal the full image
                 if (colorImageRef.current) {
+                  const { width, height, offsetX, offsetY } = getCoverDimensions(colorImageRef.current);
                   ctx.drawImage(
                     colorImageRef.current,
-                    0,
-                    0,
-                    revealCanvasRef.current.width,
-                    revealCanvasRef.current.height
+                    offsetX,
+                    offsetY,
+                    width,
+                    height
                   );
                 }
 
@@ -215,6 +246,7 @@ export default function Home() {
                     }
                   }
                   setRevealPercentage(0);
+                  setIsPaintingComplete(false);
                   setCurrentImagePath(`/bg_wallpapers/${randomImage}`);
                   // Don't reset flag here - wait for image to load (see useEffect above)
                 }, 3000);
@@ -231,6 +263,128 @@ export default function Home() {
       window.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
+
+  // Touch interaction for mobile - tap to auto-reveal around point
+  useEffect(() => {
+    const handleTouch = (e: TouchEvent) => {
+      if (!revealCanvasRef.current || !colorImageRef.current || !brushImageRef.current || isTransitioningRef.current) return;
+
+      const touch = e.touches[0];
+      const centerX = touch.clientX;
+      const centerY = touch.clientY;
+
+      const ctx = revealCanvasRef.current.getContext('2d', { willReadFrequently: false });
+      if (!ctx) return;
+
+      const brushSize = Math.min(window.innerWidth, window.innerHeight) * 0.2;
+      let angle = 0;
+      let radius = 0;
+      const maxRadius = brushSize * 3; // Expand to 3x brush size
+      const spiralSpeed = 0.5; // How fast the spiral expands
+      const angleIncrement = 0.3; // How tight the spiral is
+
+      const animateReveal = () => {
+        if (radius > maxRadius || isTransitioningRef.current) return;
+
+        // Calculate position on spiral
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+
+        // Paint at this position
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = brushSize;
+        tempCanvas.height = brushSize;
+        const tempCtx = tempCanvas.getContext('2d');
+
+        if (tempCtx) {
+          // Calculate cover dimensions to maintain aspect ratio
+          const { width, height, offsetX, offsetY } = getCoverDimensions(colorImageRef.current!);
+
+          // Draw the section of color image at this position
+          tempCtx.drawImage(
+            colorImageRef.current!,
+            offsetX - (x - brushSize / 2),
+            offsetY - (y - brushSize / 2),
+            width,
+            height
+          );
+
+          // Use brushstroke alpha as mask
+          tempCtx.globalCompositeOperation = 'destination-in';
+          tempCtx.drawImage(brushImageRef.current!, 0, 0, brushSize, brushSize);
+
+          // Paint the result onto main canvas
+          ctx.drawImage(
+            tempCanvas,
+            x - brushSize / 2,
+            y - brushSize / 2,
+            brushSize,
+            brushSize
+          );
+        }
+
+        // Update spiral parameters
+        angle += angleIncrement;
+        radius += spiralSpeed;
+
+        // Continue animation
+        requestAnimationFrame(animateReveal);
+      };
+
+      // Start the reveal animation
+      animateReveal();
+
+      // Calculate percentage after animation completes
+      setTimeout(() => {
+        const canvasImageData = ctx.getImageData(0, 0, revealCanvasRef.current!.width, revealCanvasRef.current!.height);
+        let revealedCount = 0;
+        let sampledCount = 0;
+        for (let i = 3; i < canvasImageData.data.length; i += 40) {
+          sampledCount++;
+          if (canvasImageData.data[i] > 0) {
+            revealedCount++;
+          }
+        }
+        const percentRevealed = (revealedCount / sampledCount) * 100;
+        setRevealPercentage(Math.min(percentRevealed, 100));
+
+        // Trigger transition if >90% revealed
+        if (percentRevealed >= 90 && !isTransitioningRef.current) {
+          isTransitioningRef.current = true;
+          setIsPaintingComplete(true);
+          if (colorImageRef.current) {
+            const { width, height, offsetX, offsetY } = getCoverDimensions(colorImageRef.current);
+            ctx.drawImage(
+              colorImageRef.current,
+              offsetX,
+              offsetY,
+              width,
+              height
+            );
+          }
+
+          setTimeout(() => {
+            const images = ['image_1.png', 'image_3.png', 'image_4.png', 'image_5.png', 'image_6.png', 'image_7.png', 'image_8.png', 'image_9.png', 'image_10.png', 'image_11.png', 'image_12.png', 'image_13.png', 'image_14.png', 'image_15.png', 'image_17.png', 'image_19.png', 'image_21.png'];
+            const randomImage = images[Math.floor(Math.random() * images.length)];
+
+            if (revealCanvasRef.current) {
+              const resetCtx = revealCanvasRef.current.getContext('2d');
+              if (resetCtx) {
+                resetCtx.clearRect(0, 0, revealCanvasRef.current.width, revealCanvasRef.current.height);
+              }
+            }
+            setRevealPercentage(0);
+            setIsPaintingComplete(false);
+            setCurrentImagePath(`/bg_wallpapers/${randomImage}`);
+          }, 3000);
+        }
+      }, (maxRadius / spiralSpeed) * 16); // Wait for animation to complete (approx)
+    };
+
+    window.addEventListener('touchstart', handleTouch);
+    return () => window.removeEventListener('touchstart', handleTouch);
+  }, []);
+
   // Petal button data
   const petals = [
     { name: 'Portfolio', href: '#portfolio', angle: 0 },
@@ -400,12 +554,21 @@ export default function Home() {
         {/* Center Logo */}
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
-          animate={isLogoVisible ? {
+          animate={isPaintingComplete ? {
+            scale: [1, 1.1, 1],
+            opacity: 1,
+            rotate: 720,
+            filter: 'brightness(1.5)'
+          } : isLogoVisible ? {
             scale: 1,
-            opacity: [1, 0.7, 1]
+            opacity: [1, 0.7, 1],
+            rotate: 0,
+            filter: 'brightness(1)'
           } : {
             scale: 0,
-            opacity: 0
+            opacity: 0,
+            rotate: 0,
+            filter: 'brightness(1)'
           }}
           onHoverStart={() => {
             setIsLogoVisible(false);
@@ -415,24 +578,32 @@ export default function Home() {
           }}
           transition={{
             scale: {
-              duration: isLogoVisible ? 1.2 : 0.3,
+              duration: isPaintingComplete ? 1.5 : isLogoVisible ? 1.2 : 0.3,
               delay: isLogoVisible ? 0.2 : 0,
-              ease: isLogoVisible ? "easeOut" : "easeIn"
+              ease: isPaintingComplete ? "easeInOut" : isLogoVisible ? "easeOut" : "easeIn"
             },
             opacity: {
               duration: isLogoVisible ? 14 : 0.3,
-              repeat: isLogoVisible ? Infinity : 0,
+              repeat: isLogoVisible && !isPaintingComplete ? Infinity : 0,
+              ease: "easeInOut"
+            },
+            rotate: {
+              duration: isPaintingComplete ? 1.5 : 0,
+              ease: "easeInOut"
+            },
+            filter: {
+              duration: isPaintingComplete ? 1.5 : 0,
               ease: "easeInOut"
             }
           }}
-          className="relative z-10 w-[100px] h-[100px] sm:w-[225px] sm:h-[225px] md:w-[262px] md:h-[262px] rounded-full flex items-center justify-center shadow-[0_20px_60px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-[#fffff7]/95 cursor-pointer"
+          className="relative z-10 w-[100px] h-[100px] sm:w-[225px] sm:h-[225px] md:w-[262px] md:h-[262px] rounded-full flex items-center justify-center shadow-[0_20px_60px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-[#fffff7]/95 cursor-pointer select-none"
         >
           <Image
             src="/images/victorhugoartlogo.png"
             alt="Victor Hugo Art Logo"
             width={262}
             height={262}
-            className="rounded-full object-cover"
+            className="rounded-full object-cover select-none pointer-events-none"
             priority
             style={{ filter: 'brightness(0) saturate(100%) invert(8%) sepia(39%) saturate(1890%) hue-rotate(358deg) brightness(95%) contrast(97%)' }}
           />
@@ -443,7 +614,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1 }}
-          className="absolute bottom-20 left-0 right-0 flex flex-wrap gap-3 justify-center px-6"
+          className="absolute bottom-20 left-0 right-0 flex flex-wrap gap-3 justify-center px-6 select-none"
         >
           {petals.map((petal, index) => (
             <Link key={petal.name} href={petal.href} onClick={petal.name === 'Portfolio' ? scrollToPortfolio : undefined}>
@@ -471,9 +642,9 @@ export default function Home() {
                   }
                 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 bg-[#fffff7]/55 backdrop-blur-md rounded-full shadow-lg hover:bg-[#fffff7]/95"
+                className="px-6 py-3 bg-[#fffff7]/55 backdrop-blur-md rounded-full shadow-lg hover:bg-[#fffff7]/95 select-none"
               >
-                <span className="text-[#2e1705] font-semibold text-sm">
+                <span className="text-[#2e1705] font-semibold text-sm select-none">
                   {petal.name}
                 </span>
               </motion.div>
