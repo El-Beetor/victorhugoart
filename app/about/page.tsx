@@ -1,11 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
+import Image from 'next/image';
+import { useColors } from '../context/ColorContext';
 
 export default function About() {
+  const { accentColor, darkGradientColor, brightAccentColor } = useColors();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -15,7 +17,7 @@ export default function About() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fffff7] to-[#2E1705]">
+    <div className="min-h-screen" style={{ background: `linear-gradient(to bottom, #fffff7, ${darkGradientColor})` }}>
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[#fffff7]/55 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
@@ -24,22 +26,18 @@ export default function About() {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="w-10 h-10 flex flex-col justify-center items-center gap-1.5 hover:opacity-70 transition-opacity relative z-10"
           >
-            <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
-            <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
-            <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
+            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: accentColor }}></span>
+            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: accentColor }}></span>
+            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: accentColor }}></span>
           </button>
 
-          {/* Center: Site Logo */}
+          {/* Center: Site Name */}
           <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 inline-flex items-center pointer-events-auto z-0">
-            <Image
-              src="/images/victorhugoartlogohorizontal.png"
-              alt="Victor Hugo Art"
-              width={150}
-              height={38}
-              className="object-contain !w-[120px] !h-auto sm:!w-[200px] brightness-0"
-              priority
-              style={{ filter: 'brightness(0) saturate(100%) invert(8%) sepia(39%) saturate(1890%) hue-rotate(358deg) brightness(95%) contrast(97%)' }}
-            />
+            <h1 className="text-2xl sm:text-3xl font-bold lowercase flex gap-1" style={{ color: accentColor }}>
+              {'vic art'.split('').map((letter, i) => (
+                <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, 0, -2, 3, -1][i]}deg)` }}>{letter}</span>
+              ))}
+            </h1>
           </Link>
 
           {/* Right: Empty space for symmetry */}
@@ -74,7 +72,7 @@ export default function About() {
                   onClick={() => setIsMenuOpen(false)}
                   className="w-10 h-10 flex items-center justify-center hover:opacity-70 transition-opacity"
                 >
-                  <span className="text-3xl text-[#2e1705]">×</span>
+                  <span className="text-3xl" style={{ color: accentColor }}>×</span>
                 </button>
               </div>
 
@@ -83,37 +81,52 @@ export default function About() {
                 <Link
                   href="/"
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
                 >
-                  Home
+                  {'home'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[3, -2, 4, -3][i]}deg)` }}>{letter}</span>
+                  ))}
                 </Link>
                 <Link
                   href="/#portfolio"
                   onClick={scrollToPortfolio}
-                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
                 >
-                  Portfolio
+                  {'portfolio'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[-2, 3, -4, 2, -3, 4, -2, 3, -1][i]}deg)` }}>{letter}</span>
+                  ))}
                 </Link>
                 <Link
                   href="/shop"
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
                 >
-                  Shop
+                  {'shop'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[-3, 4, -2, 3][i]}deg)` }}>{letter}</span>
+                  ))}
                 </Link>
                 <Link
                   href="/about"
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
                 >
-                  About
+                  {'about'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, -2, 3][i]}deg)` }}>{letter}</span>
+                  ))}
                 </Link>
                 <Link
                   href="/contact"
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
                 >
-                  Contact
+                  {'contact'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[-2, 3, -4, 2, -3, 4, -1][i]}deg)` }}>{letter}</span>
+                  ))}
                 </Link>
               </nav>
             </motion.div>
@@ -129,8 +142,8 @@ export default function About() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-5xl md:text-6xl font-bold text-[#2e1705] mb-8 text-center">
-              About the Artist
+            <h1 className="text-5xl md:text-6xl font-bold mb-8 text-center" style={{ color: accentColor }}>
+              hi
             </h1>
           </motion.div>
 
@@ -140,7 +153,7 @@ export default function About() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
             >
-              <div className="aspect-square rounded-lg overflow-hidden shadow-xl border border-[#2e1705]/20">
+              <div className="aspect-square rounded-lg overflow-hidden shadow-xl border" style={{ borderColor: `${accentColor}33` }}>
                 <Image
                   src="/images/profile.jpg"
                   alt="Victor Hugo - Artist"
@@ -158,16 +171,16 @@ export default function About() {
               transition={{ delay: 0.4, duration: 0.6 }}
               className="space-y-6"
             >
-              <p className="text-lg text-[#2e1705]/80 leading-relaxed">
+              <p className="text-lg leading-relaxed" style={{ color: `${accentColor}CC` }}>
                 Welcome! I&apos;m Victor Hugo, an artist passionate about creating unique and meaningful works of art.
                 My journey in art began years ago, and since then, I&apos;ve been exploring different styles and mediums
                 to express my creativity.
               </p>
-              <p className="text-lg text-[#2e1705]/80 leading-relaxed">
+              <p className="text-lg leading-relaxed" style={{ color: `${accentColor}CC` }}>
                 Each piece I create tells a story and carries a piece of my vision. Through my work, I aim to
                 evoke emotions, spark imagination, and bring beauty into the world.
               </p>
-              <p className="text-lg text-[#2e1705]/80 leading-relaxed">
+              <p className="text-lg leading-relaxed" style={{ color: `${accentColor}CC` }}>
                 Thank you for visiting my portfolio. I hope you enjoy exploring my collection as much as I
                 enjoyed creating it.
               </p>
@@ -179,15 +192,14 @@ export default function About() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="bg-[#fffff7]/80 backdrop-blur-sm rounded-lg p-8 border border-[#2e1705]/20 text-center shadow-xl"
+            className="text-right"
           >
-            <h2 className="text-3xl font-bold text-[#2e1705] mb-4">Let&apos;s Connect</h2>
-            <p className="text-[#2e1705]/70 mb-6">
-              Interested in commissioning a piece or learning more about my work?
-            </p>
             <Link
               href="/contact"
-              className="inline-block px-8 py-3 bg-[#2e1705] text-[#fffff7] font-semibold rounded-full hover:bg-[#2e1705]/80 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="inline-block px-8 py-3 text-[#fffff7] font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
+              style={{ backgroundColor: accentColor }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
             >
               Get in Touch
             </Link>
