@@ -617,56 +617,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Debug: Reveal Percentage */}
-      <div className="fixed top-24 right-4 z-50 bg-black/70 text-white px-4 py-2 rounded-lg font-mono">
-        Revealed: {revealPercentage.toFixed(1)}%
-      </div>
-
-      {/* Debug: Color Swatches */}
-      <div className="fixed top-44 right-4 z-50 bg-black/70 text-white p-4 rounded-lg font-mono text-xs max-w-xs">
-        <div className="mb-3">
-          <div className="font-bold mb-1">Dark Colors</div>
-          <div className="flex gap-1 flex-wrap">
-            {darkColors.map((color, i) => (
-              <div
-                key={i}
-                className="w-8 h-8 rounded border border-white/30"
-                style={{ backgroundColor: color }}
-                title={color}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="mb-3">
-          <div className="font-bold mb-1">Mid Colors</div>
-          <div className="flex gap-1 flex-wrap">
-            {midColors.map((color, i) => (
-              <div
-                key={i}
-                className="w-8 h-8 rounded border border-white/30"
-                style={{ backgroundColor: color }}
-                title={color}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <div className="font-bold mb-1">Bright Colors</div>
-          <div className="flex gap-1 flex-wrap">
-            {brightColors.map((color, i) => (
-              <div
-                key={i}
-                className="w-8 h-8 rounded border border-white/30"
-                style={{ backgroundColor: color }}
-                title={color}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Cursor Trail */}
       {cursorTrail.map((trail, index) => (
         <motion.div
