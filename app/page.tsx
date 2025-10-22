@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
+import { useColors } from './context/ColorContext';
 
 const artworks = [
   {
@@ -57,6 +58,7 @@ const artworks = [
 ];
 
 export default function Home() {
+  const { buttonColors, accentColor, darkGradientColor, brightAccentColor, setButtonColors, setAccentColor, setDarkGradientColor, setBrightAccentColor } = useColors();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [cursorTrail, setCursorTrail] = useState<Array<{ x: number; y: number; id: string }>>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -64,11 +66,13 @@ export default function Home() {
   const [currentImagePath, setCurrentImagePath] = useState('/test_new_feature/color.png');
   const [revealPercentage, setRevealPercentage] = useState(0);
   const [isPaintingComplete, setIsPaintingComplete] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
   const revealCanvasRef = useRef<HTMLCanvasElement>(null);
   const colorImageRef = useRef<HTMLImageElement | null>(null);
   const brushImageRef = useRef<HTMLImageElement | null>(null);
   const lastPercentageCheckRef = useRef(0);
   const isTransitioningRef = useRef(false);
+  const baselinePixelCountRef = useRef(0);
 
   // Load color image and brushstroke
   useEffect(() => {
@@ -78,6 +82,91 @@ export default function Home() {
       colorImageRef.current = colorImg;
       // Reset transitioning flag once image is loaded
       isTransitioningRef.current = false;
+
+      // Sample random colors from the image for buttons (only ones with good contrast)
+      const canvas = document.createElement('canvas');
+      canvas.width = colorImg.naturalWidth;
+      canvas.height = colorImg.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(colorImg, 0, 0);
+        const colors: string[] = [];
+
+        // Helper to calculate luminance for contrast checking
+        const getLuminance = (r: number, g: number, b: number) => {
+          const [rs, gs, bs] = [r, g, b].map(c => {
+            c = c / 255;
+            return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+          });
+          return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+        };
+
+        // Cream background luminance (255, 255, 247)
+        const bgLuminance = getLuminance(255, 255, 247);
+
+        let attempts = 0;
+        let darkColor: string | null = null;
+        let brightColor: string | null = null;
+
+        while ((colors.length < 4 || !darkColor || !brightColor) && attempts < 300) {
+          const x = Math.floor(Math.random() * canvas.width);
+          const y = Math.floor(Math.random() * canvas.height);
+          const pixel = ctx.getImageData(x, y, 1, 1).data;
+
+          // Calculate contrast ratio
+          const colorLuminance = getLuminance(pixel[0], pixel[1], pixel[2]);
+          const contrast = (Math.max(bgLuminance, colorLuminance) + 0.05) /
+                          (Math.min(bgLuminance, colorLuminance) + 0.05);
+
+          // Only use colors with contrast ratio > 3 (readable)
+          if (contrast > 3) {
+            const rgbColor = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
+
+            // Add to button colors if we need more
+            if (colors.length < 4) {
+              colors.push(rgbColor);
+            }
+
+            // Find a dark color for gradient (luminance < 0.3)
+            if (!darkColor && colorLuminance < 0.3) {
+              darkColor = rgbColor;
+            }
+
+            // Find a bright/saturated color (luminance between 0.2-0.6 with good saturation)
+            if (!brightColor && colorLuminance > 0.2 && colorLuminance < 0.6) {
+              const r = pixel[0] / 255;
+              const g = pixel[1] / 255;
+              const b = pixel[2] / 255;
+              const max = Math.max(r, g, b);
+              const min = Math.min(r, g, b);
+              const saturation = max === 0 ? 0 : (max - min) / max;
+
+              // Look for colors with saturation > 0.3
+              if (saturation > 0.3) {
+                brightColor = rgbColor;
+              }
+            }
+          }
+          attempts++;
+        }
+
+        // Fallback to default colors if not enough colors found
+        while (colors.length < 4) {
+          colors.push('#2e1705');
+        }
+        if (!darkColor) {
+          darkColor = '#2E1705';
+        }
+        if (!brightColor) {
+          brightColor = '#0B3826';
+        }
+
+        setButtonColors(colors);
+        // Set the first color as the main accent color for other elements
+        setAccentColor(colors[0]);
+        setDarkGradientColor(darkColor);
+        setBrightAccentColor(brightColor);
+      }
     };
 
     const brushImg = new window.Image();
@@ -213,43 +302,29 @@ export default function Home() {
                   revealedCount++;
                 }
               }
-              const percentRevealed = (revealedCount / sampledCount) * 100;
-              setRevealPercentage(Math.min(percentRevealed, 100));
+              // Calculate percentage based on NEW pixels painted (subtract baseline from previous image)
+              const newPixelsRevealed = revealedCount - baselinePixelCountRef.current;
+              const maxNewPixels = sampledCount - baselinePixelCountRef.current;
+              const percentRevealed = maxNewPixels > 0 ? (newPixelsRevealed / maxNewPixels) * 100 : 0;
+              setRevealPercentage(Math.min(Math.max(percentRevealed, 0), 100));
 
-              if (percentRevealed >= 90 && !isTransitioningRef.current) {
+              if (percentRevealed >= 100 && !isTransitioningRef.current) {
                 isTransitioningRef.current = true;
                 setIsPaintingComplete(true);
 
-                // Reveal the full image
-                if (colorImageRef.current) {
-                  const { width, height, offsetX, offsetY } = getCoverDimensions(colorImageRef.current);
-                  ctx.drawImage(
-                    colorImageRef.current,
-                    offsetX,
-                    offsetY,
-                    width,
-                    height
-                  );
-                }
+                // Switch to new image immediately without clearing canvas
+                // Pick random image from bg_wallpapers
+                const images = ['image_1.png', 'image_3.png', 'image_4.png', 'image_5.png', 'image_6.png', 'image_7.png', 'image_8.png', 'image_9.png', 'image_10.png', 'image_11.png', 'image_12.png', 'image_13.png', 'image_14.png', 'image_15.png', 'image_17.png', 'image_19.png', 'image_21.png'];
+                const randomImage = images[Math.floor(Math.random() * images.length)];
 
-                // Wait 3 seconds then switch to new image
-                setTimeout(() => {
-                  // Pick random image from bg_wallpapers
-                  const images = ['image_1.png', 'image_3.png', 'image_4.png', 'image_5.png', 'image_6.png', 'image_7.png', 'image_8.png', 'image_9.png', 'image_10.png', 'image_11.png', 'image_12.png', 'image_13.png', 'image_14.png', 'image_15.png', 'image_17.png', 'image_19.png', 'image_21.png'];
-                  const randomImage = images[Math.floor(Math.random() * images.length)];
+                // Store current pixel count as baseline for next image
+                baselinePixelCountRef.current = revealedCount;
 
-                  // Clear canvas and reset
-                  if (revealCanvasRef.current) {
-                    const resetCtx = revealCanvasRef.current.getContext('2d');
-                    if (resetCtx) {
-                      resetCtx.clearRect(0, 0, revealCanvasRef.current.width, revealCanvasRef.current.height);
-                    }
-                  }
-                  setRevealPercentage(0);
-                  setIsPaintingComplete(false);
-                  setCurrentImagePath(`/bg_wallpapers/${randomImage}`);
-                  // Don't reset flag here - wait for image to load (see useEffect above)
-                }, 3000);
+                // Don't clear canvas - keep previous painting
+                setRevealPercentage(0);
+                setIsPaintingComplete(false);
+                setCurrentImagePath(`/bg_wallpapers/${randomImage}`);
+                // Don't reset flag here - wait for image to load (see useEffect above)
               }
             }
           }
@@ -345,44 +420,44 @@ export default function Home() {
             revealedCount++;
           }
         }
-        const percentRevealed = (revealedCount / sampledCount) * 100;
-        setRevealPercentage(Math.min(percentRevealed, 100));
+        // Calculate percentage based on NEW pixels painted (subtract baseline from previous image)
+        const newPixelsRevealed = revealedCount - baselinePixelCountRef.current;
+        const maxNewPixels = sampledCount - baselinePixelCountRef.current;
+        const percentRevealed = maxNewPixels > 0 ? (newPixelsRevealed / maxNewPixels) * 100 : 0;
+        setRevealPercentage(Math.min(Math.max(percentRevealed, 0), 100));
 
-        // Trigger transition if >90% revealed
-        if (percentRevealed >= 90 && !isTransitioningRef.current) {
+        // Trigger transition if 100% revealed
+        if (percentRevealed >= 100 && !isTransitioningRef.current) {
           isTransitioningRef.current = true;
           setIsPaintingComplete(true);
-          if (colorImageRef.current) {
-            const { width, height, offsetX, offsetY } = getCoverDimensions(colorImageRef.current);
-            ctx.drawImage(
-              colorImageRef.current,
-              offsetX,
-              offsetY,
-              width,
-              height
-            );
-          }
 
-          setTimeout(() => {
-            const images = ['image_1.png', 'image_3.png', 'image_4.png', 'image_5.png', 'image_6.png', 'image_7.png', 'image_8.png', 'image_9.png', 'image_10.png', 'image_11.png', 'image_12.png', 'image_13.png', 'image_14.png', 'image_15.png', 'image_17.png', 'image_19.png', 'image_21.png'];
-            const randomImage = images[Math.floor(Math.random() * images.length)];
+          // Switch to new image immediately without clearing canvas
+          const images = ['image_1.png', 'image_3.png', 'image_4.png', 'image_5.png', 'image_6.png', 'image_7.png', 'image_8.png', 'image_9.png', 'image_10.png', 'image_11.png', 'image_12.png', 'image_13.png', 'image_14.png', 'image_15.png', 'image_17.png', 'image_19.png', 'image_21.png'];
+          const randomImage = images[Math.floor(Math.random() * images.length)];
 
-            if (revealCanvasRef.current) {
-              const resetCtx = revealCanvasRef.current.getContext('2d');
-              if (resetCtx) {
-                resetCtx.clearRect(0, 0, revealCanvasRef.current.width, revealCanvasRef.current.height);
-              }
-            }
-            setRevealPercentage(0);
-            setIsPaintingComplete(false);
-            setCurrentImagePath(`/bg_wallpapers/${randomImage}`);
-          }, 3000);
+          // Store current pixel count as baseline for next image
+          baselinePixelCountRef.current = revealedCount;
+
+          // Don't clear canvas - keep previous painting
+          setRevealPercentage(0);
+          setIsPaintingComplete(false);
+          setCurrentImagePath(`/bg_wallpapers/${randomImage}`);
         }
       }, (maxRadius / spiralSpeed) * 16); // Wait for animation to complete (approx)
     };
 
     window.addEventListener('touchstart', handleTouch);
     return () => window.removeEventListener('touchstart', handleTouch);
+  }, []);
+
+  // Scroll tracking for parallax effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Petal button data
@@ -426,22 +501,34 @@ export default function Home() {
           initial={{ scale: 1, opacity: 0.6 }}
           animate={{ scale: 0, opacity: 0 }}
           transition={{ duration: 0.6 }}
-          className="fixed w-4 h-4 rounded-full bg-[#fffff7] pointer-events-none z-50"
+          className="fixed w-4 h-4 rounded-full pointer-events-none z-50"
           style={{
             left: trail.x - 8,
             top: trail.y - 8,
             opacity: (index / cursorTrail.length) * 0.6,
+            backgroundColor: darkGradientColor,
           }}
         />
       ))}
 
       {/* Static Background - cream color with canvas overlay */}
       <div className="fixed inset-0 -z-10 bg-[#fffff7]">
-        {/* Canvas that reveals color image on mouse move */}
-        <canvas
-          ref={revealCanvasRef}
-          className="absolute inset-0 pointer-events-none"
-        />
+        {/* Canvas that reveals color image on mouse move with logo mask */}
+        <div className="absolute inset-0 z-10" style={{
+          WebkitMaskImage: 'url(/images/victorhugoartlogo.png)',
+          WebkitMaskPosition: '50% 50%',
+          WebkitMaskSize: '600px 600px',
+          WebkitMaskRepeat: 'no-repeat',
+          maskImage: 'url(/images/victorhugoartlogo.png)',
+          maskPosition: '50% 50%',
+          maskSize: '600px 600px',
+          maskRepeat: 'no-repeat',
+        }}>
+          <canvas
+            ref={revealCanvasRef}
+            className="absolute inset-0 pointer-events-none"
+          />
+        </div>
       </div>
 
       {/* Top Navigation Bar */}
@@ -452,22 +539,18 @@ export default function Home() {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="w-10 h-10 flex flex-col justify-center items-center gap-1.5 hover:opacity-70 transition-opacity relative z-10"
           >
-            <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
-            <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
-            <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
+            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: accentColor }}></span>
+            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: accentColor }}></span>
+            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: accentColor }}></span>
           </button>
 
-          {/* Center: Site Logo */}
+          {/* Center: Site Name */}
           <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 inline-flex items-center pointer-events-auto z-0">
-            <Image
-              src="/images/victorhugoartlogohorizontal.png"
-              alt="Victor Hugo Art"
-              width={150}
-              height={38}
-              className="object-contain !w-[120px] !h-auto sm:!w-[200px] brightness-0"
-              priority
-              style={{ filter: 'brightness(0) saturate(100%) invert(8%) sepia(39%) saturate(1890%) hue-rotate(358deg) brightness(95%) contrast(97%)' }}
-            />
+            <h1 className="text-2xl sm:text-3xl font-bold lowercase flex gap-1" style={{ color: accentColor }}>
+              {'vic art'.split('').map((letter, i) => (
+                <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, 0, -2, 3, -1][i]}deg)` }}>{letter}</span>
+              ))}
+            </h1>
           </Link>
 
           {/* Right: Empty space for symmetry */}
@@ -502,7 +585,7 @@ export default function Home() {
                   onClick={() => setIsMenuOpen(false)}
                   className="w-10 h-10 flex items-center justify-center hover:opacity-70 transition-opacity"
                 >
-                  <span className="text-3xl text-[#2e1705]">×</span>
+                  <span className="text-3xl" style={{ color: accentColor }}>×</span>
                 </button>
               </div>
 
@@ -511,37 +594,52 @@ export default function Home() {
                 <Link
                   href="/"
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
                 >
-                  Home
+                  {'home'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[3, -2, 4, -3][i]}deg)` }}>{letter}</span>
+                  ))}
                 </Link>
                 <Link
                   href="#portfolio"
                   onClick={scrollToPortfolio}
-                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
                 >
-                  Portfolio
+                  {'portfolio'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[-2, 3, -4, 2, -3, 4, -2, 3, -1][i]}deg)` }}>{letter}</span>
+                  ))}
                 </Link>
                 <Link
                   href="/shop"
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
                 >
-                  Shop
+                  {'shop'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[-3, 4, -2, 3][i]}deg)` }}>{letter}</span>
+                  ))}
                 </Link>
                 <Link
                   href="/about"
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
                 >
-                  About
+                  {'about'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, -2, 3][i]}deg)` }}>{letter}</span>
+                  ))}
                 </Link>
                 <Link
                   href="/contact"
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
                 >
-                  Contact
+                  {'contact'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[-2, 3, -4, 2, -3, 4, -1][i]}deg)` }}>{letter}</span>
+                  ))}
                 </Link>
               </nav>
             </motion.div>
@@ -550,71 +648,13 @@ export default function Home() {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="relative flex items-center justify-center min-h-screen px-4">
-        {/* Center Logo */}
-        <motion.div
-          initial={{ scale: 0, opacity: 0 }}
-          animate={isPaintingComplete ? {
-            scale: [1, 1.1, 1],
-            opacity: 1,
-            rotate: 720,
-            filter: 'brightness(1.5)'
-          } : isLogoVisible ? {
-            scale: 1,
-            opacity: [1, 0.7, 1],
-            rotate: 0,
-            filter: 'brightness(1)'
-          } : {
-            scale: 0,
-            opacity: 0,
-            rotate: 0,
-            filter: 'brightness(1)'
-          }}
-          onHoverStart={() => {
-            setIsLogoVisible(false);
-            setTimeout(() => {
-              setIsLogoVisible(true);
-            }, 500);
-          }}
-          transition={{
-            scale: {
-              duration: isPaintingComplete ? 1.5 : isLogoVisible ? 1.2 : 0.3,
-              delay: isLogoVisible ? 0.2 : 0,
-              ease: isPaintingComplete ? "easeInOut" : isLogoVisible ? "easeOut" : "easeIn"
-            },
-            opacity: {
-              duration: isLogoVisible ? 14 : 0.3,
-              repeat: isLogoVisible && !isPaintingComplete ? Infinity : 0,
-              ease: "easeInOut"
-            },
-            rotate: {
-              duration: isPaintingComplete ? 1.5 : 0,
-              ease: "easeInOut"
-            },
-            filter: {
-              duration: isPaintingComplete ? 1.5 : 0,
-              ease: "easeInOut"
-            }
-          }}
-          className="relative z-10 w-[100px] h-[100px] sm:w-[225px] sm:h-[225px] md:w-[262px] md:h-[262px] rounded-full flex items-center justify-center shadow-[0_20px_60px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-[#fffff7]/95 cursor-pointer select-none"
-        >
-          <Image
-            src="/images/victorhugoartlogo.png"
-            alt="Victor Hugo Art Logo"
-            width={262}
-            height={262}
-            className="rounded-full object-cover select-none pointer-events-none"
-            priority
-            style={{ filter: 'brightness(0) saturate(100%) invert(8%) sepia(39%) saturate(1890%) hue-rotate(358deg) brightness(95%) contrast(97%)' }}
-          />
-        </motion.div>
-
+      <main className="relative min-h-screen">
         {/* Navigation Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1 }}
-          className="absolute bottom-20 left-0 right-0 flex flex-wrap gap-3 justify-center px-6 select-none"
+          className="absolute bottom-20 left-0 right-0 flex justify-evenly px-6 select-none max-w-4xl mx-auto"
         >
           {petals.map((petal, index) => (
             <Link key={petal.name} href={petal.href} onClick={petal.name === 'Portfolio' ? scrollToPortfolio : undefined}>
@@ -642,9 +682,13 @@ export default function Home() {
                   }
                 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 bg-[#fffff7]/55 backdrop-blur-md rounded-full shadow-lg hover:bg-[#fffff7]/95 select-none"
+                className="px-6 py-2 bg-transparent border-[5px] rounded-full shadow-lg select-none"
+                style={{
+                  borderColor: buttonColors[index] || '#2e1705',
+                  color: buttonColors[index] || '#2e1705'
+                }}
               >
-                <span className="text-[#2e1705] font-semibold text-sm select-none">
+                <span className="font-semibold text-sm select-none">
                   {petal.name}
                 </span>
               </motion.div>
@@ -657,12 +701,15 @@ export default function Home() {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 0.25, scale: 1 }}
           transition={{ duration: 2, delay: 0.5 }}
-          className="absolute w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 bg-[#0B3826]/40 rounded-full blur-3xl -z-10"
+          className="absolute w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full blur-3xl -z-10"
+          style={{ backgroundColor: `${brightAccentColor}66` }}
         />
       </main>
 
       {/* Portfolio Section */}
-      <section id="portfolio" className="relative bg-gradient-to-b from-[#fffff7] to-[#2E1705] py-20 px-4 sm:px-6">
+      <section id="portfolio" className="relative py-20 px-4 sm:px-6" style={{
+        background: `linear-gradient(to bottom, #fffff7, ${darkGradientColor})`
+      }}>
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -671,10 +718,10 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="mb-16 text-center"
           >
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#2e1705] mb-4">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4" style={{ color: accentColor }}>
               Portfolio
             </h2>
-            <p className="text-xl text-[#2e1705]/70">
+            <p className="text-xl" style={{ color: `${accentColor}B3` }}>
               Explore my collection of artwork
             </p>
           </motion.div>
@@ -687,16 +734,48 @@ export default function Home() {
             transition={{ delay: 0.3 }}
             className="flex gap-3 sm:gap-4 mb-16 flex-wrap justify-center"
           >
-            <button className="px-4 sm:px-6 py-2 bg-[#2e1705]/10 hover:bg-[#2e1705]/20 text-[#2e1705] rounded-full transition-colors text-sm sm:text-base">
+            <button
+              className="px-4 sm:px-6 py-2 rounded-full transition-colors text-sm sm:text-base"
+              style={{
+                backgroundColor: `${accentColor}1A`,
+                color: accentColor
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${accentColor}33`}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${accentColor}1A`}
+            >
               All
             </button>
-            <button className="px-4 sm:px-6 py-2 bg-[#2e1705]/10 hover:bg-[#2e1705]/20 text-[#2e1705] rounded-full transition-colors text-sm sm:text-base">
+            <button
+              className="px-4 sm:px-6 py-2 rounded-full transition-colors text-sm sm:text-base"
+              style={{
+                backgroundColor: `${accentColor}1A`,
+                color: accentColor
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${accentColor}33`}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${accentColor}1A`}
+            >
               Abstract
             </button>
-            <button className="px-4 sm:px-6 py-2 bg-[#2e1705]/10 hover:bg-[#2e1705]/20 text-[#2e1705] rounded-full transition-colors text-sm sm:text-base">
+            <button
+              className="px-4 sm:px-6 py-2 rounded-full transition-colors text-sm sm:text-base"
+              style={{
+                backgroundColor: `${accentColor}1A`,
+                color: accentColor
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${accentColor}33`}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${accentColor}1A`}
+            >
               Portrait
             </button>
-            <button className="px-4 sm:px-6 py-2 bg-[#2e1705]/10 hover:bg-[#2e1705]/20 text-[#2e1705] rounded-full transition-colors text-sm sm:text-base">
+            <button
+              className="px-4 sm:px-6 py-2 rounded-full transition-colors text-sm sm:text-base"
+              style={{
+                backgroundColor: `${accentColor}1A`,
+                color: accentColor
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${accentColor}33`}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${accentColor}1A`}
+            >
               Landscape
             </button>
           </motion.div>
@@ -721,21 +800,33 @@ export default function Home() {
                   {/* Artwork Frame */}
                   <div className={`relative ${getFrameSize(art.size)} bg-[#fffff7] p-6 sm:p-8 shadow-2xl`}>
                     {/* Inner artwork area */}
-                    <div className="w-full h-full bg-gradient-to-br from-[#0B3826]/30 to-[#2e1705]/30 flex items-center justify-center border-2 border-[#2e1705]/20">
-                      <div className="text-center text-[#2e1705]">
+                    <div
+                      className="w-full h-full flex items-center justify-center border-2"
+                      style={{
+                        background: `linear-gradient(to bottom right, ${brightAccentColor}4D, ${darkGradientColor}4D)`,
+                        borderColor: darkGradientColor
+                      }}
+                    >
+                      <div className="text-center" style={{ color: accentColor }}>
                         <div className="text-5xl sm:text-7xl mb-4">🎨</div>
                         <p className="text-sm font-medium">&quot;{art.title}&quot;</p>
                       </div>
                     </div>
 
                     {/* Frame shadow/depth effect */}
-                    <div className="absolute -inset-2 bg-gradient-to-b from-[#2e1705]/80 to-[#2e1705] -z-10 shadow-2xl"></div>
+                    <div
+                      className="absolute -inset-2 -z-10 shadow-2xl"
+                      style={{
+                        background: `linear-gradient(to bottom, ${accentColor}CC, ${accentColor})`
+                      }}
+                    ></div>
                   </div>
 
                   {/* Spotlight effect on hover */}
                   <motion.div
-                    className="absolute -inset-12 bg-[#0B3826]/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-20"
+                    className="absolute -inset-12 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-20"
                     initial={{ opacity: 0 }}
+                    style={{ backgroundColor: `${brightAccentColor}33` }}
                   />
                 </motion.div>
 
@@ -745,7 +836,13 @@ export default function Home() {
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.2 * index + 0.3 }}
-                  className="mt-8 max-w-2xl mx-auto bg-[#2e1705]/20 backdrop-blur-sm border border-[#2e1705]/30 rounded-lg p-6"
+                  className="mt-8 max-w-2xl mx-auto backdrop-blur-sm rounded-lg p-6"
+                  style={{
+                    backgroundColor: `${accentColor}33`,
+                    borderWidth: '1px',
+                    borderStyle: 'solid',
+                    borderColor: `${accentColor}4D`
+                  }}
                 >
                   <h3 className="text-xl sm:text-2xl font-bold text-[#fffff7] mb-2">
                     {art.title}

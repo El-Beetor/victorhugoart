@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
+import { useColors } from '../context/ColorContext';
 
 const products = [
   {
@@ -57,6 +57,7 @@ const products = [
 ];
 
 export default function Shop() {
+  const { accentColor, darkGradientColor, brightAccentColor } = useColors();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -99,7 +100,7 @@ export default function Shop() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fffff7] to-[#2E1705]">
+    <div className="min-h-screen" style={{ background: `linear-gradient(to bottom, #fffff7, ${darkGradientColor})` }}>
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[#fffff7]/55 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
@@ -108,22 +109,18 @@ export default function Shop() {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="w-10 h-10 flex flex-col justify-center items-center gap-1.5 hover:opacity-70 transition-opacity relative z-10"
           >
-            <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
-            <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
-            <span className="w-6 h-0.5 bg-[#2e1705] rounded-full"></span>
+            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: accentColor }}></span>
+            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: accentColor }}></span>
+            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: accentColor }}></span>
           </button>
 
-          {/* Center: Site Logo */}
+          {/* Center: Site Name */}
           <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 inline-flex items-center pointer-events-auto z-0">
-            <Image
-              src="/images/victorhugoartlogohorizontal.png"
-              alt="Victor Hugo Art"
-              width={150}
-              height={38}
-              className="object-contain !w-[120px] !h-auto sm:!w-[200px] brightness-0"
-              priority
-              style={{ filter: 'brightness(0) saturate(100%) invert(8%) sepia(39%) saturate(1890%) hue-rotate(358deg) brightness(95%) contrast(97%)' }}
-            />
+            <h1 className="text-2xl sm:text-3xl font-bold lowercase flex gap-1" style={{ color: accentColor }}>
+              {'vic art'.split('').map((letter, i) => (
+                <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, 0, -2, 3, -1][i]}deg)` }}>{letter}</span>
+              ))}
+            </h1>
           </Link>
 
           {/* Right: Empty space for symmetry */}
@@ -158,7 +155,7 @@ export default function Shop() {
                   onClick={() => setIsMenuOpen(false)}
                   className="w-10 h-10 flex items-center justify-center hover:opacity-70 transition-opacity"
                 >
-                  <span className="text-3xl text-[#2e1705]">×</span>
+                  <span className="text-3xl" style={{ color: accentColor }}>×</span>
                 </button>
               </div>
 
@@ -167,37 +164,52 @@ export default function Shop() {
                 <Link
                   href="/"
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
                 >
-                  Home
+                  {'home'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[3, -2, 4, -3][i]}deg)` }}>{letter}</span>
+                  ))}
                 </Link>
                 <Link
                   href="/#portfolio"
                   onClick={scrollToPortfolio}
-                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
                 >
-                  Portfolio
+                  {'portfolio'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[-2, 3, -4, 2, -3, 4, -2, 3, -1][i]}deg)` }}>{letter}</span>
+                  ))}
                 </Link>
                 <Link
                   href="/shop"
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
                 >
-                  Shop
+                  {'shop'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[-3, 4, -2, 3][i]}deg)` }}>{letter}</span>
+                  ))}
                 </Link>
                 <Link
                   href="/about"
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
                 >
-                  About
+                  {'about'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, -2, 3][i]}deg)` }}>{letter}</span>
+                  ))}
                 </Link>
                 <Link
                   href="/contact"
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-2xl font-semibold text-[#2e1705] hover:text-[#0B3826] transition-colors"
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
                 >
-                  Contact
+                  {'contact'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[-2, 3, -4, 2, -3, 4, -1][i]}deg)` }}>{letter}</span>
+                  ))}
                 </Link>
               </nav>
             </motion.div>
@@ -213,10 +225,10 @@ export default function Shop() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-5xl md:text-6xl font-bold text-[#2e1705] mb-4">
+            <h1 className="text-5xl md:text-6xl font-bold mb-4" style={{ color: accentColor }}>
               Shop
             </h1>
-            <p className="text-xl text-[#2e1705]/70 mb-12">
+            <p className="text-xl mb-12" style={{ color: `${accentColor}B3` }}>
               Original artworks available for purchase
             </p>
           </motion.div>
@@ -228,16 +240,36 @@ export default function Shop() {
             transition={{ delay: 0.3 }}
             className="flex gap-4 mb-12 flex-wrap"
           >
-            <button className="px-6 py-2 bg-[#2e1705]/10 hover:bg-[#2e1705]/20 text-[#2e1705] rounded-full transition-colors">
+            <button
+              className="px-6 py-2 rounded-full transition-colors"
+              style={{ backgroundColor: `${accentColor}1A`, color: accentColor }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${accentColor}33`}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${accentColor}1A`}
+            >
               All Available
             </button>
-            <button className="px-6 py-2 bg-[#2e1705]/10 hover:bg-[#2e1705]/20 text-[#2e1705] rounded-full transition-colors">
+            <button
+              className="px-6 py-2 rounded-full transition-colors"
+              style={{ backgroundColor: `${accentColor}1A`, color: accentColor }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${accentColor}33`}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${accentColor}1A`}
+            >
               Abstract
             </button>
-            <button className="px-6 py-2 bg-[#2e1705]/10 hover:bg-[#2e1705]/20 text-[#2e1705] rounded-full transition-colors">
+            <button
+              className="px-6 py-2 rounded-full transition-colors"
+              style={{ backgroundColor: `${accentColor}1A`, color: accentColor }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${accentColor}33`}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${accentColor}1A`}
+            >
               Portrait
             </button>
-            <button className="px-6 py-2 bg-[#2e1705]/10 hover:bg-[#2e1705]/20 text-[#2e1705] rounded-full transition-colors">
+            <button
+              className="px-6 py-2 rounded-full transition-colors"
+              style={{ backgroundColor: `${accentColor}1A`, color: accentColor }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${accentColor}33`}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${accentColor}1A`}
+            >
               Landscape
             </button>
           </motion.div>
@@ -252,8 +284,16 @@ export default function Shop() {
                 transition={{ delay: 0.1 * index }}
                 className="group"
               >
-                <div className="relative aspect-square bg-gradient-to-br from-[#2e1705]/20 to-[#0B3826]/20 rounded-lg overflow-hidden border border-[#2e1705]/20 group-hover:border-[#2e1705]/40 transition-all">
-                  <div className="w-full h-full flex items-center justify-center text-[#2e1705]/50">
+                <div
+                  className="relative aspect-square rounded-lg overflow-hidden border transition-all"
+                  style={{
+                    background: `linear-gradient(to bottom right, ${accentColor}33, ${brightAccentColor}33)`,
+                    borderColor: `${accentColor}33`
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.borderColor = `${accentColor}66`}
+                  onMouseLeave={(e) => e.currentTarget.style.borderColor = `${accentColor}33`}
+                >
+                  <div className="w-full h-full flex items-center justify-center" style={{ color: `${accentColor}80` }}>
                     {/* Placeholder - replace with actual images */}
                     <div className="text-center">
                       <div className="text-6xl mb-4">🎨</div>
@@ -262,7 +302,7 @@ export default function Shop() {
                   </div>
 
                   {!product.available && (
-                    <div className="absolute inset-0 bg-[#2e1705]/80 flex items-center justify-center">
+                    <div className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: `${accentColor}CC` }}>
                       <span className="text-[#fffff7] font-semibold text-lg">SOLD</span>
                     </div>
                   )}
@@ -271,11 +311,11 @@ export default function Shop() {
                 <div className="mt-4">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <h3 className="text-xl font-semibold text-[#2e1705]">{product.title}</h3>
-                      <p className="text-[#2e1705]/60 text-sm">{product.category} • {product.size}</p>
+                      <h3 className="text-xl font-semibold" style={{ color: accentColor }}>{product.title}</h3>
+                      <p className="text-sm" style={{ color: `${accentColor}99` }}>{product.category} • {product.size}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold text-[#2e1705]">${product.price}</p>
+                      <p className="text-2xl font-bold" style={{ color: accentColor }}>${product.price}</p>
                     </div>
                   </div>
 
@@ -284,14 +324,18 @@ export default function Shop() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handlePurchase(product.id, product.title, product.price)}
-                      className="w-full mt-3 px-6 py-3 bg-[#2e1705] text-[#fffff7] font-semibold rounded-lg hover:bg-[#2e1705]/80 transition-colors"
+                      className="w-full mt-3 px-6 py-3 text-[#fffff7] font-semibold rounded-lg transition-opacity"
+                      style={{ backgroundColor: accentColor }}
+                      onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                      onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                     >
                       Purchase with Stripe
                     </motion.button>
                   ) : (
                     <button
                       disabled
-                      className="w-full mt-3 px-6 py-3 bg-[#2e1705]/10 text-[#2e1705]/40 font-semibold rounded-lg cursor-not-allowed"
+                      className="w-full mt-3 px-6 py-3 font-semibold rounded-lg cursor-not-allowed"
+                      style={{ backgroundColor: `${accentColor}1A`, color: `${accentColor}66` }}
                     >
                       Sold Out
                     </button>
@@ -306,25 +350,26 @@ export default function Shop() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="mt-16 bg-[#fffff7]/80 backdrop-blur-sm rounded-lg p-8 border border-[#2e1705]/20"
+            className="mt-16 bg-[#fffff7]/80 backdrop-blur-sm rounded-lg p-8 border"
+            style={{ borderColor: `${accentColor}33` }}
           >
-            <h2 className="text-2xl font-bold text-[#2e1705] mb-4">Purchase Information</h2>
-            <div className="grid md:grid-cols-2 gap-6 text-[#2e1705]/70">
+            <h2 className="text-2xl font-bold mb-4" style={{ color: accentColor }}>Purchase Information</h2>
+            <div className="grid md:grid-cols-2 gap-6" style={{ color: `${accentColor}B3` }}>
               <div>
-                <h3 className="text-[#2e1705] font-semibold mb-2">Shipping</h3>
+                <h3 className="font-semibold mb-2" style={{ color: accentColor }}>Shipping</h3>
                 <p>All artworks are carefully packaged and shipped with insurance. Shipping costs calculated at checkout.</p>
               </div>
               <div>
-                <h3 className="text-[#2e1705] font-semibold mb-2">Authenticity</h3>
+                <h3 className="font-semibold mb-2" style={{ color: accentColor }}>Authenticity</h3>
                 <p>Each piece comes with a certificate of authenticity signed by the artist.</p>
               </div>
               <div>
-                <h3 className="text-[#2e1705] font-semibold mb-2">Returns</h3>
+                <h3 className="font-semibold mb-2" style={{ color: accentColor }}>Returns</h3>
                 <p>14-day return policy for all purchases. Artwork must be returned in original condition.</p>
               </div>
               <div>
-                <h3 className="text-[#2e1705] font-semibold mb-2">Questions?</h3>
-                <p>Contact us at <a href="mailto:victorhugoart@pm.me" className="text-[#2e1705] hover:underline">victorhugoart@pm.me</a></p>
+                <h3 className="font-semibold mb-2" style={{ color: accentColor }}>Questions?</h3>
+                <p>Contact us at <a href="mailto:victorhugoart@pm.me" className="hover:underline" style={{ color: accentColor }}>victorhugoart@pm.me</a></p>
               </div>
             </div>
           </motion.div>
