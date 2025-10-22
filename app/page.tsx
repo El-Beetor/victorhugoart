@@ -864,7 +864,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1 }}
-          className="absolute bottom-20 left-0 right-0 flex justify-evenly px-6 select-none max-w-4xl mx-auto"
+          className="absolute bottom-20 left-0 right-0 flex flex-wrap justify-center gap-3 sm:gap-4 md:justify-evenly px-4 sm:px-6 select-none max-w-4xl mx-auto"
         >
           {petals.map((petal, index) => (
             <Link key={petal.name} href={petal.href} onClick={petal.name === 'Portfolio' ? scrollToPortfolio : undefined}>
@@ -892,14 +892,14 @@ export default function Home() {
                   }
                 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 py-2 border-[5px] rounded-full shadow-lg select-none"
+                className="px-4 sm:px-6 py-2 border-[3px] sm:border-[5px] rounded-full shadow-lg select-none"
                 style={{
                   borderColor: darkColors[index % darkColors.length] || '#2e1705',
                   color: darkColors[index % darkColors.length] || '#2e1705',
                   backgroundColor: brightColors[index % brightColors.length] || 'transparent'
                 }}
               >
-                <span className="font-semibold text-sm select-none">
+                <span className="font-semibold text-xs sm:text-sm select-none whitespace-nowrap">
                   {petal.name}
                 </span>
               </motion.div>
