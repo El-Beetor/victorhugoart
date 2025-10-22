@@ -818,9 +818,9 @@ export default function Home() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.3 }}
-          className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
+          className="absolute inset-0 flex items-center justify-center pointer-events-none z-20 px-4"
         >
-          <h1 ref={textRef} className="text-6xl sm:text-7xl md:text-8xl font-light lowercase flex gap-2">
+          <h1 ref={textRef} className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light lowercase flex gap-0.5 sm:gap-1 md:gap-2 text-center flex-wrap justify-center max-w-full">
             {'victor garcia art'.split('').map((letter, i) => {
               // Use dynamic color from letterColors if available, otherwise use gradient
               let color = accentColor;
