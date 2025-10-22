@@ -17,7 +17,7 @@ export default function About() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: `linear-gradient(to bottom, #fffff7, ${darkGradientColor})` }}>
+    <div className="min-h-screen" style={{ background: `linear-gradient(to bottom, #fffff7, #f5f5ed)` }}>
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[#fffff7]/55 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">

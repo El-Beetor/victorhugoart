@@ -6,19 +6,21 @@ from pathlib import Path
 # Register HEIF opener
 pillow_heif.register_heif_opener()
 
-# Path to the bg_wallpapers folder
-folder_path = Path("public/bg_wallpapers")
+# Path to the FinishedPaintings folder
+folder_path = Path("public/FinishedPaintings")
 
 print(f"Looking in: {folder_path.absolute()}")
 
-# Get all HEIC files
-files = sorted(folder_path.glob("*.heic"))
+# Get all HEIC files (case insensitive)
+files = sorted(list(folder_path.glob("*.heic")) + list(folder_path.glob("*.HEIC")))
 
 print(f"Found {len(files)} files to convert...")
 
-for i, file_path in enumerate(files, start=1):
+for file_path in files:
     try:
-        print(f"Converting {file_path.name} to image_{i}.png...", end=" ")
+        # Keep the original filename, just change extension
+        png_filename = file_path.stem + ".png"
+        print(f"Converting {file_path.name} to {png_filename}...", end=" ")
 
         # Open the HEIC file
         img = Image.open(file_path)
@@ -27,8 +29,8 @@ for i, file_path in enumerate(files, start=1):
         if img.mode != 'RGB':
             img = img.convert('RGB')
 
-        # New PNG filename
-        png_path = folder_path / f"image_{i}.png"
+        # New PNG filename with same name
+        png_path = folder_path / png_filename
 
         # Save as PNG
         img.save(png_path, 'PNG', optimize=True)

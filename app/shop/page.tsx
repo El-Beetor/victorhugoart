@@ -57,7 +57,7 @@ const products = [
 ];
 
 export default function Shop() {
-  const { accentColor, darkGradientColor, brightAccentColor } = useColors();
+  const { accentColor, darkGradientColor, brightAccentColor, darkColors, midColors, brightColors } = useColors();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -100,7 +100,7 @@ export default function Shop() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: `linear-gradient(to bottom, #fffff7, ${darkGradientColor})` }}>
+    <div className="min-h-screen" style={{ background: `linear-gradient(to bottom, #fffff7, #f5f5ed)` }}>
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[#fffff7]/55 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
@@ -225,10 +225,10 @@ export default function Shop() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-5xl md:text-6xl font-bold mb-4" style={{ color: accentColor }}>
+            <h1 className="text-5xl md:text-6xl font-bold mb-4" style={{ color: darkColors[0] || accentColor }}>
               Shop
             </h1>
-            <p className="text-xl mb-12" style={{ color: `${accentColor}B3` }}>
+            <p className="text-xl mb-12" style={{ color: darkColors[1] || accentColor }}>
               Original artworks available for purchase
             </p>
           </motion.div>

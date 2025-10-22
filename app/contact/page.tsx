@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useColors } from '../context/ColorContext';
 
 export default function Contact() {
-  const { accentColor, darkGradientColor, brightAccentColor } = useColors();
+  const { accentColor, darkGradientColor, brightAccentColor, darkColors, midColors, brightColors } = useColors();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -16,7 +16,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: `linear-gradient(to bottom, #fffff7, ${darkGradientColor})` }}>
+    <div className="min-h-screen" style={{ background: `linear-gradient(to bottom, #fffff7, #f5f5ed)` }}>
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[#fffff7]/55 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
@@ -142,10 +142,10 @@ export default function Contact() {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6" style={{ color: accentColor }}>
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6" style={{ color: darkColors[0] || accentColor }}>
               Get in Touch
             </h1>
-            <p className="text-xl sm:text-2xl" style={{ color: `${accentColor}B3` }}>
+            <p className="text-xl sm:text-2xl" style={{ color: darkColors[1] || accentColor }}>
               I&apos;d love to hear from you
             </p>
           </motion.div>

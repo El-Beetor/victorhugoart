@@ -9,70 +9,108 @@ import { useColors } from './context/ColorContext';
 const artworks = [
   {
     id: 1,
-    title: 'Midnight Dreams',
+    title: 'Bike',
     year: 2024,
-    category: 'Abstract',
-    description: 'An exploration of subconscious imagery through bold strokes and deep colors.',
-    size: 'large'
+    category: 'Landscape',
+    description: 'A vibrant scene capturing the essence of cycling through nature.',
+    size: 'large',
+    image: '/FinishedPaintings/bike.png'
   },
   {
     id: 2,
-    title: 'Portrait of Solitude',
+    title: 'Bird',
     year: 2024,
-    category: 'Portrait',
-    description: 'Capturing the quiet beauty of introspection and self-reflection.',
-    size: 'medium'
+    category: 'Nature',
+    description: 'Delicate brushwork bringing life to avian beauty.',
+    size: 'medium',
+    image: '/FinishedPaintings/bird.png'
   },
   {
     id: 3,
-    title: 'Mountain Serenity',
-    year: 2023,
-    category: 'Landscape',
-    description: 'A peaceful vista inspired by early morning light in the Rockies.',
-    size: 'large'
+    title: 'Duck',
+    year: 2024,
+    category: 'Nature',
+    description: 'A serene moment on the water, painted with careful observation.',
+    size: 'large',
+    image: '/FinishedPaintings/duck.png'
   },
   {
     id: 4,
-    title: 'Urban Rhythm',
-    year: 2023,
-    category: 'Abstract',
-    description: 'The pulse and energy of city life translated into geometric forms.',
-    size: 'small'
+    title: 'Lagoon',
+    year: 2024,
+    category: 'Landscape',
+    description: 'Tranquil waters reflecting the peaceful beauty of nature.',
+    size: 'small',
+    image: '/FinishedPaintings/lagoon.png'
   },
   {
     id: 5,
-    title: 'Faces of Time',
-    year: 2022,
-    category: 'Portrait',
-    description: 'A study of aging and the stories written in every line and wrinkle.',
-    size: 'medium'
+    title: 'River',
+    year: 2024,
+    category: 'Landscape',
+    description: 'The flowing movement of water captured in color and light.',
+    size: 'medium',
+    image: '/FinishedPaintings/river.png'
   },
   {
     id: 6,
-    title: 'Coastal Sunset',
-    year: 2022,
-    category: 'Landscape',
-    description: 'Golden hour on the Pacific coast, where sky meets sea.',
-    size: 'large'
+    title: 'Tree',
+    year: 2024,
+    category: 'Nature',
+    description: 'Strong branches reaching skyward, a study of natural form.',
+    size: 'large',
+    image: '/FinishedPaintings/tree.png'
   },
 ];
 
+// Array of finished paintings
+const finishedPaintings = [
+  '/FinishedPaintings/bike.png',
+  '/FinishedPaintings/bird.png',
+  '/FinishedPaintings/duck.png',
+  '/FinishedPaintings/lagoon.png',
+  '/FinishedPaintings/river.png',
+  '/FinishedPaintings/tree.png'
+];
+
+// Function to get random painting
+const getRandomPainting = () => {
+  return finishedPaintings[Math.floor(Math.random() * finishedPaintings.length)];
+};
+
 export default function Home() {
-  const { buttonColors, accentColor, darkGradientColor, brightAccentColor, setButtonColors, setAccentColor, setDarkGradientColor, setBrightAccentColor } = useColors();
+  const {
+    buttonColors,
+    accentColor,
+    darkGradientColor,
+    brightAccentColor,
+    darkColors,
+    midColors,
+    brightColors,
+    setButtonColors,
+    setAccentColor,
+    setDarkGradientColor,
+    setBrightAccentColor,
+    setDarkColors,
+    setMidColors,
+    setBrightColors
+  } = useColors();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [cursorTrail, setCursorTrail] = useState<Array<{ x: number; y: number; id: string }>>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLogoVisible, setIsLogoVisible] = useState(true);
-  const [currentImagePath, setCurrentImagePath] = useState('/test_new_feature/color.png');
+  const [currentImagePath, setCurrentImagePath] = useState(() => getRandomPainting());
   const [revealPercentage, setRevealPercentage] = useState(0);
   const [isPaintingComplete, setIsPaintingComplete] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const [letterColors, setLetterColors] = useState<string[]>([]);
   const revealCanvasRef = useRef<HTMLCanvasElement>(null);
   const colorImageRef = useRef<HTMLImageElement | null>(null);
   const brushImageRef = useRef<HTMLImageElement | null>(null);
   const lastPercentageCheckRef = useRef(0);
   const isTransitioningRef = useRef(false);
   const baselinePixelCountRef = useRef(0);
+  const textRef = useRef<HTMLHeadingElement>(null);
 
   // Load color image and brushstroke
   useEffect(() => {
@@ -91,6 +129,9 @@ export default function Home() {
       if (ctx) {
         ctx.drawImage(colorImg, 0, 0);
         const colors: string[] = [];
+        const extractedDarkColors: string[] = [];
+        const extractedMidColors: string[] = [];
+        const extractedBrightColors: string[] = [];
 
         // Helper to calculate luminance for contrast checking
         const getLuminance = (r: number, g: number, b: number) => {
@@ -108,7 +149,7 @@ export default function Home() {
         let darkColor: string | null = null;
         let brightColor: string | null = null;
 
-        while ((colors.length < 4 || !darkColor || !brightColor) && attempts < 300) {
+        while ((colors.length < 4 || !darkColor || !brightColor || extractedDarkColors.length < 5 || extractedMidColors.length < 5 || extractedBrightColors.length < 5) && attempts < 1000) {
           const x = Math.floor(Math.random() * canvas.width);
           const y = Math.floor(Math.random() * canvas.height);
           const pixel = ctx.getImageData(x, y, 1, 1).data;
@@ -118,10 +159,30 @@ export default function Home() {
           const contrast = (Math.max(bgLuminance, colorLuminance) + 0.05) /
                           (Math.min(bgLuminance, colorLuminance) + 0.05);
 
+          const rgbColor = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
+
+          // Categorize colors by luminance
+          // Dark colors: luminance < 0.2
+          if (colorLuminance < 0.2 && extractedDarkColors.length < 5) {
+            if (!extractedDarkColors.includes(rgbColor)) {
+              extractedDarkColors.push(rgbColor);
+            }
+          }
+          // Mid colors: luminance between 0.2 and 0.6
+          else if (colorLuminance >= 0.2 && colorLuminance <= 0.6 && extractedMidColors.length < 5) {
+            if (!extractedMidColors.includes(rgbColor)) {
+              extractedMidColors.push(rgbColor);
+            }
+          }
+          // Bright colors: luminance > 0.6
+          else if (colorLuminance > 0.6 && extractedBrightColors.length < 5) {
+            if (!extractedBrightColors.includes(rgbColor)) {
+              extractedBrightColors.push(rgbColor);
+            }
+          }
+
           // Only use colors with contrast ratio > 3 (readable)
           if (contrast > 3) {
-            const rgbColor = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
-
             // Add to button colors if we need more
             if (colors.length < 4) {
               colors.push(rgbColor);
@@ -162,10 +223,14 @@ export default function Home() {
         }
 
         setButtonColors(colors);
-        // Set the first color as the main accent color for other elements
-        setAccentColor(colors[0]);
-        setDarkGradientColor(darkColor);
-        setBrightAccentColor(brightColor);
+        setDarkColors(extractedDarkColors);
+        setMidColors(extractedMidColors);
+        setBrightColors(extractedBrightColors);
+
+        // Use extracted colors as main theme colors
+        setAccentColor(extractedDarkColors[0] || darkColor || '#2e1705');
+        setDarkGradientColor(extractedDarkColors[1] || darkColor || '#2E1705');
+        setBrightAccentColor(extractedBrightColors[0] || brightColor || '#0B3826');
       }
     };
 
@@ -312,10 +377,8 @@ export default function Home() {
                 isTransitioningRef.current = true;
                 setIsPaintingComplete(true);
 
-                // Switch to new image immediately without clearing canvas
-                // Pick random image from bg_wallpapers
-                const images = ['image_1.png', 'image_3.png', 'image_4.png', 'image_5.png', 'image_6.png', 'image_7.png', 'image_8.png', 'image_9.png', 'image_10.png', 'image_11.png', 'image_12.png', 'image_13.png', 'image_14.png', 'image_15.png', 'image_17.png', 'image_19.png', 'image_21.png'];
-                const randomImage = images[Math.floor(Math.random() * images.length)];
+                // Switch to new random finished painting
+                const newPainting = getRandomPainting();
 
                 // Store current pixel count as baseline for next image
                 baselinePixelCountRef.current = revealedCount;
@@ -323,7 +386,7 @@ export default function Home() {
                 // Don't clear canvas - keep previous painting
                 setRevealPercentage(0);
                 setIsPaintingComplete(false);
-                setCurrentImagePath(`/bg_wallpapers/${randomImage}`);
+                setCurrentImagePath(newPainting);
                 // Don't reset flag here - wait for image to load (see useEffect above)
               }
             }
@@ -431,9 +494,8 @@ export default function Home() {
           isTransitioningRef.current = true;
           setIsPaintingComplete(true);
 
-          // Switch to new image immediately without clearing canvas
-          const images = ['image_1.png', 'image_3.png', 'image_4.png', 'image_5.png', 'image_6.png', 'image_7.png', 'image_8.png', 'image_9.png', 'image_10.png', 'image_11.png', 'image_12.png', 'image_13.png', 'image_14.png', 'image_15.png', 'image_17.png', 'image_19.png', 'image_21.png'];
-          const randomImage = images[Math.floor(Math.random() * images.length)];
+          // Switch to new random finished painting
+          const newPainting = getRandomPainting();
 
           // Store current pixel count as baseline for next image
           baselinePixelCountRef.current = revealedCount;
@@ -441,7 +503,7 @@ export default function Home() {
           // Don't clear canvas - keep previous painting
           setRevealPercentage(0);
           setIsPaintingComplete(false);
-          setCurrentImagePath(`/bg_wallpapers/${randomImage}`);
+          setCurrentImagePath(newPainting);
         }
       }, (maxRadius / spiralSpeed) * 16); // Wait for animation to complete (approx)
     };
@@ -459,6 +521,72 @@ export default function Home() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Dynamic color contrast detection for text
+  useEffect(() => {
+    const checkTextColors = () => {
+      if (!textRef.current || !revealCanvasRef.current || darkColors.length === 0) return;
+
+      const canvas = revealCanvasRef.current;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      if (!ctx) return;
+
+      const letterSpans = textRef.current.querySelectorAll('span');
+      const newColors: string[] = [];
+
+      // Helper to calculate luminance
+      const getLuminance = (r: number, g: number, b: number) => {
+        const [rs, gs, bs] = [r, g, b].map(c => {
+          c = c / 255;
+          return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+        });
+        return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+      };
+
+      letterSpans.forEach((span) => {
+        const rect = span.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        // Sample the color at the center of the letter
+        const imageData = ctx.getImageData(centerX, centerY, 1, 1).data;
+        const alpha = imageData[3];
+
+        // If there's painted content underneath (alpha > 0)
+        if (alpha > 10) {
+          const bgLuminance = getLuminance(imageData[0], imageData[1], imageData[2]);
+
+          // Choose contrasting color from palette
+          let chosenColor;
+          if (bgLuminance > 0.5) {
+            // Background is bright, use dark colors
+            chosenColor = darkColors[Math.floor(Math.random() * darkColors.length)] || accentColor;
+          } else if (bgLuminance > 0.2) {
+            // Background is mid-tone, use bright or dark with good contrast
+            const contrastColors = bgLuminance > 0.35 ? darkColors : brightColors;
+            chosenColor = contrastColors[Math.floor(Math.random() * contrastColors.length)] || accentColor;
+          } else {
+            // Background is dark, use bright colors
+            chosenColor = brightColors[Math.floor(Math.random() * brightColors.length)] || accentColor;
+          }
+          newColors.push(chosenColor);
+        } else {
+          // No paint underneath, use gradient colors
+          const letterIndex = Array.from(letterSpans).indexOf(span);
+          const progress = letterIndex / (letterSpans.length - 1);
+          const allColors = [...darkColors, ...midColors, ...brightColors];
+          const colorIndex = Math.floor(progress * (allColors.length - 1));
+          newColors.push(allColors[colorIndex] || accentColor);
+        }
+      });
+
+      setLetterColors(newColors);
+    };
+
+    // Check colors periodically
+    const interval = setInterval(checkTextColors, 100);
+    return () => clearInterval(interval);
+  }, [darkColors, midColors, brightColors, accentColor]);
 
   // Petal button data
   const petals = [
@@ -494,6 +622,51 @@ export default function Home() {
         Revealed: {revealPercentage.toFixed(1)}%
       </div>
 
+      {/* Debug: Color Swatches */}
+      <div className="fixed top-44 right-4 z-50 bg-black/70 text-white p-4 rounded-lg font-mono text-xs max-w-xs">
+        <div className="mb-3">
+          <div className="font-bold mb-1">Dark Colors</div>
+          <div className="flex gap-1 flex-wrap">
+            {darkColors.map((color, i) => (
+              <div
+                key={i}
+                className="w-8 h-8 rounded border border-white/30"
+                style={{ backgroundColor: color }}
+                title={color}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-3">
+          <div className="font-bold mb-1">Mid Colors</div>
+          <div className="flex gap-1 flex-wrap">
+            {midColors.map((color, i) => (
+              <div
+                key={i}
+                className="w-8 h-8 rounded border border-white/30"
+                style={{ backgroundColor: color }}
+                title={color}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div className="font-bold mb-1">Bright Colors</div>
+          <div className="flex gap-1 flex-wrap">
+            {brightColors.map((color, i) => (
+              <div
+                key={i}
+                className="w-8 h-8 rounded border border-white/30"
+                style={{ backgroundColor: color }}
+                title={color}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Cursor Trail */}
       {cursorTrail.map((trail, index) => (
         <motion.div
@@ -506,24 +679,15 @@ export default function Home() {
             left: trail.x - 8,
             top: trail.y - 8,
             opacity: (index / cursorTrail.length) * 0.6,
-            backgroundColor: darkGradientColor,
+            backgroundColor: midColors[index % midColors.length] || darkGradientColor,
           }}
         />
       ))}
 
       {/* Static Background - cream color with canvas overlay */}
       <div className="fixed inset-0 -z-10 bg-[#fffff7]">
-        {/* Canvas that reveals color image on mouse move with logo mask */}
-        <div className="absolute inset-0 z-10" style={{
-          WebkitMaskImage: 'url(/images/victorhugoartlogo.png)',
-          WebkitMaskPosition: '50% 50%',
-          WebkitMaskSize: '600px 600px',
-          WebkitMaskRepeat: 'no-repeat',
-          maskImage: 'url(/images/victorhugoartlogo.png)',
-          maskPosition: '50% 50%',
-          maskSize: '600px 600px',
-          maskRepeat: 'no-repeat',
-        }}>
+        {/* Canvas that reveals color image on mouse move */}
+        <div className="absolute inset-0 z-10">
           <canvas
             ref={revealCanvasRef}
             className="absolute inset-0 pointer-events-none"
@@ -649,6 +813,52 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="relative min-h-screen">
+        {/* Center Text - Victor Garcia Art */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.3 }}
+          className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
+        >
+          <h1 ref={textRef} className="text-6xl sm:text-7xl md:text-8xl font-light lowercase flex gap-2">
+            {'victor garcia art'.split('').map((letter, i) => {
+              // Use dynamic color from letterColors if available, otherwise use gradient
+              let color = accentColor;
+
+              if (letterColors.length > i) {
+                color = letterColors[i];
+              } else {
+                // Calculate gradient from dark to bright colors as fallback
+                const totalLetters = 'victor garcia art'.length - 2; // subtract spaces
+                const letterIndex = letter === ' ' ? -1 : i - (i > 6 ? 1 : 0) - (i > 13 ? 1 : 0); // adjust for spaces
+
+                if (letterIndex >= 0) {
+                  const progress = letterIndex / totalLetters;
+                  const allColors = [...darkColors, ...midColors, ...brightColors];
+                  if (allColors.length > 0) {
+                    const colorIndex = Math.floor(progress * (allColors.length - 1));
+                    color = allColors[colorIndex] || accentColor;
+                  }
+                }
+              }
+
+              return (
+                <span
+                  key={i}
+                  style={{
+                    display: 'inline-block',
+                    transform: `rotate(${[2, -1, 3, -2, 1, -3, 2, 0, -1, 3, -2, 1, -3, 2, -1, 3, -2][i]}deg)`,
+                    color: color,
+                    transition: 'color 0.3s ease'
+                  }}
+                >
+                  {letter}
+                </span>
+              );
+            })}
+          </h1>
+        </motion.div>
+
         {/* Navigation Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -682,10 +892,11 @@ export default function Home() {
                   }
                 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 py-2 bg-transparent border-[5px] rounded-full shadow-lg select-none"
+                className="px-6 py-2 border-[5px] rounded-full shadow-lg select-none"
                 style={{
-                  borderColor: buttonColors[index] || '#2e1705',
-                  color: buttonColors[index] || '#2e1705'
+                  borderColor: darkColors[index % darkColors.length] || '#2e1705',
+                  color: darkColors[index % darkColors.length] || '#2e1705',
+                  backgroundColor: brightColors[index % brightColors.length] || 'transparent'
                 }}
               >
                 <span className="font-semibold text-sm select-none">
@@ -702,13 +913,13 @@ export default function Home() {
           animate={{ opacity: 0.25, scale: 1 }}
           transition={{ duration: 2, delay: 0.5 }}
           className="absolute w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full blur-3xl -z-10"
-          style={{ backgroundColor: `${brightAccentColor}66` }}
+          style={{ backgroundColor: `${midColors[2] || brightAccentColor}66` }}
         />
       </main>
 
       {/* Portfolio Section */}
       <section id="portfolio" className="relative py-20 px-4 sm:px-6" style={{
-        background: `linear-gradient(to bottom, #fffff7, ${darkGradientColor})`
+        background: `linear-gradient(to bottom, #fffff7, #f5f5ed)`
       }}>
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -718,10 +929,10 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="mb-16 text-center"
           >
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4" style={{ color: accentColor }}>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4" style={{ color: darkColors[0] || accentColor }}>
               Portfolio
             </h2>
-            <p className="text-xl" style={{ color: `${accentColor}B3` }}>
+            <p className="text-xl" style={{ color: darkColors[1] || accentColor }}>
               Explore my collection of artwork
             </p>
           </motion.div>
@@ -734,50 +945,25 @@ export default function Home() {
             transition={{ delay: 0.3 }}
             className="flex gap-3 sm:gap-4 mb-16 flex-wrap justify-center"
           >
-            <button
-              className="px-4 sm:px-6 py-2 rounded-full transition-colors text-sm sm:text-base"
-              style={{
-                backgroundColor: `${accentColor}1A`,
-                color: accentColor
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${accentColor}33`}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${accentColor}1A`}
-            >
-              All
-            </button>
-            <button
-              className="px-4 sm:px-6 py-2 rounded-full transition-colors text-sm sm:text-base"
-              style={{
-                backgroundColor: `${accentColor}1A`,
-                color: accentColor
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${accentColor}33`}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${accentColor}1A`}
-            >
-              Abstract
-            </button>
-            <button
-              className="px-4 sm:px-6 py-2 rounded-full transition-colors text-sm sm:text-base"
-              style={{
-                backgroundColor: `${accentColor}1A`,
-                color: accentColor
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${accentColor}33`}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${accentColor}1A`}
-            >
-              Portrait
-            </button>
-            <button
-              className="px-4 sm:px-6 py-2 rounded-full transition-colors text-sm sm:text-base"
-              style={{
-                backgroundColor: `${accentColor}1A`,
-                color: accentColor
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${accentColor}33`}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${accentColor}1A`}
-            >
-              Landscape
-            </button>
+            {['All', 'Nature', 'Landscape'].map((filter, idx) => (
+              <button
+                key={filter}
+                className="px-4 sm:px-6 py-2 rounded-full transition-all text-sm sm:text-base border-2"
+                style={{
+                  backgroundColor: brightColors[idx] || `${accentColor}1A`,
+                  color: darkColors[idx] || accentColor,
+                  borderColor: darkColors[idx] || accentColor
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = midColors[idx] || `${accentColor}33`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = brightColors[idx] || `${accentColor}1A`;
+                }}
+              >
+                {filter}
+              </button>
+            ))}
           </motion.div>
 
           {/* Gallery Wall */}
@@ -793,40 +979,41 @@ export default function Home() {
               >
                 {/* Frame with shadow effect */}
                 <motion.div
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  transition={{ duration: 0.3 }}
                   className="relative mx-auto max-w-3xl"
                 >
                   {/* Artwork Frame */}
-                  <div className={`relative ${getFrameSize(art.size)} bg-[#fffff7] p-6 sm:p-8 shadow-2xl`}>
+                  <div className="relative bg-[#fffff7] p-6 sm:p-8 shadow-2xl">
                     {/* Inner artwork area */}
                     <div
-                      className="w-full h-full flex items-center justify-center border-2"
+                      className="relative w-full overflow-hidden transition-all duration-300 group-hover:border-4"
                       style={{
-                        background: `linear-gradient(to bottom right, ${brightAccentColor}4D, ${darkGradientColor}4D)`,
-                        borderColor: darkGradientColor
+                        borderColor: darkColors[index % darkColors.length] || darkGradientColor
                       }}
                     >
-                      <div className="text-center" style={{ color: accentColor }}>
-                        <div className="text-5xl sm:text-7xl mb-4">🎨</div>
-                        <p className="text-sm font-medium">&quot;{art.title}&quot;</p>
-                      </div>
+                      <Image
+                        src={art.image}
+                        alt={art.title}
+                        width={1200}
+                        height={800}
+                        className="w-full h-auto"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
+                      />
                     </div>
 
                     {/* Frame shadow/depth effect */}
                     <div
-                      className="absolute -inset-2 -z-10 shadow-2xl"
+                      className="absolute -inset-2 -z-10 shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                       style={{
-                        background: `linear-gradient(to bottom, ${accentColor}CC, ${accentColor})`
+                        background: `linear-gradient(to bottom, ${midColors[index % midColors.length] || accentColor}CC, ${darkColors[index % darkColors.length] || accentColor})`
                       }}
                     ></div>
                   </div>
 
                   {/* Spotlight effect on hover */}
                   <motion.div
-                    className="absolute -inset-12 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-20"
+                    className="absolute -inset-12 rounded-full blur-3xl opacity-0 group-hover:opacity-60 transition-opacity duration-500 -z-20"
                     initial={{ opacity: 0 }}
-                    style={{ backgroundColor: `${brightAccentColor}33` }}
+                    style={{ backgroundColor: `${darkColors[index % darkColors.length] || darkGradientColor}` }}
                   />
                 </motion.div>
 
@@ -836,21 +1023,15 @@ export default function Home() {
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.2 * index + 0.3 }}
-                  className="mt-8 max-w-2xl mx-auto backdrop-blur-sm rounded-lg p-6"
-                  style={{
-                    backgroundColor: `${accentColor}33`,
-                    borderWidth: '1px',
-                    borderStyle: 'solid',
-                    borderColor: `${accentColor}4D`
-                  }}
+                  className="mt-8 max-w-2xl mx-auto p-6"
                 >
-                  <h3 className="text-xl sm:text-2xl font-bold text-[#fffff7] mb-2">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2" style={{ color: darkColors[0] || accentColor }}>
                     {art.title}
                   </h3>
-                  <p className="text-[#fffff7]/60 text-sm mb-3">
+                  <p className="text-sm mb-3" style={{ color: darkColors[1] || accentColor }}>
                     {art.category} • {art.year}
                   </p>
-                  <p className="text-[#fffff7]/80 leading-relaxed italic text-sm sm:text-base">
+                  <p className="leading-relaxed italic text-sm sm:text-base" style={{ color: darkColors[2] || accentColor }}>
                     &quot;{art.description}&quot;
                   </p>
                 </motion.div>
