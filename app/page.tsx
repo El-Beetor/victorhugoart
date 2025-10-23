@@ -831,7 +831,7 @@ export default function Home() {
           {/* Center: Site Name */}
           <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 inline-flex items-center pointer-events-auto z-0">
             <h1 className="text-2xl sm:text-3xl font-bold lowercase flex gap-1" style={{ color: darkColors[0] || accentColor }}>
-              {'victor garcia'.split('').map((letter, i) => (
+              {'vicgarcia.art'.split('').map((letter, i) => (
                 <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, 0, -2, 3, -1, 0, -2, 3, -4, 2, -1][i]}deg)` }}>{letter}</span>
               ))}
             </h1>
