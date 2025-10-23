@@ -1048,35 +1048,6 @@ export default function Home() {
             </p>
           </motion.div>
 
-          {/* Filter Buttons */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="flex gap-3 sm:gap-4 mb-16 flex-wrap justify-center"
-          >
-            {['All', 'Nature', 'Landscape'].map((filter, idx) => (
-              <button
-                key={filter}
-                className="px-4 sm:px-6 py-2 rounded-full transition-all text-sm sm:text-base border-2"
-                style={{
-                  backgroundColor: brightColors[idx] || `${accentColor}1A`,
-                  color: darkColors[idx] || accentColor,
-                  borderColor: darkColors[idx] || accentColor
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = midColors[idx] || `${accentColor}33`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = brightColors[idx] || `${accentColor}1A`;
-                }}
-              >
-                {filter}
-              </button>
-            ))}
-          </motion.div>
-
           {/* Gallery Wall */}
           <div className="space-y-16 sm:space-y-24">
             {artworks.map((art, index) => (
