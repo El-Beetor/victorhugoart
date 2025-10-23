@@ -6,7 +6,7 @@ export default function Footer() {
   const { accentColor, darkColors, brightAccentColor, brightColors } = useColors();
 
   return (
-    <footer className="w-full py-8 px-4 sm:px-6 mt-16" style={{ backgroundColor: darkColors[1] || accentColor || '#333333' }}>
+    <footer className="w-full py-8 px-4 sm:px-6" style={{ backgroundColor: darkColors[1] || accentColor || '#333333' }}>
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           {/* Email */}
