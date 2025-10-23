@@ -754,9 +754,9 @@ export default function Home() {
       setLetterColors(newColors);
     };
 
-    // Check colors periodically
-    const interval = setInterval(checkTextColors, 100);
-    return () => clearInterval(interval);
+    // Check colors periodically (disabled to prevent flashing)
+    // const interval = setInterval(checkTextColors, 100);
+    // return () => clearInterval(interval);
   }, [darkColors, midColors, brightColors, accentColor]);
 
   // Petal button data
@@ -931,25 +931,29 @@ export default function Home() {
           transition={{ duration: 1, delay: 0.3 }}
           className="absolute inset-0 flex items-center justify-center pointer-events-none z-20 px-4"
         >
-          <h1 ref={textRef} className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light lowercase flex gap-0.5 sm:gap-1 md:gap-2 text-center flex-wrap justify-center max-w-full">
+          <div className="relative">
+            {/* Blur background with gradient fade */}
+            <div className="absolute inset-0 backdrop-blur-md" style={{
+              WebkitMaskImage: 'radial-gradient(ellipse at center, black 30%, transparent 70%)',
+              maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 70%)',
+              transform: 'scale(1.2)',
+              zIndex: -1
+            }}></div>
+            <h1 ref={textRef} className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light lowercase flex gap-0.5 sm:gap-1 md:gap-2 text-center flex-wrap justify-center max-w-full" style={{ filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6))' }}>
             {'victor garcia art'.split('').map((letter, i) => {
-              // Use dynamic color from letterColors if available, otherwise use gradient
+              // Use gradient from mid to bright colors only (no dark colors)
               let color = accentColor;
 
-              if (letterColors.length > i) {
-                color = letterColors[i];
-              } else {
-                // Calculate gradient from dark to bright colors as fallback
-                const totalLetters = 'victor garcia art'.length - 2; // subtract spaces
-                const letterIndex = letter === ' ' ? -1 : i - (i > 6 ? 1 : 0) - (i > 13 ? 1 : 0); // adjust for spaces
+              // Calculate gradient from mid to bright colors as fallback
+              const totalLetters = 'victor garcia art'.length - 2; // subtract spaces
+              const letterIndex = letter === ' ' ? -1 : i - (i > 6 ? 1 : 0) - (i > 13 ? 1 : 0); // adjust for spaces
 
-                if (letterIndex >= 0) {
-                  const progress = letterIndex / totalLetters;
-                  const allColors = [...darkColors, ...midColors, ...brightColors];
-                  if (allColors.length > 0) {
-                    const colorIndex = Math.floor(progress * (allColors.length - 1));
-                    color = allColors[colorIndex] || accentColor;
-                  }
+              if (letterIndex >= 0) {
+                const progress = letterIndex / totalLetters;
+                const allColors = [...midColors, ...brightColors]; // Only use mid and bright colors
+                if (allColors.length > 0) {
+                  const colorIndex = Math.floor(progress * (allColors.length - 1));
+                  color = allColors[colorIndex] || accentColor;
                 }
               }
 
@@ -959,8 +963,7 @@ export default function Home() {
                   style={{
                     display: 'inline-block',
                     transform: `rotate(${[2, -1, 3, -2, 1, -3, 2, 0, -1, 3, -2, 1, -3, 2, -1, 3, -2][i]}deg)`,
-                    color: color,
-                    transition: 'color 0.3s ease'
+                    color: color
                   }}
                 >
                   {letter}
@@ -968,6 +971,7 @@ export default function Home() {
               );
             })}
           </h1>
+          </div>
         </motion.div>
 
         {/* Navigation Buttons */}
