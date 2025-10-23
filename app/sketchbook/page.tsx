@@ -174,23 +174,26 @@ export default function SketchBook() {
         </div>
 
         {/* Endless Scroll Gallery */}
-        <div className="w-full">
+        <div className="w-full flex flex-col">
           {sketches.map((sketch, index) => (
             <motion.div
               key={sketch}
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1, duration: 0.6 }}
-              className="w-full"
+              className="w-full flex justify-center items-center mb-4"
             >
-              <Image
-                src={sketch}
-                alt={`Sketch ${index + 1}`}
-                width={2000}
-                height={2000}
-                className="w-full h-auto"
-                priority={index < 3}
-              />
+              <div className="w-full max-w-full relative">
+                <Image
+                  src={sketch}
+                  alt={`Sketch ${index + 1}`}
+                  width={2000}
+                  height={3000}
+                  className="w-full h-auto object-contain"
+                  style={{ maxWidth: '100%', height: 'auto' }}
+                  priority={index < 3}
+                />
+              </div>
             </motion.div>
           ))}
         </div>
