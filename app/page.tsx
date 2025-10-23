@@ -104,6 +104,7 @@ export default function Home() {
   const [isPaintingComplete, setIsPaintingComplete] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [letterColors, setLetterColors] = useState<string[]>([]);
+  const [navBarColor, setNavBarColor] = useState('#ffffff');
   const revealCanvasRef = useRef<HTMLCanvasElement>(null);
   const colorImageRef = useRef<HTMLImageElement | null>(null);
   const brushImageRef = useRef<HTMLImageElement | null>(null);
@@ -162,14 +163,14 @@ export default function Home() {
           const rgbColor = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
 
           // Categorize colors by luminance
-          // Dark colors: luminance < 0.2
-          if (colorLuminance < 0.2 && extractedDarkColors.length < 5) {
+          // Dark colors: luminance < 0.3 (increased threshold to get more variety)
+          if (colorLuminance < 0.3 && extractedDarkColors.length < 5) {
             if (!extractedDarkColors.includes(rgbColor)) {
               extractedDarkColors.push(rgbColor);
             }
           }
-          // Mid colors: luminance between 0.2 and 0.6
-          else if (colorLuminance >= 0.2 && colorLuminance <= 0.6 && extractedMidColors.length < 5) {
+          // Mid colors: luminance between 0.3 and 0.6
+          else if (colorLuminance >= 0.3 && colorLuminance <= 0.6 && extractedMidColors.length < 5) {
             if (!extractedMidColors.includes(rgbColor)) {
               extractedMidColors.push(rgbColor);
             }
@@ -222,6 +223,11 @@ export default function Home() {
           brightColor = '#0B3826';
         }
 
+        console.log('Extracted Dark Colors:', extractedDarkColors);
+        console.log('Extracted Mid Colors:', extractedMidColors);
+        console.log('Extracted Bright Colors:', extractedBrightColors);
+        console.log('Button Colors:', colors);
+
         setButtonColors(colors);
         setDarkColors(extractedDarkColors);
         setMidColors(extractedMidColors);
@@ -231,6 +237,13 @@ export default function Home() {
         setAccentColor(extractedDarkColors[0] || darkColor || '#2e1705');
         setDarkGradientColor(extractedDarkColors[1] || darkColor || '#2E1705');
         setBrightAccentColor(extractedBrightColors[0] || brightColor || '#0B3826');
+
+        // Set navbar color to a random dark color
+        if (extractedDarkColors.length > 0) {
+          const randomDarkColor = extractedDarkColors[Math.floor(Math.random() * extractedDarkColors.length)];
+          setNavBarColor(randomDarkColor);
+          console.log('NavBar Color set to:', randomDarkColor);
+        }
       }
     };
 
@@ -264,6 +277,163 @@ export default function Home() {
 
     return { width, height, offsetX, offsetY };
   };
+
+  // Organic raindrop effect - reveals painting with flowing circles
+  useEffect(() => {
+    if (!revealCanvasRef.current || !colorImageRef.current) return;
+
+    const canvas = revealCanvasRef.current;
+    const ctx = canvas.getContext('2d', { willReadFrequently: false });
+    if (!ctx) return;
+
+    interface Flower {
+      x: number;
+      y: number;
+      stemStartY: number;
+      stemLength: number;
+      maxStemLength: number;
+      stemGrowthRate: number;
+      radius: number;
+      maxRadius: number;
+      growthRate: number;
+      age: number;
+      lifespan: number;
+      petalCount: number;
+      rotationOffset: number;
+      stemCurve: number;
+      isGrowing: boolean;
+    }
+
+    const flowers: Flower[] = [];
+    const maxFlowers = 5;
+    const goldenRatio = 1.618033988749895; // Golden ratio for natural spacing
+
+    const createFlower = () => {
+      const startX = Math.random() * canvas.width;
+      const startY = canvas.height + 50; // Start below screen
+      const stemHeight = 100 + Math.random() * 200;
+
+      return {
+        x: startX,
+        y: startY,
+        stemStartY: startY,
+        stemLength: 0,
+        maxStemLength: stemHeight,
+        stemGrowthRate: 1 + Math.random() * 2,
+        radius: 0, // Start at 0
+        maxRadius: 30 + Math.random() * 40, // Max bloom size
+        growthRate: 0.5 + Math.random() * 0.7, // How fast it blooms
+        age: 0,
+        lifespan: 200 + Math.random() * 150, // How long before fading
+        petalCount: Math.floor(5 + Math.random() * 8), // 5-12 petals
+        rotationOffset: Math.random() * Math.PI * 2,
+        stemCurve: (Math.random() - 0.5) * 30, // Slight curve to stem
+        isGrowing: true
+      };
+    };
+
+    const animateFlowers = () => {
+      if (!colorImageRef.current) return;
+
+      // Add new flower if we have fewer than max
+      if (flowers.length < maxFlowers && Math.random() < 0.015) {
+        flowers.push(createFlower());
+      }
+
+      // Update and draw flowers
+      flowers.forEach((flower, index) => {
+        // Age the flower
+        flower.age += 1;
+
+        if (ctx && colorImageRef.current) {
+          const { width, height, offsetX, offsetY } = getCoverDimensions(colorImageRef.current);
+
+          // First phase: Grow the stem
+          if (flower.stemLength < flower.maxStemLength) {
+            flower.stemLength += flower.stemGrowthRate;
+
+            // Update flower position as stem grows
+            flower.y = flower.stemStartY - flower.stemLength;
+
+            // Draw stem using curved line with circles
+            const stemSegments = Math.floor(flower.stemLength / 5);
+            for (let i = 0; i < stemSegments; i++) {
+              const progress = i / stemSegments;
+              const segmentY = flower.stemStartY - (progress * flower.stemLength);
+              const segmentX = flower.x + Math.sin(progress * Math.PI) * flower.stemCurve;
+
+              ctx.save();
+              ctx.beginPath();
+              ctx.arc(segmentX, segmentY, 2, 0, Math.PI * 2);
+              ctx.clip();
+              ctx.drawImage(colorImageRef.current, offsetX, offsetY, width, height);
+              ctx.restore();
+            }
+          }
+          // Second phase: Bloom the flower after stem is fully grown
+          else if (flower.radius < flower.maxRadius) {
+            flower.radius += flower.growthRate;
+
+            // Draw the stem (fully grown)
+            const stemSegments = Math.floor(flower.maxStemLength / 5);
+            for (let i = 0; i < stemSegments; i++) {
+              const progress = i / stemSegments;
+              const segmentY = flower.stemStartY - (progress * flower.maxStemLength);
+              const segmentX = flower.x + Math.sin(progress * Math.PI) * flower.stemCurve;
+
+              ctx.save();
+              ctx.beginPath();
+              ctx.arc(segmentX, segmentY, 2, 0, Math.PI * 2);
+              ctx.clip();
+              ctx.drawImage(colorImageRef.current, offsetX, offsetY, width, height);
+              ctx.restore();
+            }
+
+            // Calculate flower position (at top of stem with curve)
+            const flowerX = flower.x + Math.sin(Math.PI) * flower.stemCurve * 0.5;
+            const flowerY = flower.y;
+
+            // Draw center circle
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(flowerX, flowerY, flower.radius * 0.3, 0, Math.PI * 2);
+            ctx.clip();
+            ctx.drawImage(colorImageRef.current, offsetX, offsetY, width, height);
+            ctx.restore();
+
+            // Draw petals in a circular pattern (Fibonacci spiral arrangement)
+            for (let i = 0; i < flower.petalCount; i++) {
+              const goldenAngle = i * goldenRatio * Math.PI * 2; // Fibonacci arrangement
+
+              // Petal position using golden angle for natural spacing
+              const petalDistance = flower.radius * 0.6;
+              const petalX = flowerX + Math.cos(goldenAngle) * petalDistance;
+              const petalY = flowerY + Math.sin(goldenAngle) * petalDistance;
+
+              // Petal size varies with growth
+              const petalRadius = flower.radius * 0.35 * (1 - i / flower.petalCount * 0.3);
+
+              ctx.save();
+              ctx.beginPath();
+              ctx.arc(petalX, petalY, petalRadius, 0, Math.PI * 2);
+              ctx.clip();
+              ctx.drawImage(colorImageRef.current, offsetX, offsetY, width, height);
+              ctx.restore();
+            }
+          }
+        }
+
+        // Remove flower after lifespan
+        if (flower.age > flower.lifespan) {
+          flowers.splice(index, 1);
+        }
+      });
+
+      requestAnimationFrame(animateFlowers);
+    };
+
+    animateFlowers();
+  }, [colorImageRef.current]);
 
   // Initialize reveal canvas
   useEffect(() => {
@@ -646,23 +816,23 @@ export default function Home() {
       </div>
 
       {/* Top Navigation Bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md" style={{ backgroundColor: `${darkColors[0] || '#333333'}DD` }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#fffff7]/55 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
           {/* Left: Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="w-10 h-10 flex flex-col justify-center items-center gap-1.5 hover:opacity-70 transition-opacity relative z-10"
           >
-            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: brightColors[0] || accentColor }}></span>
-            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: brightColors[0] || accentColor }}></span>
-            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: brightColors[0] || accentColor }}></span>
+            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: darkColors[0] || accentColor }}></span>
+            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: darkColors[1] || accentColor }}></span>
+            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: darkColors[2] || accentColor }}></span>
           </button>
 
           {/* Center: Site Name */}
           <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 inline-flex items-center pointer-events-auto z-0">
-            <h1 className="text-2xl sm:text-3xl font-bold lowercase flex gap-1" style={{ color: brightColors[0] || accentColor }}>
-              {'vic art'.split('').map((letter, i) => (
-                <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, 0, -2, 3, -1][i]}deg)` }}>{letter}</span>
+            <h1 className="text-2xl sm:text-3xl font-bold lowercase flex gap-1" style={{ color: darkColors[0] || accentColor }}>
+              {'victor garcia'.split('').map((letter, i) => (
+                <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, 0, -2, 3, -1, 0, -2, 3, -4, 2, -1][i]}deg)` }}>{letter}</span>
               ))}
             </h1>
           </Link>
