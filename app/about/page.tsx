@@ -20,21 +20,21 @@ export default function About() {
   return (
     <div className="min-h-screen" style={{ background: `linear-gradient(to bottom, #fffff7, #f5f5ed)` }}>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md" style={{ backgroundColor: `${accentColor}DD` }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
           {/* Left: Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="w-10 h-10 flex flex-col justify-center items-center gap-1.5 hover:opacity-70 transition-opacity relative z-10"
           >
-            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: brightAccentColor }}></span>
-            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: brightAccentColor }}></span>
-            <span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: brightAccentColor }}></span>
+            <span className="w-6 h-0.5 rounded-full bg-black"></span>
+            <span className="w-6 h-0.5 rounded-full bg-black"></span>
+            <span className="w-6 h-0.5 rounded-full bg-black"></span>
           </button>
 
           {/* Center: Site Name */}
           <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 inline-flex items-center pointer-events-auto z-0">
-            <h1 className="text-2xl sm:text-3xl font-bold lowercase flex gap-1" style={{ color: brightAccentColor }}>
+            <h1 className="text-2xl sm:text-3xl font-bold lowercase flex gap-1 text-black">
               {'vicgarcia.art'.split('').map((letter, i) => (
                 <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, 0, -2, 3, -1, 0, -2, 3, -4, 2, -1][i]}deg)` }}>{letter}</span>
               ))}
