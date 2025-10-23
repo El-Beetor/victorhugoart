@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useColors } from '../context/ColorContext';
 import Footer from '../components/Footer';
 
@@ -32,6 +32,13 @@ export default function SketchBook() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [drawingEnabled, setDrawingEnabled] = useState(false);
+  const [penColor, setPenColor] = useState('#000000');
+  const [penSize, setPenSize] = useState(2);
+  const [drawings, setDrawings] = useState<Record<number, string>>({});
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -69,6 +76,88 @@ export default function SketchBook() {
       opacity: 0,
       rotateY: direction > 0 ? -45 : 45,
     }),
+  };
+
+  // Set up canvas when page changes
+  useEffect(() => {
+    if (canvasRef.current && imageContainerRef.current) {
+      const canvas = canvasRef.current;
+      const container = imageContainerRef.current;
+      canvas.width = container.offsetWidth;
+      canvas.height = container.offsetHeight;
+
+      // Restore drawing if exists
+      if (drawings[currentPage]) {
+        const ctx = canvas.getContext('2d');
+        const img = new window.Image();
+        img.onload = () => {
+          ctx?.drawImage(img, 0, 0);
+        };
+        img.src = drawings[currentPage];
+      } else {
+        const ctx = canvas.getContext('2d');
+        ctx?.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+  }, [currentPage, drawings]);
+
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    if (!drawingEnabled || !canvasRef.current) return;
+    setIsDrawing(true);
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
+    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.strokeStyle = penColor;
+    ctx.lineWidth = penSize;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+  };
+
+  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    if (!isDrawing || !drawingEnabled || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
+    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  };
+
+  const stopDrawing = () => {
+    if (!isDrawing) return;
+    setIsDrawing(false);
+
+    // Save drawing
+    if (canvasRef.current) {
+      const dataUrl = canvasRef.current.toDataURL();
+      setDrawings(prev => ({
+        ...prev,
+        [currentPage]: dataUrl
+      }));
+    }
+  };
+
+  const clearDrawing = () => {
+    if (canvasRef.current) {
+      const ctx = canvasRef.current.getContext('2d');
+      ctx?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      setDrawings(prev => {
+        const newDrawings = { ...prev };
+        delete newDrawings[currentPage];
+        return newDrawings;
+      });
+    }
   };
 
   return (
@@ -283,7 +372,7 @@ export default function SketchBook() {
 
                 {/* Page Content */}
                 <div className="pl-16 pr-8 py-8">
-                  <div className="relative w-full">
+                  <div ref={imageContainerRef} className="relative w-full">
                     <Image
                       src={sketches[currentPage]}
                       alt={`Sketch ${currentPage + 1}`}
@@ -295,6 +384,23 @@ export default function SketchBook() {
                         filter: 'contrast(1.05) brightness(0.98)',
                       }}
                       priority
+                    />
+
+                    {/* Drawing Canvas Overlay */}
+                    <canvas
+                      ref={canvasRef}
+                      onMouseDown={startDrawing}
+                      onMouseMove={draw}
+                      onMouseUp={stopDrawing}
+                      onMouseLeave={stopDrawing}
+                      onTouchStart={startDrawing}
+                      onTouchMove={draw}
+                      onTouchEnd={stopDrawing}
+                      className="absolute top-0 left-0 w-full h-full"
+                      style={{
+                        cursor: drawingEnabled ? 'crosshair' : 'default',
+                        touchAction: drawingEnabled ? 'none' : 'auto',
+                      }}
                     />
                   </div>
 
@@ -331,6 +437,86 @@ export default function SketchBook() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
+        </div>
+
+        {/* Drawing Toolbar */}
+        <div className="fixed bottom-24 right-8 z-20 bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-4 border-2"
+          style={{ borderColor: `${accentColor}33` }}>
+          <div className="flex flex-col gap-4 items-center min-w-[200px]">
+            {/* Drawing Toggle */}
+            <div className="w-full">
+              <button
+                onClick={() => setDrawingEnabled(!drawingEnabled)}
+                className="w-full px-6 py-3 rounded-lg font-semibold transition-all"
+                style={{
+                  backgroundColor: drawingEnabled ? accentColor : '#e5e7eb',
+                  color: drawingEnabled ? '#ffffff' : '#374151',
+                }}
+              >
+                {drawingEnabled ? '✏️ Drawing ON' : '✏️ Drawing OFF'}
+              </button>
+            </div>
+
+            {/* Color Picker */}
+            {drawingEnabled && (
+              <>
+                <div className="w-full">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Pen Color
+                  </label>
+                  <div className="flex gap-2 items-center">
+                    <input
+                      type="color"
+                      value={penColor}
+                      onChange={(e) => setPenColor(e.target.value)}
+                      className="w-12 h-12 rounded-lg border-2 cursor-pointer"
+                      style={{ borderColor: accentColor }}
+                    />
+                    <div className="flex-1 flex gap-2">
+                      {['#000000', '#ff0000', '#0000ff', '#00ff00'].map(color => (
+                        <button
+                          key={color}
+                          onClick={() => setPenColor(color)}
+                          className="w-8 h-8 rounded-full border-2 transition-all"
+                          style={{
+                            backgroundColor: color,
+                            borderColor: penColor === color ? accentColor : '#d1d5db',
+                            transform: penColor === color ? 'scale(1.2)' : 'scale(1)',
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pen Size Slider */}
+                <div className="w-full">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Pen Size: {penSize}px
+                  </label>
+                  <input
+                    type="range"
+                    min="1"
+                    max="20"
+                    value={penSize}
+                    onChange={(e) => setPenSize(parseInt(e.target.value))}
+                    className="w-full"
+                    style={{ accentColor }}
+                  />
+                </div>
+
+                {/* Clear Button */}
+                <div className="w-full">
+                  <button
+                    onClick={clearDrawing}
+                    className="w-full px-6 py-2 rounded-lg font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors"
+                  >
+                    🗑️ Clear Drawing
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Page Dots Indicator */}
