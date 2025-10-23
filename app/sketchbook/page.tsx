@@ -1,10 +1,31 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useColors } from '../context/ColorContext';
 import Footer from '../components/Footer';
+
+const sketches = [
+  '/sketches/image_1.png',
+  '/sketches/image_3.png',
+  '/sketches/image_4.png',
+  '/sketches/image_5.png',
+  '/sketches/image_6.png',
+  '/sketches/image_7.png',
+  '/sketches/image_8.png',
+  '/sketches/image_9.png',
+  '/sketches/image_10.png',
+  '/sketches/image_11.png',
+  '/sketches/image_12.png',
+  '/sketches/image_13.png',
+  '/sketches/image_14.png',
+  '/sketches/image_15.png',
+  '/sketches/image_17.png',
+  '/sketches/image_19.png',
+  '/sketches/image_21.png',
+];
 
 export default function SketchBook() {
   const { accentColor, darkGradientColor, brightAccentColor, darkColors, midColors, brightColors } = useColors();
@@ -135,36 +156,43 @@ export default function SketchBook() {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="pt-24 pb-16 px-6">
-        <div className="max-w-7xl mx-auto">
+      <main className="pt-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center"
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-4" style={{ color: darkColors[0] || accentColor }}>
               SketchBook
             </h1>
-            <p className="text-xl mb-12" style={{ color: darkColors[1] || accentColor }}>
+            <p className="text-xl" style={{ color: darkColors[1] || accentColor }}>
               Sketches and work in progress
             </p>
           </motion.div>
+        </div>
 
-          {/* Coming Soon Message */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="max-w-2xl mx-auto text-center py-20"
-          >
-            <p className="text-2xl mb-8" style={{ color: darkColors[2] || accentColor }}>
-              Coming Soon
-            </p>
-            <p className="text-lg" style={{ color: darkColors[1] || accentColor }}>
-              This section will showcase sketches, studies, and works in progress.
-            </p>
-          </motion.div>
+        {/* Endless Scroll Gallery */}
+        <div className="w-full">
+          {sketches.map((sketch, index) => (
+            <motion.div
+              key={sketch}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1, duration: 0.6 }}
+              className="w-full"
+            >
+              <Image
+                src={sketch}
+                alt={`Sketch ${index + 1}`}
+                width={2000}
+                height={2000}
+                className="w-full h-auto"
+                priority={index < 3}
+              />
+            </motion.div>
+          ))}
         </div>
       </main>
 
