@@ -591,9 +591,10 @@ export default function Home() {
   // Petal button data
   const petals = [
     { name: 'Portfolio', href: '#portfolio', angle: 0 },
-    { name: 'Shop', href: '/shop', angle: 90 },
-    { name: 'About', href: '/about', angle: 180 },
-    { name: 'Contact', href: '/contact', angle: 270 },
+    { name: 'SketchBook', href: '/sketchbook', angle: 72 },
+    { name: 'Shop', href: '/shop', angle: 144 },
+    { name: 'About', href: '/about', angle: 216 },
+    { name: 'Contact', href: '/contact', angle: 288 },
   ];
 
   const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
