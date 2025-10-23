@@ -10,6 +10,7 @@ import Footer from '../components/Footer';
 export default function About() {
   const { accentColor, darkGradientColor, brightAccentColor } = useColors();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAiNoteOpen, setIsAiNoteOpen] = useState(false);
 
   const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -184,16 +185,51 @@ export default function About() {
                 </Link>
                 {' '}everywhere now. I don&apos;t have a specific goal in mind — I just want to make things that inspire me, my friends, and hopefully you too.
               </p>
-              <p className="text-lg leading-relaxed text-gray-800">
-                <strong>A Note on AI and Art:</strong><br />
-                There is a lot of talk out there about AI and the future of human-made art. For me, art has never been just about the final result — it&apos;s about the challenge, the growth, and the way it connects the artist to the world around them.
-              </p>
-              <p className="text-lg leading-relaxed text-gray-800">
-                I don&apos;t use AI to create my artwork, but I do use it to help build apps and write code. If you feel the urge to create — whether it&apos;s art, music, apps, or anything else — don&apos;t let generative AI discourage you. Mistakes are part of the process, and making something is always better than making nothing.
-              </p>
-              <p className="text-lg leading-relaxed text-gray-800">
-                Artists have always faced criticism and exploitation from people who don&apos;t understand or value creativity. But your perspective and imagination are yours alone — and no one can take that away.
-              </p>
+
+              {/* Collapsible AI Note Section */}
+              <div className="border rounded-lg overflow-hidden" style={{ borderColor: `${accentColor}33` }}>
+                <button
+                  onClick={() => setIsAiNoteOpen(!isAiNoteOpen)}
+                  className="w-full px-4 py-3 flex justify-between items-center hover:bg-gray-50 transition-colors"
+                >
+                  <strong className="text-lg text-gray-800">A Note on AI and Art</strong>
+                  <motion.svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    animate={{ rotate: isAiNoteOpen ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                    style={{ color: accentColor }}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </motion.svg>
+                </button>
+                <AnimatePresence>
+                  {isAiNoteOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-4 pb-4 space-y-4">
+                        <p className="text-lg leading-relaxed text-gray-800">
+                          There is a lot of talk out there about AI and the future of human-made art. For me, art has never been just about the final result — it&apos;s about the challenge, the growth, and the way it connects the artist to the world around them.
+                        </p>
+                        <p className="text-lg leading-relaxed text-gray-800">
+                          I don&apos;t use AI to create my artwork, but I do use it to help build apps and write code. If you feel the urge to create — whether it&apos;s art, music, apps, or anything else — don&apos;t let generative AI discourage you. Mistakes are part of the process, and making something is always better than making nothing.
+                        </p>
+                        <p className="text-lg leading-relaxed text-gray-800">
+                          Artists have always faced criticism and exploitation from people who don&apos;t understand or value creativity. But your perspective and imagination are yours alone — and no one can take that away.
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </motion.div>
           </div>
 
