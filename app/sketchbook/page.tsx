@@ -30,11 +30,45 @@ const sketches = [
 export default function SketchBook() {
   const { accentColor, darkGradientColor, brightAccentColor, darkColors, midColors, brightColors } = useColors();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [direction, setDirection] = useState(0);
 
   const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     window.location.href = '/#portfolio';
     setIsMenuOpen(false);
+  };
+
+  const nextPage = () => {
+    if (currentPage < sketches.length - 1) {
+      setDirection(1);
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 0) {
+      setDirection(-1);
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const variants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0,
+      rotateY: direction > 0 ? 45 : -45,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      rotateY: 0,
+    },
+    exit: (direction: number) => ({
+      x: direction > 0 ? -1000 : 1000,
+      opacity: 0,
+      rotateY: direction > 0 ? -45 : 45,
+    }),
   };
 
   return (
@@ -156,8 +190,8 @@ export default function SketchBook() {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="pt-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12">
+      <main className="pt-24 pb-12 px-4 min-h-screen flex flex-col">
+        <div className="max-w-7xl mx-auto w-full mb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -167,34 +201,95 @@ export default function SketchBook() {
             <h1 className="text-5xl md:text-6xl font-bold mb-4" style={{ color: darkColors[0] || accentColor }}>
               SketchBook
             </h1>
-            <p className="text-xl" style={{ color: darkColors[1] || accentColor }}>
-              Sketches and work in progress
+            <p className="text-xl text-gray-700">
+              Page {currentPage + 1} of {sketches.length}
             </p>
           </motion.div>
         </div>
 
-        {/* Endless Scroll Gallery */}
-        <div className="w-full flex flex-col">
-          {sketches.map((sketch, index) => (
-            <motion.div
-              key={sketch}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.6 }}
-              className="w-full flex justify-center items-center mb-4"
-            >
-              <div className="w-full max-w-full relative">
-                <Image
-                  src={sketch}
-                  alt={`Sketch ${index + 1}`}
-                  width={2000}
-                  height={3000}
-                  className="w-full h-auto object-contain"
-                  style={{ maxWidth: '100%', height: 'auto' }}
-                  priority={index < 3}
-                />
-              </div>
-            </motion.div>
+        {/* Sketchbook Page Container */}
+        <div className="flex-1 flex items-center justify-center relative max-w-6xl mx-auto w-full">
+          {/* Previous Button */}
+          <button
+            onClick={prevPage}
+            disabled={currentPage === 0}
+            className="absolute left-0 z-10 p-4 rounded-full bg-white/80 backdrop-blur-sm shadow-lg hover:bg-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            style={{ color: accentColor }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          {/* Page Display */}
+          <div className="relative w-full max-w-4xl mx-16" style={{ perspective: '2000px' }}>
+            <AnimatePresence initial={false} custom={direction} mode="wait">
+              <motion.div
+                key={currentPage}
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: 'spring', stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.3 },
+                  rotateY: { duration: 0.5 },
+                }}
+                className="relative bg-white rounded-lg shadow-2xl p-4 sm:p-8"
+                style={{
+                  transformStyle: 'preserve-3d',
+                  border: '2px solid #e5e7eb'
+                }}
+              >
+                <div className="relative w-full">
+                  <Image
+                    src={sketches[currentPage]}
+                    alt={`Sketch ${currentPage + 1}`}
+                    width={2000}
+                    height={3000}
+                    className="w-full h-auto object-contain rounded"
+                    style={{ maxHeight: 'calc(100vh - 300px)' }}
+                    priority
+                  />
+                </div>
+
+                {/* Page Number at Bottom */}
+                <div className="text-center mt-4 text-gray-500 text-sm">
+                  {currentPage + 1}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Next Button */}
+          <button
+            onClick={nextPage}
+            disabled={currentPage === sketches.length - 1}
+            className="absolute right-0 z-10 p-4 rounded-full bg-white/80 backdrop-blur-sm shadow-lg hover:bg-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            style={{ color: accentColor }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Page Dots Indicator */}
+        <div className="flex justify-center gap-2 mt-8">
+          {sketches.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setDirection(index > currentPage ? 1 : -1);
+                setCurrentPage(index);
+              }}
+              className="w-2 h-2 rounded-full transition-all"
+              style={{
+                backgroundColor: index === currentPage ? accentColor : '#d1d5db',
+                transform: index === currentPage ? 'scale(1.5)' : 'scale(1)'
+              }}
+            />
           ))}
         </div>
       </main>
