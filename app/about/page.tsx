@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import Image from 'next/image';
 import { useColors } from '../context/ColorContext';
+import Footer from '../components/Footer';
 
 export default function About() {
   const { accentColor, darkGradientColor, brightAccentColor } = useColors();
@@ -225,6 +226,9 @@ export default function About() {
           </motion.div>
         </div>
       </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

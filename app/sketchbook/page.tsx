@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useColors } from '../context/ColorContext';
+import Footer from '../components/Footer';
 
 export default function SketchBook() {
   const { accentColor, darkGradientColor, brightAccentColor, darkColors, midColors, brightColors } = useColors();
@@ -166,6 +167,9 @@ export default function SketchBook() {
           </motion.div>
         </div>
       </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
