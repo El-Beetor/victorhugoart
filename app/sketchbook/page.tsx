@@ -236,28 +236,86 @@ export default function SketchBook() {
                   opacity: { duration: 0.3 },
                   rotateY: { duration: 0.5 },
                 }}
-                className="relative bg-white rounded-lg shadow-2xl p-4 sm:p-8"
+                className="relative shadow-2xl"
                 style={{
                   transformStyle: 'preserve-3d',
-                  border: '2px solid #e5e7eb'
+                  backgroundColor: '#f8f6f0',
+                  backgroundImage: `
+                    repeating-linear-gradient(
+                      0deg,
+                      transparent,
+                      transparent 2px,
+                      rgba(0,0,0,0.02) 2px,
+                      rgba(0,0,0,0.02) 4px
+                    ),
+                    repeating-linear-gradient(
+                      90deg,
+                      transparent,
+                      transparent 2px,
+                      rgba(0,0,0,0.015) 2px,
+                      rgba(0,0,0,0.015) 4px
+                    )
+                  `,
+                  boxShadow: `
+                    0 20px 40px rgba(0,0,0,0.2),
+                    inset 0 0 100px rgba(0,0,0,0.05),
+                    inset 0 0 0 1px rgba(139,69,19,0.1)
+                  `,
                 }}
               >
-                <div className="relative w-full">
-                  <Image
-                    src={sketches[currentPage]}
-                    alt={`Sketch ${currentPage + 1}`}
-                    width={2000}
-                    height={3000}
-                    className="w-full h-auto object-contain rounded"
-                    style={{ maxHeight: 'calc(100vh - 300px)' }}
-                    priority
-                  />
+                {/* Spiral Binding Holes */}
+                <div className="absolute left-0 top-0 bottom-0 w-12 flex flex-col justify-around items-center py-8" style={{
+                  background: 'linear-gradient(90deg, rgba(0,0,0,0.05) 0%, transparent 100%)',
+                  borderRight: '2px dashed rgba(139,69,19,0.2)'
+                }}>
+                  {[...Array(20)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-4 h-4 rounded-full border-2"
+                      style={{
+                        borderColor: '#8b4513',
+                        backgroundColor: '#f8f6f0',
+                        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)'
+                      }}
+                    />
+                  ))}
                 </div>
 
-                {/* Page Number at Bottom */}
-                <div className="text-center mt-4 text-gray-500 text-sm">
-                  {currentPage + 1}
+                {/* Page Content */}
+                <div className="pl-16 pr-8 py-8">
+                  <div className="relative w-full">
+                    <Image
+                      src={sketches[currentPage]}
+                      alt={`Sketch ${currentPage + 1}`}
+                      width={2000}
+                      height={3000}
+                      className="w-full h-auto object-contain"
+                      style={{
+                        maxHeight: 'calc(100vh - 350px)',
+                        filter: 'contrast(1.05) brightness(0.98)',
+                      }}
+                      priority
+                    />
+                  </div>
+
+                  {/* Page Number at Bottom Corner */}
+                  <div className="text-right mt-6 pr-4 font-serif italic text-gray-600 text-sm">
+                    {currentPage + 1}
+                  </div>
                 </div>
+
+                {/* Worn edges effect */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: `
+                      radial-gradient(circle at top left, transparent 70%, rgba(139,69,19,0.1)),
+                      radial-gradient(circle at top right, transparent 70%, rgba(139,69,19,0.1)),
+                      radial-gradient(circle at bottom left, transparent 70%, rgba(139,69,19,0.1)),
+                      radial-gradient(circle at bottom right, transparent 70%, rgba(139,69,19,0.1))
+                    `
+                  }}
+                />
               </motion.div>
             </AnimatePresence>
           </div>
