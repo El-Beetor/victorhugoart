@@ -99,6 +99,16 @@ export default function About() {
                   ))}
                 </Link>
                 <Link
+                  href="/sketchbook"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
+                >
+                  {'sketchbook'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, -2, 3, -4, 2, -3, 4, -2][i]}deg)` }}>{letter}</span>
+                  ))}
+                </Link>
+                <Link
                   href="/shop"
                   onClick={() => setIsMenuOpen(false)}
                   className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
@@ -116,16 +126,6 @@ export default function About() {
                 >
                   {'about'.split('').map((letter, i) => (
                     <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, -2, 3][i]}deg)` }}>{letter}</span>
-                  ))}
-                </Link>
-                <Link
-                  href="/contact"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
-                  style={{ color: accentColor }}
-                >
-                  {'contact'.split('').map((letter, i) => (
-                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[-2, 3, -4, 2, -3, 4, -1][i]}deg)` }}>{letter}</span>
                   ))}
                 </Link>
               </nav>
@@ -187,22 +187,41 @@ export default function About() {
             </motion.div>
           </div>
 
-          {/* Contact CTA */}
+          {/* Contact Section */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="text-right"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+            className="bg-[#fffff7]/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 sm:p-12 border mt-16"
+            style={{ borderColor: `${accentColor}1A` }}
           >
-            <Link
-              href="/contact"
-              className="inline-block px-8 py-3 text-[#fffff7] font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
-              style={{ backgroundColor: accentColor }}
-              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
-              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-            >
-              Get in Touch
-            </Link>
+            <div className="space-y-8">
+              {/* Email Section */}
+              <div className="text-center">
+                <h2 className="text-2xl sm:text-3xl font-bold mb-4" style={{ color: accentColor }}>
+                  Get in Touch
+                </h2>
+                <p className="mb-6" style={{ color: `${accentColor}B3` }}>
+                  For inquiries, commissions, or just to say hello
+                </p>
+                <a
+                  href="mailto:victorhugoart@pm.me"
+                  className="inline-block px-8 py-4 text-[#fffff7] font-semibold text-lg rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  style={{ backgroundColor: accentColor }}
+                  onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                  onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                >
+                  victorhugoart@pm.me
+                </a>
+              </div>
+
+              {/* Response Time */}
+              <div className="text-center">
+                <p className="text-sm" style={{ color: `${accentColor}CC` }}>
+                  I typically respond within 24-48 hours
+                </p>
+              </div>
+            </div>
           </motion.div>
         </div>
       </main>

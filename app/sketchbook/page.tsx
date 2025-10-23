@@ -127,16 +127,6 @@ export default function SketchBook() {
                     <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, -2, 3][i]}deg)` }}>{letter}</span>
                   ))}
                 </Link>
-                <Link
-                  href="/contact"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
-                  style={{ color: accentColor }}
-                >
-                  {'contact'.split('').map((letter, i) => (
-                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[-2, 3, -4, 2, -3, 4, -1][i]}deg)` }}>{letter}</span>
-                  ))}
-                </Link>
               </nav>
             </motion.div>
           </>
