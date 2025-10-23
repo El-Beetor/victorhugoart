@@ -173,17 +173,26 @@ export default function About() {
               className="space-y-6"
             >
               <p className="text-lg leading-relaxed text-gray-800">
-                Welcome! I&apos;m Victor Hugo, an artist passionate about creating unique and meaningful works of art.
-                My journey in art began years ago, and since then, I&apos;ve been exploring different styles and mediums
-                to express my creativity.
+                Thank you for visiting my website and checking out my art!
+                Creating art is so fun. I love making and sharing it with the people around me. Whether it&apos;s
+                sketching, painting, designing, coding, or building something from scratch, the process of turning an idea into reality scratches that creative itch in my brain.
               </p>
               <p className="text-lg leading-relaxed text-gray-800">
-                Each piece I create tells a story and carries a piece of my vision. Through my work, I aim to
-                evoke emotions, spark imagination, and bring beauty into the world.
+                I am constantly learning and developing this hobby of mine, I bring my{' '}
+                <Link href="/sketchbook" className="font-semibold hover:underline transition-all" style={{ color: accentColor }}>
+                  sketchbook
+                </Link>
+                {' '}everywhere now. I don&apos;t have a specific goal in mind — I just want to make things that inspire me, my friends, and hopefully you too.
               </p>
               <p className="text-lg leading-relaxed text-gray-800">
-                Thank you for visiting my portfolio. I hope you enjoy exploring my collection as much as I
-                enjoyed creating it.
+                <strong>A Note on AI and Art:</strong><br />
+                There is a lot of talk out there about AI and the future of human-made art. For me, art has never been just about the final result — it&apos;s about the challenge, the growth, and the way it connects the artist to the world around them.
+              </p>
+              <p className="text-lg leading-relaxed text-gray-800">
+                I don&apos;t use AI to create my artwork, but I do use it to help build apps and write code. If you feel the urge to create — whether it&apos;s art, music, apps, or anything else — don&apos;t let generative AI discourage you. Mistakes are part of the process, and making something is always better than making nothing.
+              </p>
+              <p className="text-lg leading-relaxed text-gray-800">
+                Artists have always faced criticism and exploitation from people who don&apos;t understand or value creativity. But your perspective and imagination are yours alone — and no one can take that away.
               </p>
             </motion.div>
           </div>
