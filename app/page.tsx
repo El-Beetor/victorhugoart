@@ -1110,11 +1110,8 @@ export default function Home() {
                   <h3 className="text-xl sm:text-2xl font-bold mb-2" style={{ color: darkColors[0] || accentColor }}>
                     {art.title}
                   </h3>
-                  <p className="text-sm mb-3" style={{ color: darkColors[1] || accentColor }}>
+                  <p className="text-sm" style={{ color: darkColors[1] || accentColor }}>
                     {art.category} • {art.year}
-                  </p>
-                  <p className="leading-relaxed italic text-sm sm:text-base" style={{ color: darkColors[2] || accentColor }}>
-                    &quot;{art.description}&quot;
                   </p>
                 </motion.div>
               </motion.div>
