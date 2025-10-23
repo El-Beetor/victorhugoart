@@ -284,7 +284,7 @@ export default function Shop() {
                   onMouseEnter={(e) => e.currentTarget.style.borderColor = `${accentColor}66`}
                   onMouseLeave={(e) => e.currentTarget.style.borderColor = `${accentColor}33`}
                 >
-                  <div className="w-full h-full flex items-center justify-center" style={{ color: `${accentColor}80` }}>
+                  <div className="w-full h-full flex items-center justify-center text-gray-600">
                     {/* Placeholder - replace with actual images */}
                     <div className="text-center">
                       <div className="text-6xl mb-4">🎨</div>
@@ -303,7 +303,7 @@ export default function Shop() {
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h3 className="text-xl font-semibold" style={{ color: accentColor }}>{product.title}</h3>
-                      <p className="text-sm" style={{ color: `${accentColor}99` }}>{product.category} • {product.size}</p>
+                      <p className="text-sm text-gray-700">{product.category} • {product.size}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-2xl font-bold" style={{ color: accentColor }}>${product.price}</p>
@@ -325,8 +325,7 @@ export default function Shop() {
                   ) : (
                     <button
                       disabled
-                      className="w-full mt-3 px-6 py-3 font-semibold rounded-lg cursor-not-allowed"
-                      style={{ backgroundColor: `${accentColor}1A`, color: `${accentColor}66` }}
+                      className="w-full mt-3 px-6 py-3 font-semibold rounded-lg cursor-not-allowed bg-gray-200 text-gray-500"
                     >
                       Sold Out
                     </button>
@@ -345,7 +344,7 @@ export default function Shop() {
             style={{ borderColor: `${accentColor}33` }}
           >
             <h2 className="text-2xl font-bold mb-4" style={{ color: accentColor }}>Purchase Information</h2>
-            <div className="grid md:grid-cols-2 gap-6" style={{ color: `${accentColor}B3` }}>
+            <div className="grid md:grid-cols-2 gap-6 text-gray-800">
               <div>
                 <h3 className="font-semibold mb-2" style={{ color: accentColor }}>Shipping</h3>
                 <p>All artworks are carefully packaged and shipped with insurance. Shipping costs calculated at checkout.</p>

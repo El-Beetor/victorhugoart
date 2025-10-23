@@ -172,16 +172,16 @@ export default function About() {
               transition={{ delay: 0.4, duration: 0.6 }}
               className="space-y-6"
             >
-              <p className="text-lg leading-relaxed" style={{ color: `${accentColor}CC` }}>
+              <p className="text-lg leading-relaxed text-gray-800">
                 Welcome! I&apos;m Victor Hugo, an artist passionate about creating unique and meaningful works of art.
                 My journey in art began years ago, and since then, I&apos;ve been exploring different styles and mediums
                 to express my creativity.
               </p>
-              <p className="text-lg leading-relaxed" style={{ color: `${accentColor}CC` }}>
+              <p className="text-lg leading-relaxed text-gray-800">
                 Each piece I create tells a story and carries a piece of my vision. Through my work, I aim to
                 evoke emotions, spark imagination, and bring beauty into the world.
               </p>
-              <p className="text-lg leading-relaxed" style={{ color: `${accentColor}CC` }}>
+              <p className="text-lg leading-relaxed text-gray-800">
                 Thank you for visiting my portfolio. I hope you enjoy exploring my collection as much as I
                 enjoyed creating it.
               </p>
@@ -202,7 +202,7 @@ export default function About() {
                 <h2 className="text-2xl sm:text-3xl font-bold mb-4" style={{ color: accentColor }}>
                   Get in Touch
                 </h2>
-                <p className="mb-6" style={{ color: `${accentColor}B3` }}>
+                <p className="mb-6 text-gray-700">
                   For inquiries, commissions, or just to say hello
                 </p>
                 <a
@@ -218,7 +218,7 @@ export default function About() {
 
               {/* Response Time */}
               <div className="text-center">
-                <p className="text-sm" style={{ color: `${accentColor}CC` }}>
+                <p className="text-sm text-gray-700">
                   I typically respond within 24-48 hours
                 </p>
               </div>
