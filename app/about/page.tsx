@@ -206,13 +206,13 @@ export default function About() {
                   For inquiries, commissions, or just to say hello
                 </p>
                 <a
-                  href="mailto:victorhugoart@pm.me"
+                  href="mailto:vicgarcia.art@pm.me"
                   className="inline-block px-8 py-4 text-[#fffff7] font-semibold text-lg rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
                   style={{ backgroundColor: accentColor }}
                   onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
                   onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                 >
-                  victorhugoart@pm.me
+                  vicgarcia.art@pm.me
                 </a>
               </div>
 

@@ -86,7 +86,7 @@ export default function Shop() {
 
       if (data.error) {
         console.error('Error:', data.error);
-        alert('Something went wrong. Please try again or contact victorhugoart@pm.me');
+        alert('Something went wrong. Please try again or contact vicgarcia.art@pm.me');
         return;
       }
 
@@ -96,7 +96,7 @@ export default function Shop() {
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Something went wrong. Please try again or contact victorhugoart@pm.me');
+      alert('Something went wrong. Please try again or contact vicgarcia.art@pm.me');
     }
   };
 
@@ -360,7 +360,7 @@ export default function Shop() {
               </div>
               <div>
                 <h3 className="font-semibold mb-2" style={{ color: accentColor }}>Questions?</h3>
-                <p>Contact us at <a href="mailto:victorhugoart@pm.me" className="hover:underline" style={{ color: accentColor }}>victorhugoart@pm.me</a></p>
+                <p>Contact us at <a href="mailto:vicgarcia.art@pm.me" className="hover:underline" style={{ color: accentColor }}>vicgarcia.art@pm.me</a></p>
               </div>
             </div>
           </motion.div>

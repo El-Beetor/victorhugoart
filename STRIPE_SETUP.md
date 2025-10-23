@@ -142,7 +142,7 @@ To customize the checkout experience:
 - **Stripe Documentation**: https://stripe.com/docs
 - **Stripe Checkout**: https://stripe.com/docs/payments/checkout
 - **Webhooks Guide**: https://stripe.com/docs/webhooks
-- **For issues with your art shop**: victorhugoart@pm.me
+- **For issues with your art shop**: vicgarcia.art@pm.me
 
 ## Common Issues
 

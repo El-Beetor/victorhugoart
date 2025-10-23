@@ -13,11 +13,11 @@ export default function Footer() {
           <div className="text-center sm:text-left">
             <p className="text-sm mb-2" style={{ color: `${brightColors[0] || brightAccentColor}99` }}>Contact</p>
             <a
-              href="mailto:victorhugoart@pm.me"
+              href="mailto:vicgarcia.art@pm.me"
               className="text-lg font-semibold hover:opacity-70 transition-opacity"
               style={{ color: brightColors[0] || brightAccentColor || '#ffffff' }}
             >
-              victorhugoart@pm.me
+              vicgarcia.art@pm.me
             </a>
           </div>
 
