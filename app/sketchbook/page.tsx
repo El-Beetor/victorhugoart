@@ -3,11 +3,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useColors } from '../context/ColorContext';
 import Footer from '../components/Footer';
 
-const sketches = [
+const sketchesBase = [
   '/sketches/image_1.png',
   '/sketches/image_3.png',
   '/sketches/image_4.png',
@@ -27,137 +27,30 @@ const sketches = [
   '/sketches/image_21.png',
 ];
 
+// Shuffle function
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 export default function SketchBook() {
   const { accentColor, darkGradientColor, brightAccentColor, darkColors, midColors, brightColors } = useColors();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [direction, setDirection] = useState(0);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [drawingEnabled, setDrawingEnabled] = useState(false);
-  const [penColor, setPenColor] = useState('#000000');
-  const [penSize, setPenSize] = useState(2);
-  const [drawings, setDrawings] = useState<Record<number, string>>({});
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imageContainerRef = useRef<HTMLDivElement>(null);
+  const [sketches, setSketches] = useState(sketchesBase);
+
+  // Shuffle on client side only to avoid hydration mismatch
+  useEffect(() => {
+    setSketches(shuffleArray(sketchesBase));
+  }, []);
 
   const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     window.location.href = '/#portfolio';
     setIsMenuOpen(false);
-  };
-
-  const nextPage = () => {
-    if (currentPage < sketches.length - 1) {
-      setDirection(1);
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const prevPage = () => {
-    if (currentPage > 0) {
-      setDirection(-1);
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const variants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0,
-      rotateY: direction > 0 ? 45 : -45,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-      rotateY: 0,
-    },
-    exit: (direction: number) => ({
-      x: direction > 0 ? -1000 : 1000,
-      opacity: 0,
-      rotateY: direction > 0 ? -45 : 45,
-    }),
-  };
-
-  // Set up canvas when page changes
-  useEffect(() => {
-    if (canvasRef.current && imageContainerRef.current) {
-      const canvas = canvasRef.current;
-      const container = imageContainerRef.current;
-      canvas.width = container.offsetWidth;
-      canvas.height = container.offsetHeight;
-
-      // Restore drawing if exists
-      if (drawings[currentPage]) {
-        const ctx = canvas.getContext('2d');
-        const img = new window.Image();
-        img.onload = () => {
-          ctx?.drawImage(img, 0, 0);
-        };
-        img.src = drawings[currentPage];
-      } else {
-        const ctx = canvas.getContext('2d');
-        ctx?.clearRect(0, 0, canvas.width, canvas.height);
-      }
-    }
-  }, [currentPage, drawings]);
-
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    if (!drawingEnabled || !canvasRef.current) return;
-    setIsDrawing(true);
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
-
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.strokeStyle = penColor;
-    ctx.lineWidth = penSize;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-  };
-
-  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    if (!isDrawing || !drawingEnabled || !canvasRef.current) return;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
-
-    ctx.lineTo(x, y);
-    ctx.stroke();
-  };
-
-  const stopDrawing = () => {
-    if (!isDrawing) return;
-    setIsDrawing(false);
-
-    // Save drawing
-    if (canvasRef.current) {
-      const dataUrl = canvasRef.current.toDataURL();
-      setDrawings(prev => ({
-        ...prev,
-        [currentPage]: dataUrl
-      }));
-    }
-  };
-
-  const clearDrawing = () => {
-    if (canvasRef.current) {
-      const ctx = canvasRef.current.getContext('2d');
-      ctx?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-      setDrawings(prev => {
-        const newDrawings = { ...prev };
-        delete newDrawings[currentPage];
-        return newDrawings;
-      });
-    }
   };
 
   return (
@@ -279,262 +172,46 @@ export default function SketchBook() {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="pt-24 pb-12 px-4 min-h-screen flex flex-col">
-        <div className="max-w-7xl mx-auto w-full mb-8">
+      <main className="pt-24 pb-12 px-4 min-h-screen">
+        <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center"
+            className="text-center mb-12"
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-4" style={{ color: darkColors[0] || accentColor }}>
               SketchBook
             </h1>
             <p className="text-xl text-gray-700">
-              Page {currentPage + 1} of {sketches.length}
+              {sketches.length} Sketches
             </p>
           </motion.div>
-        </div>
 
-        {/* Sketchbook Page Container */}
-        <div className="flex-1 flex items-center justify-center relative max-w-6xl mx-auto w-full">
-          {/* Previous Button */}
-          <button
-            onClick={prevPage}
-            disabled={currentPage === 0}
-            className="absolute left-0 z-10 p-4 rounded-full bg-white/80 backdrop-blur-sm shadow-lg hover:bg-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-            style={{ color: accentColor }}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-
-          {/* Page Display */}
-          <div className="relative w-full max-w-4xl mx-16" style={{ perspective: '2000px' }}>
-            <AnimatePresence initial={false} custom={direction} mode="wait">
+          {/* Scrolling Gallery */}
+          <div className="space-y-8">
+            {sketches.map((sketch, index) => (
               <motion.div
-                key={currentPage}
-                custom={direction}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                  x: { type: 'spring', stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.3 },
-                  rotateY: { duration: 0.5 },
-                }}
-                className="relative shadow-2xl"
-                style={{
-                  transformStyle: 'preserve-3d',
-                  backgroundColor: '#f8f6f0',
-                  backgroundImage: `
-                    repeating-linear-gradient(
-                      0deg,
-                      transparent,
-                      transparent 2px,
-                      rgba(0,0,0,0.02) 2px,
-                      rgba(0,0,0,0.02) 4px
-                    ),
-                    repeating-linear-gradient(
-                      90deg,
-                      transparent,
-                      transparent 2px,
-                      rgba(0,0,0,0.015) 2px,
-                      rgba(0,0,0,0.015) 4px
-                    )
-                  `,
-                  boxShadow: `
-                    0 20px 40px rgba(0,0,0,0.2),
-                    inset 0 0 100px rgba(0,0,0,0.05),
-                    inset 0 0 0 1px rgba(139,69,19,0.1)
-                  `,
-                }}
+                key={sketch}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ delay: 0.1 * (index % 3), duration: 0.6 }}
+                className="w-full"
               >
-                {/* Spiral Binding Holes */}
-                <div className="absolute left-0 top-0 bottom-0 w-12 flex flex-col justify-around items-center py-8" style={{
-                  background: 'linear-gradient(90deg, rgba(0,0,0,0.05) 0%, transparent 100%)',
-                  borderRight: '2px dashed rgba(139,69,19,0.2)'
-                }}>
-                  {[...Array(20)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="w-4 h-4 rounded-full border-2"
-                      style={{
-                        borderColor: '#8b4513',
-                        backgroundColor: '#f8f6f0',
-                        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)'
-                      }}
-                    />
-                  ))}
-                </div>
-
-                {/* Page Content */}
-                <div className="pl-16 pr-8 py-8">
-                  <div ref={imageContainerRef} className="relative w-full">
-                    <Image
-                      src={sketches[currentPage]}
-                      alt={`Sketch ${currentPage + 1}`}
-                      width={2000}
-                      height={3000}
-                      className="w-full h-auto object-contain"
-                      style={{
-                        maxHeight: 'calc(100vh - 350px)',
-                        filter: 'contrast(1.05) brightness(0.98)',
-                      }}
-                      priority
-                    />
-
-                    {/* Drawing Canvas Overlay */}
-                    <canvas
-                      ref={canvasRef}
-                      onMouseDown={startDrawing}
-                      onMouseMove={draw}
-                      onMouseUp={stopDrawing}
-                      onMouseLeave={stopDrawing}
-                      onTouchStart={startDrawing}
-                      onTouchMove={draw}
-                      onTouchEnd={stopDrawing}
-                      className="absolute top-0 left-0 w-full h-full"
-                      style={{
-                        cursor: drawingEnabled ? 'crosshair' : 'default',
-                        touchAction: drawingEnabled ? 'none' : 'auto',
-                      }}
-                    />
-                  </div>
-
-                  {/* Page Number at Bottom Corner */}
-                  <div className="text-right mt-6 pr-4 font-serif italic text-gray-600 text-sm">
-                    {currentPage + 1}
-                  </div>
-                </div>
-
-                {/* Worn edges effect */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
+                <Image
+                  src={sketch}
+                  alt={`Sketch ${index + 1}`}
+                  width={2000}
+                  height={3000}
+                  className="w-full h-auto shadow-lg"
                   style={{
-                    background: `
-                      radial-gradient(circle at top left, transparent 70%, rgba(139,69,19,0.1)),
-                      radial-gradient(circle at top right, transparent 70%, rgba(139,69,19,0.1)),
-                      radial-gradient(circle at bottom left, transparent 70%, rgba(139,69,19,0.1)),
-                      radial-gradient(circle at bottom right, transparent 70%, rgba(139,69,19,0.1))
-                    `
+                    filter: 'contrast(1.05) brightness(0.98)',
                   }}
                 />
               </motion.div>
-            </AnimatePresence>
+            ))}
           </div>
-
-          {/* Next Button */}
-          <button
-            onClick={nextPage}
-            disabled={currentPage === sketches.length - 1}
-            className="absolute right-0 z-10 p-4 rounded-full bg-white/80 backdrop-blur-sm shadow-lg hover:bg-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-            style={{ color: accentColor }}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Drawing Toolbar */}
-        <div className="fixed bottom-24 right-8 z-20 bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-4 border-2"
-          style={{ borderColor: `${accentColor}33` }}>
-          <div className="flex flex-col gap-4 items-center min-w-[200px]">
-            {/* Drawing Toggle */}
-            <div className="w-full">
-              <button
-                onClick={() => setDrawingEnabled(!drawingEnabled)}
-                className="w-full px-6 py-3 rounded-lg font-semibold transition-all"
-                style={{
-                  backgroundColor: drawingEnabled ? accentColor : '#e5e7eb',
-                  color: drawingEnabled ? '#ffffff' : '#374151',
-                }}
-              >
-                {drawingEnabled ? '✏️ Drawing ON' : '✏️ Drawing OFF'}
-              </button>
-            </div>
-
-            {/* Color Picker */}
-            {drawingEnabled && (
-              <>
-                <div className="w-full">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Pen Color
-                  </label>
-                  <div className="flex gap-2 items-center">
-                    <input
-                      type="color"
-                      value={penColor}
-                      onChange={(e) => setPenColor(e.target.value)}
-                      className="w-12 h-12 rounded-lg border-2 cursor-pointer"
-                      style={{ borderColor: accentColor }}
-                    />
-                    <div className="flex-1 flex gap-2">
-                      {['#000000', '#ff0000', '#0000ff', '#00ff00'].map(color => (
-                        <button
-                          key={color}
-                          onClick={() => setPenColor(color)}
-                          className="w-8 h-8 rounded-full border-2 transition-all"
-                          style={{
-                            backgroundColor: color,
-                            borderColor: penColor === color ? accentColor : '#d1d5db',
-                            transform: penColor === color ? 'scale(1.2)' : 'scale(1)',
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Pen Size Slider */}
-                <div className="w-full">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Pen Size: {penSize}px
-                  </label>
-                  <input
-                    type="range"
-                    min="1"
-                    max="20"
-                    value={penSize}
-                    onChange={(e) => setPenSize(parseInt(e.target.value))}
-                    className="w-full"
-                    style={{ accentColor }}
-                  />
-                </div>
-
-                {/* Clear Button */}
-                <div className="w-full">
-                  <button
-                    onClick={clearDrawing}
-                    className="w-full px-6 py-2 rounded-lg font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors"
-                  >
-                    🗑️ Clear Drawing
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Page Dots Indicator */}
-        <div className="flex justify-center gap-2 mt-8">
-          {sketches.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                setDirection(index > currentPage ? 1 : -1);
-                setCurrentPage(index);
-              }}
-              className="w-2 h-2 rounded-full transition-all"
-              style={{
-                backgroundColor: index === currentPage ? accentColor : '#d1d5db',
-                transform: index === currentPage ? 'scale(1.5)' : 'scale(1)'
-              }}
-            />
-          ))}
         </div>
       </main>
 

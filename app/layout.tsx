@@ -32,6 +32,37 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Preload critical images */}
+        <link rel="preload" as="image" href="/FinishedPaintings/bike.png" />
+        <link rel="preload" as="image" href="/FinishedPaintings/bird.png" />
+        <link rel="preload" as="image" href="/FinishedPaintings/duck.png" />
+        <link rel="preload" as="image" href="/FinishedPaintings/lagoon.png" />
+        <link rel="preload" as="image" href="/FinishedPaintings/river.png" />
+        <link rel="preload" as="image" href="/FinishedPaintings/tree.png" />
+        <link rel="preload" as="image" href="/test_new_feature/brushstroke.png" />
+        <link rel="preload" as="image" href="/images/victorhugoartlogo.png" />
+        <link rel="preload" as="image" href="/images/profile.jpg" />
+
+        {/* Preload sketch images */}
+        <link rel="preload" as="image" href="/sketches/image_1.png" />
+        <link rel="preload" as="image" href="/sketches/image_3.png" />
+        <link rel="preload" as="image" href="/sketches/image_4.png" />
+        <link rel="preload" as="image" href="/sketches/image_5.png" />
+        <link rel="preload" as="image" href="/sketches/image_6.png" />
+        <link rel="preload" as="image" href="/sketches/image_7.png" />
+        <link rel="preload" as="image" href="/sketches/image_8.png" />
+        <link rel="preload" as="image" href="/sketches/image_9.png" />
+        <link rel="preload" as="image" href="/sketches/image_10.png" />
+        <link rel="preload" as="image" href="/sketches/image_11.png" />
+        <link rel="preload" as="image" href="/sketches/image_12.png" />
+        <link rel="preload" as="image" href="/sketches/image_13.png" />
+        <link rel="preload" as="image" href="/sketches/image_14.png" />
+        <link rel="preload" as="image" href="/sketches/image_15.png" />
+        <link rel="preload" as="image" href="/sketches/image_17.png" />
+        <link rel="preload" as="image" href="/sketches/image_19.png" />
+        <link rel="preload" as="image" href="/sketches/image_21.png" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

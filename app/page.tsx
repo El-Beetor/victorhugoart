@@ -308,6 +308,7 @@ export default function Home() {
     const flowers: Flower[] = [];
     const maxFlowers = 5;
     const goldenRatio = 1.618033988749895; // Golden ratio for natural spacing
+    let totalFlowersCreated = 0; // Track total flowers created
 
     const createFlower = () => {
       const startX = Math.random() * canvas.width;
@@ -336,9 +337,10 @@ export default function Home() {
     const animateFlowers = () => {
       if (!colorImageRef.current) return;
 
-      // Add new flower if we have fewer than max
-      if (flowers.length < maxFlowers && Math.random() < 0.015) {
+      // Add new flower only if we haven't created 5 flowers yet
+      if (totalFlowersCreated < maxFlowers && Math.random() < 0.015) {
         flowers.push(createFlower());
+        totalFlowersCreated++;
       }
 
       // Update and draw flowers
@@ -939,7 +941,7 @@ export default function Home() {
               transform: 'scale(1.2)',
               zIndex: -1
             }}></div>
-            <h1 ref={textRef} className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light lowercase flex gap-0.5 sm:gap-1 md:gap-2 text-center flex-wrap justify-center max-w-full" style={{ filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6))' }}>
+            <h1 ref={textRef} className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-light lowercase flex gap-0.5 sm:gap-1 md:gap-2 text-center flex-wrap justify-center max-w-full" style={{ filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6))' }}>
             {'victor garcia art'.split('').map((letter, i) => {
               // Use gradient from mid to bright colors only (no dark colors)
               let color = accentColor;
