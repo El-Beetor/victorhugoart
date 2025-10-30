@@ -25,6 +25,7 @@ const sketchesBase = [
   '/sketches/image_17.png',
   '/sketches/image_19.png',
   '/sketches/image_21.png',
+  '/sketches/lagoon.png',
 ];
 
 // Shuffle function
@@ -58,7 +59,23 @@ export default function SketchBook() {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md" style={{ backgroundColor: '#fffff7DD' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
-          {/* Left: Menu Button */}
+          {/* Left: Site Name */}
+          <Link href="/" className="inline-flex items-center gap-2 pointer-events-auto z-10">
+            <Image
+              src="/favicon.ico"
+              alt="Victor Garcia Art Logo"
+              width={32}
+              height={32}
+              className="w-6 h-6 sm:w-8 sm:h-8"
+            />
+            <h1 className="text-2xl sm:text-3xl font-bold lowercase flex gap-1 text-black">
+              {'vicgarcia.art'.split('').map((letter, i) => (
+                <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, 0, -2, 3, -1, 0, -2, 3, -4, 2, -1][i]}deg)` }}>{letter}</span>
+              ))}
+            </h1>
+          </Link>
+
+          {/* Right: Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="w-10 h-10 flex flex-col justify-center items-center gap-1.5 hover:opacity-70 transition-opacity relative z-10"
@@ -67,18 +84,6 @@ export default function SketchBook() {
             <span className="w-6 h-0.5 rounded-full bg-black"></span>
             <span className="w-6 h-0.5 rounded-full bg-black"></span>
           </button>
-
-          {/* Center: Site Name */}
-          <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 inline-flex items-center pointer-events-auto z-0">
-            <h1 className="text-2xl sm:text-3xl font-bold lowercase flex gap-1 text-black">
-              {'vicgarcia.art'.split('').map((letter, i) => (
-                <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, 0, -2, 3, -1, 0, -2, 3, -4, 2, -1][i]}deg)` }}>{letter}</span>
-              ))}
-            </h1>
-          </Link>
-
-          {/* Right: Empty space for symmetry */}
-          <div className="w-10 h-10"></div>
         </div>
       </nav>
 
@@ -97,11 +102,11 @@ export default function SketchBook() {
 
             {/* Menu Panel */}
             <motion.div
-              initial={{ x: '-100%' }}
+              initial={{ x: '100%' }}
               animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
+              exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 h-full w-80 bg-[#fffff7] shadow-2xl z-50 flex flex-col"
+              className="fixed right-0 top-0 h-full w-80 bg-[#fffff7] shadow-2xl z-50 flex flex-col"
             >
               {/* Close Button */}
               <div className="flex justify-start p-6">

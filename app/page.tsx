@@ -37,15 +37,6 @@ const artworks = [
   },
   {
     id: 4,
-    title: 'Lagoon',
-    year: 2024,
-    category: 'Landscape',
-    description: 'Tranquil waters reflecting the peaceful beauty of nature.',
-    size: 'small',
-    image: '/FinishedPaintings/lagoon.png'
-  },
-  {
-    id: 5,
     title: 'River',
     year: 2024,
     category: 'Landscape',
@@ -54,7 +45,7 @@ const artworks = [
     image: '/FinishedPaintings/river.png'
   },
   {
-    id: 6,
+    id: 5,
     title: 'Tree',
     year: 2024,
     category: 'Nature',
@@ -69,7 +60,6 @@ const finishedPaintings = [
   '/FinishedPaintings/bike.png',
   '/FinishedPaintings/bird.png',
   '/FinishedPaintings/duck.png',
-  '/FinishedPaintings/lagoon.png',
   '/FinishedPaintings/river.png',
   '/FinishedPaintings/tree.png'
 ];
@@ -107,6 +97,7 @@ export default function Home() {
   const [letterColors, setLetterColors] = useState<string[]>([]);
   const [navBarColor, setNavBarColor] = useState('#ffffff');
   const revealCanvasRef = useRef<HTMLCanvasElement>(null);
+  const bgCanvasRef = useRef<HTMLCanvasElement>(null);
   const colorImageRef = useRef<HTMLImageElement | null>(null);
   const brushImageRef = useRef<HTMLImageElement | null>(null);
   const lastPercentageCheckRef = useRef(0);
@@ -122,6 +113,34 @@ export default function Home() {
       colorImageRef.current = colorImg;
       // Reset transitioning flag once image is loaded
       isTransitioningRef.current = false;
+
+      // Draw grayscale version on background canvas
+      if (bgCanvasRef.current) {
+        const bgCanvas = bgCanvasRef.current;
+        const bgCtx = bgCanvas.getContext('2d');
+        if (bgCtx) {
+          bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+          // Calculate cover dimensions
+          const { width, height, offsetX, offsetY } = getCoverDimensions(colorImg);
+
+          // Draw the image
+          bgCtx.drawImage(colorImg, offsetX, offsetY, width, height);
+
+          // Apply grayscale filter
+          const imageData = bgCtx.getImageData(0, 0, bgCanvas.width, bgCanvas.height);
+          const data = imageData.data;
+
+          for (let i = 0; i < data.length; i += 4) {
+            const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+            data[i] = gray;     // R
+            data[i + 1] = gray; // G
+            data[i + 2] = gray; // B
+          }
+
+          bgCtx.putImageData(imageData, 0, 0);
+        }
+      }
 
       // Sample random colors from the image for buttons (only ones with good contrast)
       const canvas = document.createElement('canvas');
@@ -257,7 +276,8 @@ export default function Home() {
 
   // Helper function to calculate cover dimensions (maintains aspect ratio)
   const getCoverDimensions = (img: HTMLImageElement) => {
-    const windowRatio = window.innerWidth / window.innerHeight;
+    const canvasHeight = window.innerHeight * 0.6667; // 2/3 of viewport height
+    const windowRatio = window.innerWidth / canvasHeight;
     const imageRatio = img.naturalWidth / img.naturalHeight;
 
     let width, height, offsetX, offsetY;
@@ -267,11 +287,11 @@ export default function Home() {
       width = window.innerWidth;
       height = window.innerWidth / imageRatio;
       offsetX = 0;
-      offsetY = -(height - window.innerHeight) / 2;
+      offsetY = -(height - canvasHeight) / 2;
     } else {
       // Window is taller - fit to height
-      width = window.innerHeight * imageRatio;
-      height = window.innerHeight;
+      width = canvasHeight * imageRatio;
+      height = canvasHeight;
       offsetX = -(width - window.innerWidth) / 2;
       offsetY = 0;
     }
@@ -438,13 +458,17 @@ export default function Home() {
     animateFlowers();
   }, [colorImageRef.current]);
 
-  // Initialize reveal canvas
+  // Initialize reveal canvas and background canvas
   useEffect(() => {
-    if (!revealCanvasRef.current) return;
+    if (!revealCanvasRef.current || !bgCanvasRef.current) return;
 
     const canvas = revealCanvasRef.current;
+    const bgCanvas = bgCanvasRef.current;
+
     canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.height = window.innerHeight * 0.6667; // 2/3 of viewport height
+    bgCanvas.width = window.innerWidth;
+    bgCanvas.height = window.innerHeight * 0.6667;
 
     // Start with transparent canvas (cream background shows through)
     const ctx = canvas.getContext('2d', { willReadFrequently: false });
@@ -462,12 +486,34 @@ export default function Home() {
       }
 
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.height = window.innerHeight * 0.6667; // 2/3 of viewport height
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight * 0.6667;
 
       const ctx = canvas.getContext('2d');
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(tempCanvas, 0, 0);
+      }
+
+      // Redraw grayscale background after resize
+      if (colorImageRef.current && bgCanvasRef.current) {
+        const bgCtx = bgCanvasRef.current.getContext('2d');
+        if (bgCtx) {
+          bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+          const { width, height, offsetX, offsetY } = getCoverDimensions(colorImageRef.current);
+          bgCtx.drawImage(colorImageRef.current, offsetX, offsetY, width, height);
+
+          const imageData = bgCtx.getImageData(0, 0, bgCanvas.width, bgCanvas.height);
+          const data = imageData.data;
+          for (let i = 0; i < data.length; i += 4) {
+            const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+            data[i] = gray;
+            data[i + 1] = gray;
+            data[i + 2] = gray;
+          }
+          bgCtx.putImageData(imageData, 0, 0);
+        }
       }
     };
 
@@ -480,14 +526,19 @@ export default function Home() {
     let counter = 0;
 
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      const canvasHeight = window.innerHeight * 0.6667;
 
-      // Add cursor trail with unique ID
-      const newTrail = { x: e.clientX, y: e.clientY, id: `${Date.now()}-${counter++}` };
-      setCursorTrail((prev) => [...prev, newTrail].slice(-15));
+      // Only track cursor trail in the top 2/3
+      if (e.clientY <= canvasHeight) {
+        setMousePosition({ x: e.clientX, y: e.clientY });
 
-      // Paint color image using brushstroke alpha as mask (skip if transitioning)
-      if (revealCanvasRef.current && colorImageRef.current && brushImageRef.current && !isTransitioningRef.current) {
+        // Add cursor trail with unique ID
+        const newTrail = { x: e.clientX, y: e.clientY, id: `${Date.now()}-${counter++}` };
+        setCursorTrail((prev) => [...prev, newTrail].slice(-15));
+      }
+
+      // Paint color image using brushstroke alpha as mask (skip if transitioning and only in top 2/3)
+      if (e.clientY <= canvasHeight && revealCanvasRef.current && colorImageRef.current && brushImageRef.current && !isTransitioningRef.current) {
         const ctx = revealCanvasRef.current.getContext('2d', { willReadFrequently: false });
         if (ctx) {
           const brushSize = Math.min(window.innerWidth, window.innerHeight) * 0.2;
@@ -553,10 +604,10 @@ export default function Home() {
                 // Switch to new random finished painting
                 const newPainting = getRandomPainting();
 
-                // Store current pixel count as baseline for next image
-                baselinePixelCountRef.current = revealedCount;
+                // Clear canvas for new image
+                ctx.clearRect(0, 0, revealCanvasRef.current.width, revealCanvasRef.current.height);
+                baselinePixelCountRef.current = 0;
 
-                // Don't clear canvas - keep previous painting
                 setRevealPercentage(0);
                 setIsPaintingComplete(false);
                 setCurrentImagePath(newPainting);
@@ -583,6 +634,10 @@ export default function Home() {
       const touch = e.touches[0];
       const centerX = touch.clientX;
       const centerY = touch.clientY;
+      const canvasHeight = window.innerHeight * 0.6667;
+
+      // Only work in the top 2/3
+      if (centerY > canvasHeight) return;
 
       const ctx = revealCanvasRef.current.getContext('2d', { willReadFrequently: false });
       if (!ctx) return;
@@ -647,7 +702,8 @@ export default function Home() {
 
       // Calculate percentage after animation completes
       setTimeout(() => {
-        const canvasImageData = ctx.getImageData(0, 0, revealCanvasRef.current!.width, revealCanvasRef.current!.height);
+        if (!revealCanvasRef.current) return;
+        const canvasImageData = ctx.getImageData(0, 0, revealCanvasRef.current.width, revealCanvasRef.current.height);
         let revealedCount = 0;
         let sampledCount = 0;
         for (let i = 3; i < canvasImageData.data.length; i += 40) {
@@ -670,10 +726,10 @@ export default function Home() {
           // Switch to new random finished painting
           const newPainting = getRandomPainting();
 
-          // Store current pixel count as baseline for next image
-          baselinePixelCountRef.current = revealedCount;
+          // Clear canvas for new image
+          ctx.clearRect(0, 0, revealCanvasRef.current.width, revealCanvasRef.current.height);
+          baselinePixelCountRef.current = 0;
 
-          // Don't clear canvas - keep previous painting
           setRevealPercentage(0);
           setIsPaintingComplete(false);
           setCurrentImagePath(newPainting);
@@ -763,10 +819,10 @@ export default function Home() {
 
   // Petal button data
   const petals = [
-    { name: 'Portfolio', href: '#portfolio', angle: 0 },
-    { name: 'SketchBook', href: '/sketchbook', angle: 90 },
-    { name: 'Shop', href: '/shop', angle: 180 },
-    { name: 'About', href: '/about', angle: 270 },
+    { name: 'Portfolio', href: '#portfolio', angle: 0, image: '/ButtonImages/portfolio.png' },
+    { name: 'SketchBook', href: '/sketchbook', angle: 90, image: '/ButtonImages/sketchbook.png' },
+    { name: 'Shop', href: '/shop', angle: 180, image: '/ButtonImages/shop.png' },
+    { name: 'About', href: '/about', angle: 270, image: '/ButtonImages/aboutme.png' },
   ];
 
   const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -809,8 +865,15 @@ export default function Home() {
 
       {/* Static Background - cream color with canvas overlay */}
       <div className="fixed inset-0 -z-10 bg-[#fffff7]">
-        {/* Canvas that reveals color image on mouse move */}
-        <div className="absolute inset-0 z-10">
+        {/* Black and white version of current image - 2/3 height */}
+        <div className="absolute inset-x-0 top-0 h-[66.67vh] z-0">
+          <canvas
+            ref={bgCanvasRef}
+            className="absolute inset-0"
+          />
+        </div>
+        {/* Canvas that reveals color image on mouse move - 2/3 height */}
+        <div className="absolute inset-x-0 top-0 h-[66.67vh] z-10">
           <canvas
             ref={revealCanvasRef}
             className="absolute inset-0 pointer-events-none"
@@ -821,7 +884,23 @@ export default function Home() {
       {/* Top Navigation Bar */}
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md" style={{ backgroundColor: '#fffff7DD' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
-          {/* Left: Menu Button */}
+          {/* Left: Site Name */}
+          <Link href="/" className="inline-flex items-center gap-2 pointer-events-auto z-10">
+            <Image
+              src="/favicon.ico"
+              alt="Victor Garcia Art Logo"
+              width={32}
+              height={32}
+              className="w-6 h-6 sm:w-8 sm:h-8"
+            />
+            <h1 className="text-2xl sm:text-3xl font-bold lowercase flex gap-1 text-black">
+              {'vicgarcia.art'.split('').map((letter, i) => (
+                <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, 0, -2, 3, -1, 0, -2, 3, -4, 2, -1][i]}deg)` }}>{letter}</span>
+              ))}
+            </h1>
+          </Link>
+
+          {/* Right: Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="w-10 h-10 flex flex-col justify-center items-center gap-1.5 hover:opacity-70 transition-opacity relative z-10"
@@ -830,18 +909,6 @@ export default function Home() {
             <span className="w-6 h-0.5 rounded-full bg-black"></span>
             <span className="w-6 h-0.5 rounded-full bg-black"></span>
           </button>
-
-          {/* Center: Site Name */}
-          <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 inline-flex items-center pointer-events-auto z-0">
-            <h1 className="text-2xl sm:text-3xl font-bold lowercase flex gap-1 text-black">
-              {'vicgarcia.art'.split('').map((letter, i) => (
-                <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, 0, -2, 3, -1, 0, -2, 3, -4, 2, -1][i]}deg)` }}>{letter}</span>
-              ))}
-            </h1>
-          </Link>
-
-          {/* Right: Empty space for symmetry */}
-          <div className="w-10 h-10"></div>
         </div>
       </nav>
 
@@ -860,11 +927,11 @@ export default function Home() {
 
             {/* Menu Panel */}
             <motion.div
-              initial={{ x: '-100%' }}
+              initial={{ x: '100%' }}
               animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
+              exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 h-full w-80 bg-[#fffff7] shadow-2xl z-50 flex flex-col"
+              className="fixed right-0 top-0 h-full w-80 bg-[#fffff7] shadow-2xl z-50 flex flex-col"
             >
               {/* Close Button */}
               <div className="flex justify-start p-6">
@@ -899,6 +966,16 @@ export default function Home() {
                   ))}
                 </Link>
                 <Link
+                  href="/sketchbook"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
+                >
+                  {'sketchbook'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, -2, 3, -4, 2, -3, 4, -2][i]}deg)` }}>{letter}</span>
+                  ))}
+                </Link>
+                <Link
                   href="/shop"
                   onClick={() => setIsMenuOpen(false)}
                   className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
@@ -925,14 +1002,16 @@ export default function Home() {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="relative min-h-screen">
-        {/* Center Text - Victor Garcia Art */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, delay: 0.3 }}
-          className="absolute inset-0 flex items-center justify-center pointer-events-none z-20 px-4"
-        >
+      <main className="relative h-screen flex flex-col">
+        {/* Top 2/3: Painting Area */}
+        <div className="relative h-[66.67vh] flex items-center justify-center">
+          {/* Center Text - Victor Garcia Art */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.3 }}
+            className="flex items-center justify-center pointer-events-none z-20 px-4"
+          >
           <div className="relative">
             {/* Blur background with gradient fade */}
             <div className="absolute inset-0 backdrop-blur-md" style={{
@@ -975,14 +1054,16 @@ export default function Home() {
           </h1>
           </div>
         </motion.div>
+        </div>
 
-        {/* Navigation Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
-          className="absolute bottom-20 left-0 right-0 flex flex-wrap justify-center gap-3 sm:gap-4 md:justify-evenly px-4 sm:px-6 select-none max-w-4xl mx-auto"
-        >
+        {/* Bottom 1/3: Navigation Buttons */}
+        <div className="relative h-[33.33vh] flex items-center justify-center bg-[#fffff7]">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 px-4 sm:px-6 select-none max-w-5xl mx-auto"
+          >
           {petals.map((petal, index) => (
             <Link key={petal.name} href={petal.href} onClick={petal.name === 'Portfolio' ? scrollToPortfolio : undefined}>
               <motion.div
@@ -990,48 +1071,52 @@ export default function Home() {
                 animate={{
                   scale: 1,
                   opacity: 1,
-                  rotate: [0, -10, 10, -10, 10, 0],
                 }}
                 whileHover={{
-                  scale: 1.1,
-                  rotate: 5,
+                  scale: 1.05,
                   transition: { duration: 0.2 }
                 }}
                 transition={{
                   scale: { duration: 0.4, delay: 1.2 + index * 0.1 },
                   opacity: { duration: 0.4, delay: 1.2 + index * 0.1 },
-                  rotate: {
-                    duration: 1.5,
-                    delay: 3 + index * 0.3,
-                    repeat: Infinity,
-                    repeatDelay: 4,
-                    ease: "easeInOut"
-                  }
                 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-4 sm:px-6 py-2 border-[3px] sm:border-[5px] rounded-full shadow-lg select-none"
-                style={{
-                  borderColor: darkColors[index % darkColors.length] || '#2e1705',
-                  color: darkColors[index % darkColors.length] || '#2e1705',
-                  backgroundColor: brightColors[index % brightColors.length] || 'transparent'
-                }}
+                className="flex flex-col items-center gap-2 select-none"
               >
-                <span className="font-semibold text-xs sm:text-sm select-none whitespace-nowrap">
+                <motion.div
+                  animate={{
+                    rotate: [0, -10, 10, -10, 10, 0],
+                  }}
+                  transition={{
+                    rotate: {
+                      duration: 1.5,
+                      delay: 3 + index * 0.3,
+                      repeat: Infinity,
+                      repeatDelay: 4,
+                      ease: "easeInOut"
+                    }
+                  }}
+                  className="rounded-lg overflow-hidden"
+                >
+                  <Image
+                    src={petal.image}
+                    alt={petal.name}
+                    width={200}
+                    height={200}
+                    className="w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 object-contain"
+                  />
+                </motion.div>
+                <span
+                  className="font-semibold text-base sm:text-lg select-none whitespace-nowrap uppercase"
+                  style={{ color: '#000000' }}
+                >
                   {petal.name}
                 </span>
               </motion.div>
             </Link>
           ))}
-        </motion.div>
-
-        {/* Decorative Background Glow */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.25, scale: 1 }}
-          transition={{ duration: 2, delay: 0.5 }}
-          className="absolute w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full blur-3xl -z-10"
-          style={{ backgroundColor: `${midColors[2] || brightAccentColor}66` }}
-        />
+          </motion.div>
+        </div>
       </main>
 
       {/* Portfolio Section */}

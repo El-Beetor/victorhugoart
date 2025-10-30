@@ -2,14 +2,21 @@ from PIL import Image, ImageEnhance, ImageStat
 import os
 from pathlib import Path
 import numpy as np
+from pillow_heif import register_heif_opener
 
-# Path to the bg_wallpapers folder
-folder_path = Path("public/bg_wallpapers")
+# Register HEIF/HEIC support
+register_heif_opener()
+
+# Path to the ButtonImages folder
+folder_path = Path("public/ButtonImages")
 
 print(f"Looking in: {folder_path.absolute()}")
 
-# Get all PNG files
-files = sorted(folder_path.glob("*.png"))
+# Get all image files (PNG, JPG, JPEG, HEIC)
+files = []
+for ext in ["*.png", "*.jpg", "*.jpeg", "*.heic", "*.HEIC"]:
+    files.extend(folder_path.glob(ext))
+files = sorted(files)
 
 print(f"Found {len(files)} images to process...")
 
@@ -75,10 +82,14 @@ for i, file_path in enumerate(files, start=1):
         # Step 3: Adjust contrast for consistency
         img = adjust_contrast(img, 1.1)
 
-        # Save the processed image (overwrite original)
-        img.save(file_path, 'PNG', optimize=True)
-
-        print("Done")
+        # Save the processed image (convert HEIC to PNG)
+        if file_path.suffix.lower() == '.heic':
+            new_path = file_path.with_suffix('.png')
+            img.save(new_path, 'PNG', optimize=True)
+            print(f"Converted to {new_path.name}")
+        else:
+            img.save(file_path, 'PNG', optimize=True)
+            print("Done")
 
     except Exception as e:
         print(f"Error: {e}")
