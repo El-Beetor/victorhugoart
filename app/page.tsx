@@ -96,6 +96,7 @@ export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [letterColors, setLetterColors] = useState<string[]>([]);
   const [navBarColor, setNavBarColor] = useState('#ffffff');
+  const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const revealCanvasRef = useRef<HTMLCanvasElement>(null);
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
   const colorImageRef = useRef<HTMLImageElement | null>(null);
@@ -819,10 +820,10 @@ export default function Home() {
 
   // Petal button data
   const petals = [
-    { name: 'Portfolio', href: '#portfolio', angle: 0, image: '/ButtonImages/portfolio.png' },
-    { name: 'SketchBook', href: '/sketchbook', angle: 90, image: '/ButtonImages/sketchbook.png' },
-    { name: 'Shop', href: '/shop', angle: 180, image: '/ButtonImages/shop.png' },
-    { name: 'About', href: '/about', angle: 270, image: '/ButtonImages/aboutme.png' },
+    { name: 'Portfolio', href: '#portfolio', angle: 0, image: '/ButtonImages/portfolio.png', hoverImage: '/ButtonImages/portfolio2.png' },
+    { name: 'SketchBook', href: '/sketchbook', angle: 90, image: '/ButtonImages/sketchbook.png', hoverImage: '/ButtonImages/sketchbook2.png' },
+    { name: 'Shop', href: '/shop', angle: 180, image: '/ButtonImages/shop.png', hoverImage: '/ButtonImages/shop2.png' },
+    { name: 'About', href: '/about', angle: 270, image: '/ButtonImages/aboutme.png', hoverImage: '/ButtonImages/aboutme2.png' },
   ];
 
   const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -1057,7 +1058,7 @@ export default function Home() {
         </div>
 
         {/* Bottom 1/3: Navigation Buttons */}
-        <div className="relative h-[33.33vh] flex items-center justify-center bg-[#fffff7]">
+        <div className="relative h-[50vh] md:h-[33.33vh] flex items-center justify-center bg-[#fffff7]">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1081,6 +1082,8 @@ export default function Home() {
                   opacity: { duration: 0.4, delay: 1.2 + index * 0.1 },
                 }}
                 whileTap={{ scale: 0.95 }}
+                onMouseEnter={() => setHoveredButton(petal.name)}
+                onMouseLeave={() => setHoveredButton(null)}
                 className="flex flex-col items-center gap-2 select-none"
               >
                 <motion.div
@@ -1099,7 +1102,7 @@ export default function Home() {
                   className="rounded-lg overflow-hidden"
                 >
                   <Image
-                    src={petal.image}
+                    src={hoveredButton === petal.name ? petal.hoverImage : petal.image}
                     alt={petal.name}
                     width={200}
                     height={200}
