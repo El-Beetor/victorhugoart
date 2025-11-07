@@ -33,9 +33,23 @@ export async function POST(req: NextRequest) {
       console.log('Payment successful:', session.id);
       console.log('Product ID:', session.metadata?.productId);
 
-      // TODO: Send confirmation email
-      // TODO: Update inventory
-      // TODO: Send artwork information
+      // Mark product as sold (unavailable)
+      if (session.metadata?.productId) {
+        try {
+          // Get existing product to preserve other metadata
+          const product = await stripe.products.retrieve(session.metadata.productId);
+
+          await stripe.products.update(session.metadata.productId, {
+            metadata: {
+              ...product.metadata, // Preserve existing metadata (category, size, etc.)
+              available: 'false', // Mark as sold
+            },
+          });
+          console.log(`Product ${session.metadata.productId} marked as sold`);
+        } catch (error) {
+          console.error('Error marking product as sold:', error);
+        }
+      }
 
       break;
 

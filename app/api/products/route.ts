@@ -24,7 +24,7 @@ export async function GET() {
         price: price ? (price.unit_amount || 0) / 100 : 0, // Convert from cents to dollars
         category: product.metadata?.category || 'Uncategorized',
         size: product.metadata?.size || '',
-        available: product.metadata?.available !== 'false', // Check metadata for availability
+        available: product.metadata?.available !== 'false', // If 'false' string, then unavailable (sold)
         description: product.description || '',
         images: product.images || [],
       };
