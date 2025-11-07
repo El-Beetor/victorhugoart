@@ -11,57 +11,77 @@ const artworks = [
   {
     id: 1,
     title: 'Bike',
-    year: 2024,
-    category: 'Landscape',
-    description: 'A vibrant scene capturing the essence of cycling through nature.',
-    size: 'large',
-    image: '/FinishedPaintings/bike.png'
+    year: 2025,
+    category: 'Oil on Canvas 9" x12"',
+    description: 'Oil on Canvas 9" x12"',
+    size: 'small',
+    image: '/FinishedPaintings/bike.jpg'
   },
   {
     id: 2,
     title: 'Bird',
-    year: 2024,
-    category: 'Nature',
-    description: 'Delicate brushwork bringing life to avian beauty.',
+    year: 2025,
+    category: 'Oil on Canvas 14" x18"',
+    description: 'Oil on Canvas 14" x18"',
     size: 'medium',
-    image: '/FinishedPaintings/bird.png'
+    image: '/FinishedPaintings/bird.jpg'
   },
   {
     id: 3,
     title: 'Duck',
-    year: 2024,
-    category: 'Nature',
-    description: 'A serene moment on the water, painted with careful observation.',
+    year: 2025,
+    category: 'Oil on Canvas 8" x 10"',
+    description: 'Oil on Canvas 8" x10"',
     size: 'large',
     image: '/FinishedPaintings/duck.png'
   },
   {
     id: 4,
     title: 'River',
-    year: 2024,
-    category: 'Landscape',
-    description: 'The flowing movement of water captured in color and light.',
+    year: 2025,
+    category: 'Oil on Canvas 8" x 10"',
+    description: 'Oil on Canvas 8" x 10"',
     size: 'medium',
     image: '/FinishedPaintings/river.png'
   },
   {
     id: 5,
     title: 'Tree',
-    year: 2024,
-    category: 'Nature',
-    description: 'Strong branches reaching skyward, a study of natural form.',
+    year: 2025,
+    category: 'Oil on Canvas 24" x 30"',
+    description: 'Oil on Canvas 24 x 30',
     size: 'large',
-    image: '/FinishedPaintings/tree.png'
+    image: '/FinishedPaintings/tree.jpg'
   },
+  {
+    id: 6,
+    title: 'Bar',
+    year: 2025,
+    category: 'Oil on Canvas 8" x 10"',
+    description: 'Oil on Canvas 8 x 10',
+    size: 'large',
+    image: '/FinishedPaintings/bar.jpg'
+  },
+  {
+    id: 7,
+    title: 'Sheep',
+    year: 2025,
+    category: 'Oil on Canvas 8" x 10"',
+    description: 'Oil on Canvas 8 x 10',
+    size: 'large',
+    image: '/FinishedPaintings/sheep.jpg'
+  }
 ];
 
 // Array of finished paintings
 const finishedPaintings = [
-  '/FinishedPaintings/bike.png',
-  '/FinishedPaintings/bird.png',
+  '/FinishedPaintings/bike.jpg',
+  '/FinishedPaintings/bird.jpg',
   '/FinishedPaintings/duck.png',
   '/FinishedPaintings/river.png',
-  '/FinishedPaintings/tree.png'
+  '/FinishedPaintings/tree.jpg',
+  '/FinishedPaintings/bar.jpg',
+  '/FinishedPaintings/sheep.jpg'
 ];
 
 // Function to get random painting

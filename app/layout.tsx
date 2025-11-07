@@ -34,12 +34,13 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* Preload critical images */}
-        <link rel="preload" as="image" href="/FinishedPaintings/bike.png" />
-        <link rel="preload" as="image" href="/FinishedPaintings/bird.png" />
+        <link rel="preload" as="image" href="/FinishedPaintings/bike.jpg" />
+        <link rel="preload" as="image" href="/FinishedPaintings/bird.jpg" />
         <link rel="preload" as="image" href="/FinishedPaintings/duck.png" />
-        <link rel="preload" as="image" href="/FinishedPaintings/lagoon.png" />
         <link rel="preload" as="image" href="/FinishedPaintings/river.png" />
-        <link rel="preload" as="image" href="/FinishedPaintings/tree.png" />
+        <link rel="preload" as="image" href="/FinishedPaintings/tree.jpg" />
+        <link rel="preload" as="image" href="/FinishedPaintings/bar.jpg" />
+        <link rel="preload" as="image" href="/FinishedPaintings/sheep.jpg" />
         <link rel="preload" as="image" href="/test_new_feature/brushstroke.png" />
         <link rel="preload" as="image" href="/images/victorhugoartlogo.png" />
         <link rel="preload" as="image" href="/images/profile.jpg" />
