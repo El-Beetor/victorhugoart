@@ -2,64 +2,50 @@
 
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useColors } from '../context/ColorContext';
 import Footer from '../components/Footer';
 
-const products = [
-  {
-    id: 1,
-    title: 'Abstract Dreams',
-    price: 299,
-    category: 'Abstract',
-    size: '24" x 36"',
-    available: true,
-  },
-  {
-    id: 2,
-    title: 'Sunset Portrait',
-    price: 499,
-    category: 'Portrait',
-    size: '30" x 40"',
-    available: true,
-  },
-  {
-    id: 3,
-    title: 'Mountain Vista',
-    price: 399,
-    category: 'Landscape',
-    size: '36" x 48"',
-    available: false,
-  },
-  {
-    id: 4,
-    title: 'Urban Flow',
-    price: 349,
-    category: 'Abstract',
-    size: '24" x 36"',
-    available: true,
-  },
-  {
-    id: 5,
-    title: 'Golden Hour',
-    price: 449,
-    category: 'Landscape',
-    size: '30" x 40"',
-    available: true,
-  },
-  {
-    id: 6,
-    title: 'Inner Light',
-    price: 599,
-    category: 'Portrait',
-    size: '36" x 48"',
-    available: true,
-  },
-];
+interface Product {
+  id: string;
+  priceId: string;
+  title: string;
+  price: number;
+  category: string;
+  size: string;
+  available: boolean;
+  description?: string;
+  images?: string[];
+}
 
 export default function Shop() {
   const { accentColor, darkGradientColor, brightAccentColor, darkColors, midColors, brightColors } = useColors();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch products from Stripe
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const response = await fetch('/api/products');
+        const data = await response.json();
+
+        if (data.error) {
+          setError(data.error);
+        } else {
+          setProducts(data.products);
+        }
+      } catch (err) {
+        setError('Failed to load products');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProducts();
+  }, []);
 
   const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -67,7 +53,7 @@ export default function Shop() {
     setIsMenuOpen(false);
   };
 
-  const handlePurchase = async (productId: number, title: string, price: number) => {
+  const handlePurchase = async (productId: string, priceId: string) => {
     try {
       // Create checkout session
       const response = await fetch('/api/checkout', {
@@ -77,8 +63,7 @@ export default function Shop() {
         },
         body: JSON.stringify({
           productId,
-          title,
-          price,
+          priceId,
         }),
       });
 
@@ -224,116 +209,108 @@ export default function Shop() {
             </p>
           </motion.div>
 
-          {/* Filter Buttons */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="flex gap-4 mb-12 flex-wrap"
-          >
-            <button
-              className="px-6 py-2 rounded-full transition-colors"
-              style={{ backgroundColor: `${accentColor}1A`, color: accentColor }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${accentColor}33`}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${accentColor}1A`}
-            >
-              All Available
-            </button>
-            <button
-              className="px-6 py-2 rounded-full transition-colors"
-              style={{ backgroundColor: `${accentColor}1A`, color: accentColor }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${accentColor}33`}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${accentColor}1A`}
-            >
-              Abstract
-            </button>
-            <button
-              className="px-6 py-2 rounded-full transition-colors"
-              style={{ backgroundColor: `${accentColor}1A`, color: accentColor }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${accentColor}33`}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${accentColor}1A`}
-            >
-              Portrait
-            </button>
-            <button
-              className="px-6 py-2 rounded-full transition-colors"
-              style={{ backgroundColor: `${accentColor}1A`, color: accentColor }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${accentColor}33`}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${accentColor}1A`}
-            >
-              Landscape
-            </button>
-          </motion.div>
+          {/* Loading State */}
+          {loading && (
+            <div className="text-center py-16">
+              <p className="text-xl" style={{ color: accentColor }}>Loading products...</p>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && (
+            <div className="text-center py-16">
+              <p className="text-xl text-red-600">{error}</p>
+            </div>
+          )}
 
           {/* Product Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((product, index) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * index }}
-                className="group"
-              >
-                <div
-                  className="relative aspect-square rounded-lg overflow-hidden border transition-all"
-                  style={{
-                    background: `linear-gradient(to bottom right, ${accentColor}33, ${brightAccentColor}33)`,
-                    borderColor: `${accentColor}33`
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.borderColor = `${accentColor}66`}
-                  onMouseLeave={(e) => e.currentTarget.style.borderColor = `${accentColor}33`}
-                >
-                  <div className="w-full h-full flex items-center justify-center text-gray-600">
-                    {/* Placeholder - replace with actual images */}
-                    <div className="text-center">
-                      <div className="text-6xl mb-4">🎨</div>
-                      <p className="text-sm">Product image</p>
-                    </div>
-                  </div>
-
-                  {!product.available && (
-                    <div className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: `${accentColor}CC` }}>
-                      <span className="text-[#fffff7] font-semibold text-lg">SOLD</span>
-                    </div>
-                  )}
+          {!loading && !error && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {products.length === 0 ? (
+                <div className="col-span-full text-center py-16">
+                  <p className="text-xl" style={{ color: accentColor }}>
+                    No products available yet. Add products in your Stripe dashboard!
+                  </p>
                 </div>
-
-                <div className="mt-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h3 className="text-xl font-semibold" style={{ color: accentColor }}>{product.title}</h3>
-                      <p className="text-sm text-gray-700">{product.category} • {product.size}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold" style={{ color: accentColor }}>${product.price}</p>
-                    </div>
-                  </div>
-
-                  {product.available ? (
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => handlePurchase(product.id, product.title, product.price)}
-                      className="w-full mt-3 px-6 py-3 text-[#fffff7] font-semibold rounded-lg transition-opacity"
-                      style={{ backgroundColor: accentColor }}
-                      onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
-                      onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+              ) : (
+                products.map((product, index) => (
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 * index }}
+                    className="group"
+                  >
+                    <div
+                      className="relative aspect-square rounded-lg overflow-hidden border transition-all"
+                      style={{
+                        background: `linear-gradient(to bottom right, ${accentColor}33, ${brightAccentColor}33)`,
+                        borderColor: `${accentColor}33`
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = `${accentColor}66`}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = `${accentColor}33`}
                     >
-                      Purchase with Stripe
-                    </motion.button>
-                  ) : (
-                    <button
-                      disabled
-                      className="w-full mt-3 px-6 py-3 font-semibold rounded-lg cursor-not-allowed bg-gray-200 text-gray-500"
-                    >
-                      Sold Out
-                    </button>
-                  )}
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                      {product.images && product.images.length > 0 ? (
+                        <img
+                          src={product.images[0]}
+                          alt={product.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-600">
+                          <div className="text-center">
+                            <div className="text-6xl mb-4">🎨</div>
+                            <p className="text-sm">No image</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {!product.available && (
+                        <div className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: `${accentColor}CC` }}>
+                          <span className="text-[#fffff7] font-semibold text-lg">SOLD</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mt-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex-1">
+                          <h3 className="text-xl font-semibold" style={{ color: accentColor }}>{product.title}</h3>
+                          {product.description && (
+                            <p className="text-sm text-gray-700 mt-1">{product.description}</p>
+                          )}
+                        </div>
+                        <div className="text-right ml-4">
+                          <p className="text-2xl font-bold" style={{ color: accentColor }}>${product.price}</p>
+                        </div>
+                      </div>
+
+                      {product.available ? (
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handlePurchase(product.id, product.priceId)}
+                          className="w-full mt-3 px-6 py-3 text-[#fffff7] font-semibold rounded-lg transition-opacity"
+                          style={{ backgroundColor: accentColor }}
+                          onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                          onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                        >
+                          Purchase with Stripe
+                        </motion.button>
+                      ) : (
+                        <button
+                          disabled
+                          className="w-full mt-3 px-6 py-3 font-semibold rounded-lg cursor-not-allowed bg-gray-200 text-gray-500"
+                        >
+                          Sold Out
+                        </button>
+                      )}
+                    </div>
+                  </motion.div>
+                ))
+              )}
+            </div>
+          )}
 
           {/* Info Section */}
           <motion.div
