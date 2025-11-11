@@ -10,16 +10,16 @@ import Footer from './components/Footer';
 const artworks = [
   {
     id: 1,
-    title: 'Bike',
+    title: 'After School Bike Ride',
     year: 2025,
-    category: 'Oil on Canvas 9" x12"',
+    category: 'Oil on Canvas 9 x 12"',
     description: 'Oil on Canvas 9" x12"',
     size: 'small',
     image: '/FinishedPaintings/bike.jpg'
   },
   {
     id: 2,
-    title: 'Bird',
+    title: 'A Bird in Blue',
     year: 2025,
     category: 'Oil on Canvas 14" x18"',
     description: 'Oil on Canvas 14" x18"',
@@ -28,25 +28,25 @@ const artworks = [
   },
   {
     id: 3,
-    title: 'Duck',
+    title: 'Sisters',
     year: 2025,
-    category: 'Oil on Canvas 8" x 10"',
+    category: 'Oil on Paper 8" x 10"',
     description: 'Oil on Canvas 8" x10"',
     size: 'large',
     image: '/FinishedPaintings/duck.png'
   },
   {
     id: 4,
-    title: 'River',
+    title: 'Long way down: Far way forward',
     year: 2025,
-    category: 'Oil on Canvas 8" x 10"',
+    category: 'Oil on Wood 8" x 10"',
     description: 'Oil on Canvas 8" x 10"',
     size: 'medium',
     image: '/FinishedPaintings/river.png'
   },
   {
     id: 5,
-    title: 'Tree',
+    title: 'Bellowing Tree',
     year: 2025,
     category: 'Oil on Canvas 24" x 30"',
     description: 'Oil on Canvas 24 x 30',
@@ -55,7 +55,7 @@ const artworks = [
   },
   {
     id: 6,
-    title: 'Bar',
+    title: '10pm',
     year: 2025,
     category: 'Oil on Canvas 8" x 10"',
     description: 'Oil on Canvas 8 x 10',
@@ -64,7 +64,7 @@ const artworks = [
   },
   {
     id: 7,
-    title: 'Sheep',
+    title: 'French Sheep',
     year: 2025,
     category: 'Oil on Canvas 8" x 10"',
     description: 'Oil on Canvas 8 x 10',
