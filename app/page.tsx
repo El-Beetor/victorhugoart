@@ -19,7 +19,7 @@ const artworks = [
   },
   {
     id: 2,
-    title: 'A Bird in Blue',
+    title: 'Bird in Blue',
     year: 2025,
     category: 'Oil on Canvas 14" x18"',
     description: 'Oil on Canvas 14" x18"',
@@ -46,7 +46,7 @@ const artworks = [
   },
   {
     id: 5,
-    title: 'Bellowing Tree',
+    title: 'Billowing Tree',
     year: 2025,
     category: 'Oil on Canvas 24" x 30"',
     description: 'Oil on Canvas 24 x 30',
@@ -64,7 +64,7 @@ const artworks = [
   },
   {
     id: 7,
-    title: 'French Sheep',
+    title: 'Le\' Sheep',
     year: 2025,
     category: 'Oil on Canvas 8" x 10"',
     description: 'Oil on Canvas 8 x 10',
