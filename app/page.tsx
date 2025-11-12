@@ -1023,7 +1023,7 @@ export default function Home() {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="relative h-screen flex flex-col">
+      <main className="relative min-h-screen flex flex-col">
         {/* Top 2/3: Painting Area */}
         <div className="relative h-[66.67vh] flex items-center justify-center">
           {/* Center Text - Victor Garcia Art */}
@@ -1078,7 +1078,7 @@ export default function Home() {
         </div>
 
         {/* Bottom 1/3: Navigation Buttons */}
-        <div className="relative h-[50vh] md:h-[33.33vh] flex items-center justify-center bg-[#fffff7]">
+        <div className="relative py-2 md:py-12 flex items-center justify-center bg-[#fffff7]">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1143,7 +1143,7 @@ export default function Home() {
       </main>
 
       {/* Portfolio Section */}
-      <section id="portfolio" className="relative py-20 px-4 sm:px-6" style={{
+      <section id="portfolio" className="relative  py-10 px-4 sm:px-6" style={{
         background: `linear-gradient(to bottom, #fffff7, #f5f5ed)`
       }}>
         <div className="max-w-6xl mx-auto">
