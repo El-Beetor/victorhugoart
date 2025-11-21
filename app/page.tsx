@@ -10,6 +10,15 @@ import Footer from './components/Footer';
 const artworks = [
   {
     id: 1,
+    title: '10pm',
+    year: 2025,
+    category: 'Oil on Canvas 8" x 10"',
+    description: 'Oil on Canvas 8 x 10',
+    size: 'large',
+    image: '/FinishedPaintings/bar.jpg'
+  },
+  {
+    id: 2,
     title: 'After School Bike Ride',
     year: 2025,
     category: 'Oil on Canvas 9 x 12"',
@@ -18,7 +27,7 @@ const artworks = [
     image: '/FinishedPaintings/bike.jpg'
   },
   {
-    id: 2,
+    id: 3,
     title: 'Bird in Blue',
     year: 2025,
     category: 'Oil on Canvas 14" x18"',
@@ -27,7 +36,7 @@ const artworks = [
     image: '/FinishedPaintings/bird.jpg'
   },
   {
-    id: 3,
+    id: 4,
     title: 'Sisters',
     year: 2025,
     category: 'Oil on Paper 8" x 10"',
@@ -36,7 +45,7 @@ const artworks = [
     image: '/FinishedPaintings/duck.png'
   },
   {
-    id: 4,
+    id: 5,
     title: 'Long way down: Far way forward',
     year: 2025,
     category: 'Oil on Wood 8" x 10"',
@@ -45,22 +54,13 @@ const artworks = [
     image: '/FinishedPaintings/river.png'
   },
   {
-    id: 5,
+    id: 6,
     title: 'Billowing Tree',
     year: 2025,
     category: 'Oil on Canvas 24" x 30"',
     description: 'Oil on Canvas 24 x 30',
     size: 'large',
     image: '/FinishedPaintings/tree.jpg'
-  },
-  {
-    id: 6,
-    title: '10pm',
-    year: 2025,
-    category: 'Oil on Canvas 8" x 10"',
-    description: 'Oil on Canvas 8 x 10',
-    size: 'large',
-    image: '/FinishedPaintings/bar.jpg'
   },
   {
     id: 7,
@@ -75,12 +75,12 @@ const artworks = [
 
 // Array of finished paintings
 const finishedPaintings = [
+  '/FinishedPaintings/bar.jpg',
   '/FinishedPaintings/bike.jpg',
   '/FinishedPaintings/bird.jpg',
   '/FinishedPaintings/duck.png',
   '/FinishedPaintings/river.png',
   '/FinishedPaintings/tree.jpg',
-  '/FinishedPaintings/bar.jpg',
   '/FinishedPaintings/sheep.jpg'
 ];
 
@@ -1078,7 +1078,7 @@ export default function Home() {
         </div>
 
         {/* Bottom 1/3: Navigation Buttons */}
-        <div className="relative py-2 md:py-12 flex items-center justify-center bg-[#fffff7]">
+        <div className="relative py-2 md:py-25 flex items-center justify-center bg-[#fffff7]">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
