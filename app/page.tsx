@@ -10,71 +10,89 @@ import Footer from './components/Footer';
 const artworks = [
   {
     id: 1,
+    title: 'Graceland',
+    year: 2025,
+    category: 'Oil on Canvas 8" x 12"',
+    description: 'Oil on Canvas 8" x 12"',
+    size: 'small',
+    image: '/FinishedPaintings/graceland.jpg',
+    behindTheScenesUrl: '/behind-the-scenes/graceland'
+  },
+  {
+    id: 2,
     title: '10pm',
     year: 2025,
     category: 'Oil on Canvas 8" x 10"',
     description: 'Oil on Canvas 8 x 10',
     size: 'large',
-    image: '/FinishedPaintings/bar.jpg'
+    image: '/FinishedPaintings/bar.jpg',
+    behindTheScenesUrl: '/behind-the-scenes/10pm'
   },
   {
-    id: 2,
+    id: 3,
     title: 'After School Bike Ride',
     year: 2025,
     category: 'Oil on Canvas 9 x 12"',
     description: 'Oil on Canvas 9" x12"',
     size: 'small',
-    image: '/FinishedPaintings/bike.jpg'
+    image: '/FinishedPaintings/bike.jpg',
+    behindTheScenesUrl: '/behind-the-scenes/after-school-bike-ride'
   },
   {
-    id: 3,
+    id: 4,
     title: 'Bird in Blue',
     year: 2025,
     category: 'Oil on Canvas 14" x18"',
     description: 'Oil on Canvas 14" x18"',
     size: 'medium',
-    image: '/FinishedPaintings/bird.jpg'
+    image: '/FinishedPaintings/bird.jpg',
+    behindTheScenesUrl: '/behind-the-scenes/bird-in-blue'
   },
   {
-    id: 4,
+    id: 5,
     title: 'Sisters',
     year: 2025,
     category: 'Oil on Paper 8" x 10"',
     description: 'Oil on Canvas 8" x10"',
     size: 'large',
-    image: '/FinishedPaintings/duck.png'
+    image: '/FinishedPaintings/duck.png',
+    behindTheScenesUrl: '/behind-the-scenes/sisters'
   },
   {
-    id: 5,
+    id: 6,
     title: 'Long way down: Far way forward',
     year: 2025,
     category: 'Oil on Wood 8" x 10"',
     description: 'Oil on Canvas 8" x 10"',
     size: 'medium',
-    image: '/FinishedPaintings/river.png'
+    image: '/FinishedPaintings/river.png',
+    behindTheScenesUrl: '/behind-the-scenes/long-way-down'
   },
   {
-    id: 6,
+    id: 7,
     title: 'Billowing Tree',
     year: 2025,
     category: 'Oil on Canvas 24" x 30"',
     description: 'Oil on Canvas 24 x 30',
     size: 'large',
-    image: '/FinishedPaintings/tree.jpg'
+    image: '/FinishedPaintings/tree.jpg',
+    behindTheScenesUrl: '/behind-the-scenes/billowing-tree'
   },
   {
-    id: 7,
+    id: 8,
     title: 'Le\' Sheep',
     year: 2025,
     category: 'Oil on Canvas 8" x 10"',
     description: 'Oil on Canvas 8 x 10',
     size: 'large',
-    image: '/FinishedPaintings/sheep.jpg'
+    image: '/FinishedPaintings/sheep.jpg',
+    behindTheScenesUrl: '/behind-the-scenes/le-sheep'
   }
 ];
 
 // Array of finished paintings
 const finishedPaintings = [
+  '/FinishedPaintings/graceland.jpg',
   '/FinishedPaintings/bar.jpg',
   '/FinishedPaintings/bike.jpg',
   '/FinishedPaintings/bird.jpg',
@@ -1221,12 +1239,34 @@ export default function Home() {
                   transition={{ delay: 0.2 * index + 0.3 }}
                   className="mt-8 max-w-2xl mx-auto p-6"
                 >
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2" style={{ color: darkColors[0] || accentColor }}>
-                    {art.title}
-                  </h3>
-                  <p className="text-sm" style={{ color: darkColors[1] || accentColor }}>
-                    {art.category} • {art.year}
-                  </p>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+                    {/* Artwork Info */}
+                    <div className="flex-1">
+                      <h3 className="text-xl sm:text-2xl font-bold mb-2" style={{ color: darkColors[0] || accentColor }}>
+                        {art.title}
+                      </h3>
+                      <p className="text-sm" style={{ color: darkColors[1] || accentColor }}>
+                        {art.category} • {art.year}
+                      </p>
+                    </div>
+
+                    {/* Behind the Scenes Button - only for specific artworks */}
+                    {art.behindTheScenesUrl && (
+                      <Link href={art.behindTheScenesUrl}>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-4 py-2 rounded-lg font-medium text-sm sm:text-base whitespace-nowrap transition-all duration-300 shadow-md hover:shadow-lg"
+                          style={{
+                            backgroundColor: darkColors[0] || accentColor,
+                            color: '#fffff7'
+                          }}
+                        >
+                          See Behind the Scenes
+                        </motion.button>
+                      </Link>
+                    )}
+                  </div>
                 </motion.div>
               </motion.div>
             ))}
