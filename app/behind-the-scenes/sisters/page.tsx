@@ -160,7 +160,7 @@ export default function SistersBehindTheScenes() {
             <h2 className="text-3xl sm:text-4xl font-bold text-center mb-6" style={{ color: darkColors[0] || accentColor }}>About This Piece</h2>
             <div className="bg-white p-8 shadow-lg rounded-lg">
               <p className="text-lg leading-relaxed mb-4" style={{ color: darkColors[1] || accentColor }}>
-                  I wanted to make a paining for my sister. I haven't seen her in a while and wanted her to have something I made. She was stressed so I found the most relaxing photo I could find in my references.
+                  I wanted to make a painting for my sister. I haven&apos;t seen her in a while and wanted her to have something I made. She was stressed so I found the most relaxing photo I could find in my references.
               </p>
               <p className="text-lg leading-relaxed" style={{ color: darkColors[1] || accentColor }}>
               </p>
