@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 import { useColors } from '../../context/ColorContext';
 import Footer from '../../components/Footer';
 
@@ -78,7 +77,7 @@ export default function LeSheepBehindTheScenes() {
       <main className="pt-24 pb-16 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-center mb-12">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4" style={{ color: darkColors[0] || accentColor }}>Le' Sheep</h1>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4" style={{ color: darkColors[0] || accentColor }}>Le&apos; Sheep</h1>
             <p className="text-xl" style={{ color: darkColors[1] || accentColor }}>Behind the Scenes</p>
           </motion.div>
 
@@ -87,7 +86,7 @@ export default function LeSheepBehindTheScenes() {
               <Image src="/FinishedPaintings/sheep.jpg" alt="Le' Sheep - Finished Painting" width={1200} height={800} className="w-full h-auto" />
               <div className="mt-6 text-center">
                 <h2 className="text-2xl font-bold mb-2" style={{ color: darkColors[0] || accentColor }}>Finished Painting</h2>
-                <p className="text-sm" style={{ color: darkColors[1] || accentColor }}>Oil on Canvas 8" x 10" • 2025</p>
+                <p className="text-sm" style={{ color: darkColors[1] || accentColor }}>Oil on Canvas 8&quot; x 10&quot; • 2025</p>
               </div>
             </div>
           </motion.div>
@@ -160,8 +159,8 @@ export default function LeSheepBehindTheScenes() {
             <h2 className="text-3xl sm:text-4xl font-bold text-center mb-6" style={{ color: darkColors[0] || accentColor }}>About This Piece</h2>
             <div className="bg-white p-8 shadow-lg rounded-lg">
               <p className="text-lg leading-relaxed mb-4" style={{ color: darkColors[1] || accentColor }}>
-                  This one was fun to paint because I did it around friends. I wish I didn't go so saturated with the colors, it is jarring for me looking back at it. I also wish I had smaller brushes to work with when I made this.
-                  I think using a large brush for most of the painting is great but you do need some small details to really sell some shapes. 
+                  This one was fun to paint because I did it around friends. I wish I didn&apos;t go so saturated with the colors, it is jarring for me looking back at it. I also wish I had smaller brushes to work with when I made this.
+                  I think using a large brush for most of the painting is great but you do need some small details to really sell some shapes.
               </p>
               <p className="text-lg leading-relaxed" style={{ color: darkColors[1] || accentColor }}>
               </p>

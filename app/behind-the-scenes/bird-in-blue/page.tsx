@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 import { useColors } from '../../context/ColorContext';
 import Footer from '../../components/Footer';
 
@@ -99,7 +98,7 @@ export default function BirdInBlueBehindTheScenes() {
               <Image src="/FinishedPaintings/bird.jpg" alt="Bird in Blue - Finished Painting" width={1200} height={800} className="w-full h-auto" />
               <div className="mt-6 text-center">
                 <h2 className="text-2xl font-bold mb-2" style={{ color: darkColors[0] || accentColor }}>Finished Painting</h2>
-                <p className="text-sm" style={{ color: darkColors[1] || accentColor }}>Oil on Canvas 14" x 18" • 2025</p>
+                <p className="text-sm" style={{ color: darkColors[1] || accentColor }}>Oil on Canvas 14&quot; x 18&quot; • 2025</p>
               </div>
             </div>
           </motion.div>
@@ -172,8 +171,8 @@ export default function BirdInBlueBehindTheScenes() {
             <h2 className="text-3xl sm:text-4xl font-bold text-center mb-6" style={{ color: darkColors[0] || accentColor }}>About This Piece</h2>
             <div className="bg-white p-8 shadow-lg rounded-lg">
               <p className="text-lg leading-relaxed mb-4" style={{ color: darkColors[1] || accentColor }}>
-                  This was the first oil painting I did in college. I wanted to get into this hobbie that i've always loved but didn't have the time to due to school work. Well it was my last year and I had a light schedule that quarter so It seemed like a good time to start.
-                  My girlfriend took this photo of a bird perched on a dead branch in front of a lagoon that I really liked. I genuinely don't know how it came out as good as it did. I am still trying to reach the level that this painting reached. Hopefully one day.
+                  This was the first oil painting I did in college. I wanted to get into this hobbie that i&apos;ve always loved but didn&apos;t have the time to due to school work. Well it was my last year and I had a light schedule that quarter so It seemed like a good time to start.
+                  My girlfriend took this photo of a bird perched on a dead branch in front of a lagoon that I really liked. I genuinely don&apos;t know how it came out as good as it did. I am still trying to reach the level that this painting reached. Hopefully one day.
               </p>
               <p className="text-lg leading-relaxed" style={{ color: darkColors[1] || accentColor }}>
               </p>

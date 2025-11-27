@@ -2,18 +2,12 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useColors } from '../../context/ColorContext';
 import Footer from '../../components/Footer';
 
 export default function AfterSchoolBikeRideBehindTheScenes() {
   const { accentColor, darkColors } = useColors();
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  const wipImages = [
-    { src: '/placeholder-wip.jpg', title: '' },
-  ];
 
   // Color palette used in the painting
   const colorPalette = [
@@ -33,14 +27,6 @@ export default function AfterSchoolBikeRideBehindTheScenes() {
     { color: '#404040', name: 'Darks', percentage: 18 },
     { color: '#1C1C1C', name: 'Deep Shadows', percentage: 5 },
   ];
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % wipImages.length);
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + wipImages.length) % wipImages.length);
-  };
 
   // Generate pie chart slices for color palette
   const generatePieSlices = (data: typeof colorPalette) => {
@@ -149,7 +135,7 @@ export default function AfterSchoolBikeRideBehindTheScenes() {
                   Finished Painting
                 </h2>
                 <p className="text-sm" style={{ color: darkColors[1] || accentColor }}>
-                  Oil on Canvas 9" x 12" • 2025
+                  Oil on Canvas 9&quot; x 12&quot; • 2025
                 </p>
               </div>
             </div>

@@ -55,7 +55,8 @@ export default function GracelandBehindTheScenes() {
 
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
-    let h = 0, s = 0, l = (max + min) / 2;
+    let h = 0, s = 0;
+    const l = (max + min) / 2;
 
     if (max !== min) {
       const d = max - min;
@@ -205,7 +206,7 @@ export default function GracelandBehindTheScenes() {
                   Finished Painting
                 </h2>
                 <p className="text-sm" style={{ color: darkColors[1] || accentColor }}>
-                  Oil on Canvas 8" x 12" • 2025
+                  Oil on Canvas 8&quot; x 12&quot; • 2025
                 </p>
               </div>
             </div>
@@ -315,9 +316,9 @@ export default function GracelandBehindTheScenes() {
 
               </p>
               <p className="text-lg leading-relaxed" style={{ color: darkColors[1] || accentColor }}>
-                I decided on a longer canvas since I wanted to capture a relaxed feeling. I took several photos from different views and used most of them for this composition. 
+                I decided on a longer canvas since I wanted to capture a relaxed feeling. I took several photos from different views and used most of them for this composition.
                 The Hills for me where the main event and wanted to make sure they covered most of the canvas. I had a lot of trouble with the foreground,
-                I kept adding and taking away detail since I wasn't sure just how much I wanted the foreground to stand out. In the end I settled for a lot less detail and let the 
+                I kept adding and taking away detail since I wasn&apos;t sure just how much I wanted the foreground to stand out. In the end I settled for a lot less detail and let the
                 two cows steal the show.
               </p>
             </div>

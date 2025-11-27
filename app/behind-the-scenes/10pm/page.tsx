@@ -54,7 +54,8 @@ export default function TenPmBehindTheScenes() {
 
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
-    let h = 0, s = 0, l = (max + min) / 2;
+    let h = 0, s = 0;
+    const l = (max + min) / 2;
 
     if (max !== min) {
       const d = max - min;
@@ -204,7 +205,7 @@ export default function TenPmBehindTheScenes() {
                   Finished Painting
                 </h2>
                 <p className="text-sm" style={{ color: darkColors[1] || accentColor }}>
-                  Oil on Canvas 8" x 10" • 2025
+                  Oil on Canvas 8&quot; x 10&quot; • 2025
                 </p>
               </div>
             </div>

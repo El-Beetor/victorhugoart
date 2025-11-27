@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 import { useColors } from '../../context/ColorContext';
 import Footer from '../../components/Footer';
 
@@ -87,7 +86,7 @@ export default function BillowingTreeBehindTheScenes() {
               <Image src="/FinishedPaintings/tree.jpg" alt="Billowing Tree - Finished Painting" width={1200} height={800} className="w-full h-auto" />
               <div className="mt-6 text-center">
                 <h2 className="text-2xl font-bold mb-2" style={{ color: darkColors[0] || accentColor }}>Finished Painting</h2>
-                <p className="text-sm" style={{ color: darkColors[1] || accentColor }}>Oil on Canvas 24" x 30" • 2025</p>
+                <p className="text-sm" style={{ color: darkColors[1] || accentColor }}>Oil on Canvas 24&quot; x 30&quot; • 2025</p>
               </div>
             </div>
           </motion.div>
