@@ -13,7 +13,7 @@ export default function TenPmBehindTheScenes() {
 
   const wipImages = [
     { src: '/WorkInProgress/10pm_wip/undercoat.jpg', title: 'I started this painting with a bright red undercoat' },
-    { src: '/WorkInProgress/10pm_wip/sketch.jpg', title: 'I then scetched the composition' },
+    { src: '/WorkInProgress/10pm_wip/sketch.jpg', title: 'I then sketched the composition' },
     { src: '/WorkInProgress/10pm_wip/blockin.jpg', title: 'Blocked in the darks and lights' },
     { src: '/FinishedPaintings/bar.jpg', title: 'I brightened up the piece and added a lot more lights' },
     
@@ -309,9 +309,9 @@ export default function TenPmBehindTheScenes() {
               <p className="text-lg leading-relaxed mb-4" style={{ color: darkColors[1] || accentColor }}>
                 I currently live on top of a bar and knew I had to paint it at some point. This is that some point. 
                 I went down there and did a sketch of the scene and really enjoyed the composition and how easily it was to enter it. 
-                The bar had a distint bright red that I wanted to make sure was in the final piece. This one was a hard piece to get right. It took a while
-                to get it to point where I was happy with it. I had to go back and add a lot more light sources than there was in real life to get the that cozy feeling I 
-                felt when I was there. 
+                The bar had a distinct bright red that I wanted to make sure was in the final piece. This one was a hard piece to get right. It took a while
+                to get it to a point where I was happy with it. I had to go back and add a lot more light sources than there were in real life to get that cozy feeling I
+                felt when I was there.
               </p>
               <p className="text-lg leading-relaxed" style={{ color: darkColors[1] || accentColor }}>
               </p>

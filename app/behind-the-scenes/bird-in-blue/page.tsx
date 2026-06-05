@@ -171,7 +171,7 @@ export default function BirdInBlueBehindTheScenes() {
             <h2 className="text-3xl sm:text-4xl font-bold text-center mb-6" style={{ color: darkColors[0] || accentColor }}>About This Piece</h2>
             <div className="bg-white p-8 shadow-lg rounded-lg">
               <p className="text-lg leading-relaxed mb-4" style={{ color: darkColors[1] || accentColor }}>
-                  This was the first oil painting I did in college. I wanted to get into this hobbie that i&apos;ve always loved but didn&apos;t have the time to due to school work. Well it was my last year and I had a light schedule that quarter so It seemed like a good time to start.
+                  This was the first oil painting I did in college. I wanted to get into this hobby that I&apos;ve always loved but didn&apos;t have the time to due to school work. Well it was my last year and I had a light schedule that quarter so it seemed like a good time to start.
                   My girlfriend took this photo of a bird perched on a dead branch in front of a lagoon that I really liked. I genuinely don&apos;t know how it came out as good as it did. I am still trying to reach the level that this painting reached. Hopefully one day.
               </p>
               <p className="text-lg leading-relaxed" style={{ color: darkColors[1] || accentColor }}>

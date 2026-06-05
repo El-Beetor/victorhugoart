@@ -237,7 +237,7 @@ export default function AfterSchoolBikeRideBehindTheScenes() {
             </h2>
             <div className="bg-white p-8 shadow-lg rounded-lg">
               <p className="text-lg leading-relaxed mb-4" style={{ color: darkColors[1] || accentColor }}>
-                  One of the earlier oil paintings I have. This is of my friends biking around our University on a foggy evening. I loved the ambience of that back ride.
+                  One of the earlier oil paintings I have. This is of my friends biking around our University on a foggy evening. I loved the ambience of that bike ride.
               </p>
               <p className="text-lg leading-relaxed" style={{ color: darkColors[1] || accentColor }}>
               </p>

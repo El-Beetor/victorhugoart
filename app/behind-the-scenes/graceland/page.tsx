@@ -311,13 +311,13 @@ export default function GracelandBehindTheScenes() {
               <p className="text-lg leading-relaxed mb-4" style={{ color: darkColors[1] || accentColor }}>
                 I wanted to take a drive on California State Route 1 one of my favorite scenic routes. 
                 My girlfriend and I stopped by the road right before the coast to take a look at the rolling hills and the cows. 
-                I came on this ride with my Nikon D5100 camera hoping to captrue some reference photos for future paintings. 
+                I came on this ride with my Nikon D5100 camera hoping to capture some reference photos for future paintings.
                 This was one I knew I wanted to paint right away.
 
               </p>
               <p className="text-lg leading-relaxed" style={{ color: darkColors[1] || accentColor }}>
                 I decided on a longer canvas since I wanted to capture a relaxed feeling. I took several photos from different views and used most of them for this composition.
-                The Hills for me where the main event and wanted to make sure they covered most of the canvas. I had a lot of trouble with the foreground,
+                The Hills for me were the main event and I wanted to make sure they covered most of the canvas. I had a lot of trouble with the foreground,
                 I kept adding and taking away detail since I wasn&apos;t sure just how much I wanted the foreground to stand out. In the end I settled for a lot less detail and let the
                 two cows steal the show.
               </p>

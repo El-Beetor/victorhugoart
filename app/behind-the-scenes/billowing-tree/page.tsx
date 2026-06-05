@@ -161,7 +161,7 @@ export default function BillowingTreeBehindTheScenes() {
               <p className="text-lg leading-relaxed mb-4" style={{ color: darkColors[1] || accentColor }}>
                   This was the first really Large painting I did. I wanted to test myself and see what gaps I had in my skill. Turns out a lot because I repainted a lot of this.
                   This was a big learning lesson for me even though I do enjoy how it came out I know what I can do better next time. The biggest lesson I learned was that I
-                  should always start small and then scale up. I end up wasting too much paint going directly to the large canvas
+                  should always start small and then scale up. I end up wasting too much paint going directly to the large canvas.
               </p>
               <p className="text-lg leading-relaxed" style={{ color: darkColors[1] || accentColor }}>
               </p>

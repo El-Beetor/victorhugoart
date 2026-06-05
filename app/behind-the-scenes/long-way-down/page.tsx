@@ -159,8 +159,8 @@ export default function LongWayDownBehindTheScenes() {
             <h2 className="text-3xl sm:text-4xl font-bold text-center mb-6" style={{ color: darkColors[0] || accentColor }}>About This Piece</h2>
             <div className="bg-white p-8 shadow-lg rounded-lg">
               <p className="text-lg leading-relaxed mb-4" style={{ color: darkColors[1] || accentColor }}>
-                  This was a plien air painting I did in Horshoe Bend in Arizona. I just came back from hiking the Narrows and was ready for something more stationary. It was hot and I had no chair but I wanted to do at least one piece on this trip.
-                  I think the heat I experienced there led to me using very warm and faded colors which worked out well. Everytime I look at this painting I remember how hot it was.
+                  This was a plein air painting I did in Horseshoe Bend in Arizona. I just came back from hiking the Narrows and was ready for something more stationary. It was hot and I had no chair but I wanted to do at least one piece on this trip.
+                  I think the heat I experienced there led to me using very warm and faded colors which worked out well. Every time I look at this painting I remember how hot it was.
               </p>
               <p className="text-lg leading-relaxed" style={{ color: darkColors[1] || accentColor }}>
               </p>
