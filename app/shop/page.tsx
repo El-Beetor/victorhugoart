@@ -168,6 +168,16 @@ export default function Shop() {
                   ))}
                 </Link>
                 <Link
+                  href="/sketchbook"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
+                  style={{ color: accentColor }}
+                >
+                  {'sketchbook'.split('').map((letter, i) => (
+                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, -2, 3, -4, 2, -3, 4, -2][i]}deg)` }}>{letter}</span>
+                  ))}
+                </Link>
+                <Link
                   href="/shop"
                   onClick={() => setIsMenuOpen(false)}
                   className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
@@ -219,7 +229,7 @@ export default function Shop() {
           {/* Error State */}
           {error && (
             <div className="text-center py-16">
-              <p className="text-xl text-red-600">{error}</p>
+              <p className="text-xl" style={{ color: darkColors[0] || accentColor }}>Shop is currently unavailable. Please check back soon or reach out at vicgarcia.art@pm.me</p>
             </div>
           )}
 

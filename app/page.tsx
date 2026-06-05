@@ -1161,7 +1161,7 @@ export default function Home() {
       </main>
 
       {/* Portfolio Section */}
-      <section id="portfolio" className="relative  py-10 px-4 sm:px-6" style={{
+      <section id="portfolio" className="relative py-10 px-4 sm:px-6" style={{
         background: `linear-gradient(to bottom, #fffff7, #f5f5ed)`
       }}>
         <div className="max-w-6xl mx-auto">
