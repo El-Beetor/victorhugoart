@@ -1,0 +1,36 @@
+{
+  "font": "geist",
+  "accentColor": "#2e1705",
+  "darkGradientColor": "#2E1705",
+  "brightAccentColor": "#0B3826",
+  "darkColors": [
+    "#2e1705",
+    "#3d2410",
+    "#1f3d2e",
+    "#4a2f15",
+    "#2a1a08"
+  ],
+  "midColors": [
+    "#8a6f47",
+    "#a0826d",
+    "#6b8e5a",
+    "#b08968",
+    "#7a8c6f"
+  ],
+  "brightColors": [
+    "#e8d5b7",
+    "#f0e4d0",
+    "#d4e4d0",
+    "#f5ead6",
+    "#dde8d8"
+  ],
+  "buttonColors": [
+    "#8a6f47",
+    "#a0826d",
+    "#6b8e5a",
+    "#b08968"
+  ],
+  "bgGradientStart": "#fffff7",
+  "bgGradientEnd": "#f5f5ed",
+  "textColor": "#374151"
+}

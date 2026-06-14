@@ -39,7 +39,7 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 };
 
 export default function SketchBook() {
-  const { accentColor, darkGradientColor, brightAccentColor, darkColors, midColors, brightColors } = useColors();
+  const { accentColor, darkGradientColor, brightAccentColor, darkColors, midColors, brightColors, bgGradientStart, bgGradientEnd, textColor } = useColors();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [sketches, setSketches] = useState(sketchesBase);
 
@@ -48,16 +48,10 @@ export default function SketchBook() {
     setSketches(shuffleArray(sketchesBase));
   }, []);
 
-  const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    window.location.href = '/#portfolio';
-    setIsMenuOpen(false);
-  };
-
   return (
-    <div className="min-h-screen" style={{ background: `linear-gradient(to bottom, #fffff7, #f5f5ed)` }}>
+    <div className="min-h-screen" style={{ background: `linear-gradient(to bottom, ${bgGradientStart}, ${bgGradientEnd})` }}>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md" style={{ backgroundColor: '#fffff7DD' }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md" style={{ backgroundColor: `${bgGradientStart}DD` }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
           {/* Left: Site Name */}
           <Link href="/" className="inline-flex items-center gap-2 pointer-events-auto z-10">
@@ -106,7 +100,8 @@ export default function SketchBook() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-full w-80 bg-[#fffff7] shadow-2xl z-50 flex flex-col"
+              className="fixed right-0 top-0 h-full w-80 shadow-2xl z-50 flex flex-col"
+              style={{ backgroundColor: bgGradientStart }}
             >
               {/* Close Button */}
               <div className="flex justify-start p-6">
@@ -131,8 +126,8 @@ export default function SketchBook() {
                   ))}
                 </Link>
                 <Link
-                  href="#portfolio"
-                  onClick={scrollToPortfolio}
+                  href="/portfolio"
+                  onClick={() => setIsMenuOpen(false)}
                   className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
                   style={{ color: accentColor }}
                 >
@@ -148,16 +143,6 @@ export default function SketchBook() {
                 >
                   {'sketchbook'.split('').map((letter, i) => (
                     <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, -2, 3, -4, 2, -3, 4, -2][i]}deg)` }}>{letter}</span>
-                  ))}
-                </Link>
-                <Link
-                  href="/shop"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
-                  style={{ color: accentColor }}
-                >
-                  {'shop'.split('').map((letter, i) => (
-                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[-3, 4, -2, 3][i]}deg)` }}>{letter}</span>
                   ))}
                 </Link>
                 <Link
@@ -188,7 +173,7 @@ export default function SketchBook() {
             <h1 className="text-5xl md:text-6xl font-bold mb-4" style={{ color: darkColors[0] || accentColor }}>
               Sketchbook
             </h1>
-            <p className="text-xl text-gray-700">
+            <p className="text-xl" style={{ color: textColor }}>
               {sketches.length} Sketches
             </p>
           </motion.div>

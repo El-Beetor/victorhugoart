@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode } from 'react';
+import theme from '../config/theme.json';
 
 interface ColorContextType {
   buttonColors: string[];
@@ -10,6 +11,9 @@ interface ColorContextType {
   darkColors: string[];
   midColors: string[];
   brightColors: string[];
+  bgGradientStart: string;
+  bgGradientEnd: string;
+  textColor: string;
   setButtonColors: (colors: string[]) => void;
   setAccentColor: (color: string) => void;
   setDarkGradientColor: (color: string) => void;
@@ -17,18 +21,24 @@ interface ColorContextType {
   setDarkColors: (colors: string[]) => void;
   setMidColors: (colors: string[]) => void;
   setBrightColors: (colors: string[]) => void;
+  setBgGradientStart: (color: string) => void;
+  setBgGradientEnd: (color: string) => void;
+  setTextColor: (color: string) => void;
 }
 
 const ColorContext = createContext<ColorContextType | undefined>(undefined);
 
 export function ColorProvider({ children }: { children: ReactNode }) {
-  const [buttonColors, setButtonColors] = useState<string[]>([]);
-  const [accentColor, setAccentColor] = useState('#2e1705');
-  const [darkGradientColor, setDarkGradientColor] = useState('#2E1705');
-  const [brightAccentColor, setBrightAccentColor] = useState('#0B3826');
-  const [darkColors, setDarkColors] = useState<string[]>([]);
-  const [midColors, setMidColors] = useState<string[]>([]);
-  const [brightColors, setBrightColors] = useState<string[]>([]);
+  const [buttonColors, setButtonColors] = useState<string[]>(theme.buttonColors);
+  const [accentColor, setAccentColor] = useState(theme.accentColor);
+  const [darkGradientColor, setDarkGradientColor] = useState(theme.darkGradientColor);
+  const [brightAccentColor, setBrightAccentColor] = useState(theme.brightAccentColor);
+  const [darkColors, setDarkColors] = useState<string[]>(theme.darkColors);
+  const [midColors, setMidColors] = useState<string[]>(theme.midColors);
+  const [brightColors, setBrightColors] = useState<string[]>(theme.brightColors);
+  const [bgGradientStart, setBgGradientStart] = useState(theme.bgGradientStart);
+  const [bgGradientEnd, setBgGradientEnd] = useState(theme.bgGradientEnd);
+  const [textColor, setTextColor] = useState(theme.textColor);
 
   return (
     <ColorContext.Provider
@@ -40,6 +50,9 @@ export function ColorProvider({ children }: { children: ReactNode }) {
         darkColors,
         midColors,
         brightColors,
+        bgGradientStart,
+        bgGradientEnd,
+        textColor,
         setButtonColors,
         setAccentColor,
         setDarkGradientColor,
@@ -47,6 +60,9 @@ export function ColorProvider({ children }: { children: ReactNode }) {
         setDarkColors,
         setMidColors,
         setBrightColors,
+        setBgGradientStart,
+        setBgGradientEnd,
+        setTextColor,
       }}
     >
       {children}

@@ -8,20 +8,14 @@ import { useColors } from '../context/ColorContext';
 import Footer from '../components/Footer';
 
 export default function About() {
-  const { accentColor, darkGradientColor, brightAccentColor } = useColors();
+  const { accentColor, darkGradientColor, brightAccentColor, bgGradientStart, bgGradientEnd, textColor } = useColors();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAiNoteOpen, setIsAiNoteOpen] = useState(false);
 
-  const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    window.location.href = '/#portfolio';
-    setIsMenuOpen(false);
-  };
-
   return (
-    <div className="min-h-screen" style={{ background: `linear-gradient(to bottom, #fffff7, #f5f5ed)` }}>
+    <div className="min-h-screen" style={{ background: `linear-gradient(to bottom, ${bgGradientStart}, ${bgGradientEnd})` }}>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md" style={{ backgroundColor: '#fffff7DD' }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md" style={{ backgroundColor: `${bgGradientStart}DD` }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
           {/* Left: Menu Button */}
           <button
@@ -66,7 +60,8 @@ export default function About() {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 h-full w-80 bg-[#fffff7] shadow-2xl z-50 flex flex-col"
+              className="fixed left-0 top-0 h-full w-80 shadow-2xl z-50 flex flex-col"
+              style={{ backgroundColor: bgGradientStart }}
             >
               {/* Close Button */}
               <div className="flex justify-start p-6">
@@ -91,8 +86,8 @@ export default function About() {
                   ))}
                 </Link>
                 <Link
-                  href="/#portfolio"
-                  onClick={scrollToPortfolio}
+                  href="/portfolio"
+                  onClick={() => setIsMenuOpen(false)}
                   className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
                   style={{ color: accentColor }}
                 >
@@ -108,16 +103,6 @@ export default function About() {
                 >
                   {'sketchbook'.split('').map((letter, i) => (
                     <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, -2, 3, -4, 2, -3, 4, -2][i]}deg)` }}>{letter}</span>
-                  ))}
-                </Link>
-                <Link
-                  href="/shop"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
-                  style={{ color: accentColor }}
-                >
-                  {'shop'.split('').map((letter, i) => (
-                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[-3, 4, -2, 3][i]}deg)` }}>{letter}</span>
                   ))}
                 </Link>
                 <Link
@@ -173,12 +158,12 @@ export default function About() {
               transition={{ delay: 0.4, duration: 0.6 }}
               className="space-y-6"
             >
-              <p className="text-lg leading-relaxed text-gray-800">
+              <p className="text-lg leading-relaxed" style={{ color: textColor }}>
                 Thank you for visiting my website and checking out my art!
                 Creating art is so fun. I love making and sharing it with the people around me. Whether it&apos;s
                 sketching, painting, designing, coding, or building something from scratch, the process of turning an idea into reality scratches that creative itch in my brain.
               </p>
-              <p className="text-lg leading-relaxed text-gray-800">
+              <p className="text-lg leading-relaxed" style={{ color: textColor }}>
                 I am constantly learning and developing this hobby of mine, I bring my{' '}
                 <Link href="/sketchbook" className="font-semibold hover:underline transition-all" style={{ color: accentColor }}>
                   sketchbook
@@ -192,7 +177,7 @@ export default function About() {
                   onClick={() => setIsAiNoteOpen(!isAiNoteOpen)}
                   className="w-full px-4 py-3 flex justify-between items-center hover:bg-gray-50 transition-colors"
                 >
-                  <strong className="text-lg text-gray-800">A Note on AI and Art</strong>
+                  <strong className="text-lg" style={{ color: textColor }}>A Note on AI and Art</strong>
                   <motion.svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-6 w-6"
@@ -216,13 +201,13 @@ export default function About() {
                       className="overflow-hidden"
                     >
                       <div className="px-4 pb-4 space-y-4">
-                        <p className="text-lg leading-relaxed text-gray-800">
+                        <p className="text-lg leading-relaxed" style={{ color: textColor }}>
                           There is a lot of talk out there about AI and the future of human-made art. For me, art has never been just about the final result — it&apos;s about the challenge, the growth, and the way it connects the artist to the world around them.
                         </p>
-                        <p className="text-lg leading-relaxed text-gray-800">
+                        <p className="text-lg leading-relaxed" style={{ color: textColor }}>
                           I don&apos;t use AI to create my artwork, but I do use it to help build apps and write code. If you feel the urge to create — whether it&apos;s art, music, apps, or anything else — don&apos;t let generative AI discourage you. Mistakes are part of the process, and making something is always better than making nothing.
                         </p>
-                        <p className="text-lg leading-relaxed text-gray-800">
+                        <p className="text-lg leading-relaxed" style={{ color: textColor }}>
                           Artists have always faced criticism and exploitation from people who don&apos;t understand or value creativity. But your perspective and imagination are yours alone — and no one can take that away.
                         </p>
                       </div>
@@ -238,8 +223,8 @@ export default function About() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
-            className="bg-[#fffff7]/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 sm:p-12 border mt-16"
-            style={{ borderColor: `${accentColor}1A` }}
+            className="backdrop-blur-sm rounded-2xl shadow-2xl p-8 sm:p-12 border mt-16"
+            style={{ borderColor: `${accentColor}1A`, backgroundColor: `${bgGradientStart}CC` }}
           >
             <div className="space-y-8">
               {/* Email Section */}
@@ -247,7 +232,7 @@ export default function About() {
                 <h2 className="text-2xl sm:text-3xl font-bold mb-4" style={{ color: accentColor }}>
                   Get in Touch
                 </h2>
-                <p className="mb-6 text-gray-700">
+                <p className="mb-6" style={{ color: textColor }}>
                   For inquiries, commissions, or just to say hello
                 </p>
                 <a
@@ -263,7 +248,7 @@ export default function About() {
 
               {/* Response Time */}
               <div className="text-center">
-                <p className="text-sm text-gray-700">
+                <p className="text-sm" style={{ color: textColor }}>
                   I typically respond within 24-48 hours
                 </p>
               </div>

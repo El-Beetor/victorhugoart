@@ -19,7 +19,7 @@ interface Product {
 }
 
 export default function Shop() {
-  const { accentColor, darkGradientColor, brightAccentColor, darkColors, midColors, brightColors } = useColors();
+  const { accentColor, darkGradientColor, brightAccentColor, darkColors, midColors, brightColors, bgGradientStart, bgGradientEnd, textColor } = useColors();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,12 +46,6 @@ export default function Shop() {
 
     fetchProducts();
   }, []);
-
-  const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    window.location.href = '/#portfolio';
-    setIsMenuOpen(false);
-  };
 
   const handlePurchase = async (productId: string, priceId: string) => {
     try {
@@ -86,9 +80,9 @@ export default function Shop() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: `linear-gradient(to bottom, #fffff7, #f5f5ed)` }}>
+    <div className="min-h-screen" style={{ background: `linear-gradient(to bottom, ${bgGradientStart}, ${bgGradientEnd})` }}>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md" style={{ backgroundColor: '#fffff7DD' }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md" style={{ backgroundColor: `${bgGradientStart}DD` }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
           {/* Left: Menu Button */}
           <button
@@ -133,7 +127,8 @@ export default function Shop() {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 h-full w-80 bg-[#fffff7] shadow-2xl z-50 flex flex-col"
+              className="fixed left-0 top-0 h-full w-80 shadow-2xl z-50 flex flex-col"
+              style={{ backgroundColor: bgGradientStart }}
             >
               {/* Close Button */}
               <div className="flex justify-start p-6">
@@ -158,8 +153,8 @@ export default function Shop() {
                   ))}
                 </Link>
                 <Link
-                  href="/#portfolio"
-                  onClick={scrollToPortfolio}
+                  href="/portfolio"
+                  onClick={() => setIsMenuOpen(false)}
                   className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
                   style={{ color: accentColor }}
                 >
@@ -175,16 +170,6 @@ export default function Shop() {
                 >
                   {'sketchbook'.split('').map((letter, i) => (
                     <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, -2, 3, -4, 2, -3, 4, -2][i]}deg)` }}>{letter}</span>
-                  ))}
-                </Link>
-                <Link
-                  href="/shop"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
-                  style={{ color: accentColor }}
-                >
-                  {'shop'.split('').map((letter, i) => (
-                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[-3, 4, -2, 3][i]}deg)` }}>{letter}</span>
                   ))}
                 </Link>
                 <Link
@@ -287,7 +272,7 @@ export default function Shop() {
                         <div className="flex-1">
                           <h3 className="text-xl font-semibold" style={{ color: accentColor }}>{product.title}</h3>
                           {product.description && (
-                            <p className="text-sm text-gray-700 mt-1">{product.description}</p>
+                            <p className="text-sm mt-1" style={{ color: textColor }}>{product.description}</p>
                           )}
                         </div>
                         <div className="text-right ml-4">
@@ -327,11 +312,11 @@ export default function Shop() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="mt-16 bg-[#fffff7]/80 backdrop-blur-sm rounded-lg p-8 border"
-            style={{ borderColor: `${accentColor}33` }}
+            className="mt-16 backdrop-blur-sm rounded-lg p-8 border"
+            style={{ borderColor: `${accentColor}33`, backgroundColor: `${bgGradientStart}CC` }}
           >
             <h2 className="text-2xl font-bold mb-4" style={{ color: accentColor }}>Purchase Information</h2>
-            <div className="grid md:grid-cols-2 gap-6 text-gray-800">
+            <div className="grid md:grid-cols-2 gap-6" style={{ color: textColor }}>
               <div>
                 <h3 className="font-semibold mb-2" style={{ color: accentColor }}>Shipping</h3>
                 <p>All artworks are carefully packaged and shipped with insurance. Shipping costs calculated at checkout.</p>

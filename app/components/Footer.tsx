@@ -20,6 +20,19 @@ export default function Footer() {
             </a>
           </div>
 
+          {/* Patreon */}
+          <div className="text-center">
+            <p className="text-sm mb-2 text-white">Support</p>
+            <a
+              href="https://patreon.com/vicgarciaart"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-lg font-semibold hover:opacity-70 transition-opacity text-white"
+            >
+              Patreon
+            </a>
+          </div>
+
           {/* Instagram */}
           <div className="text-center sm:text-right">
             <p className="text-sm mb-2 text-white">Follow</p>

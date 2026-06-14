@@ -1,7 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Playfair_Display, Poppins, Caveat, Special_Elite, Courier_Prime, Cutive_Mono } from "next/font/google";
 import "./globals.css";
 import { ColorProvider } from "./context/ColorContext";
+import DebugPanel from "./components/DebugPanel";
+import theme from "./config/theme.json";
+
+const FONT_VARS: Record<string, string> = {
+  geist: "var(--font-geist-sans)",
+  playfair: "var(--font-playfair)",
+  poppins: "var(--font-poppins)",
+  caveat: "var(--font-caveat)",
+  specialElite: "var(--font-special-elite)",
+  courierPrime: "var(--font-courier-prime)",
+  cutiveMono: "var(--font-cutive-mono)",
+};
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -11,6 +23,42 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const playfairDisplay = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+const caveat = Caveat({
+  variable: "--font-caveat",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const specialElite = Special_Elite({
+  variable: "--font-special-elite",
+  subsets: ["latin"],
+  weight: ["400"],
+});
+
+const courierPrime = Courier_Prime({
+  variable: "--font-courier-prime",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
+const cutiveMono = Cutive_Mono({
+  variable: "--font-cutive-mono",
+  subsets: ["latin"],
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {
@@ -33,42 +81,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Preload critical images */}
+        {/* Preload hero painting candidates (small files only) */}
         <link rel="preload" as="image" href="/FinishedPaintings/bike.jpg" />
         <link rel="preload" as="image" href="/FinishedPaintings/bird.jpg" />
-        <link rel="preload" as="image" href="/FinishedPaintings/duck.png" />
-        <link rel="preload" as="image" href="/FinishedPaintings/river.png" />
         <link rel="preload" as="image" href="/FinishedPaintings/tree.jpg" />
         <link rel="preload" as="image" href="/FinishedPaintings/bar.jpg" />
         <link rel="preload" as="image" href="/FinishedPaintings/sheep.jpg" />
         <link rel="preload" as="image" href="/test_new_feature/brushstroke.png" />
-        <link rel="preload" as="image" href="/images/victorhugoartlogo.png" />
-        <link rel="preload" as="image" href="/images/profile.jpg" />
-
-        {/* Preload sketch images */}
-        <link rel="preload" as="image" href="/sketches/image_1.png" />
-        <link rel="preload" as="image" href="/sketches/image_3.png" />
-        <link rel="preload" as="image" href="/sketches/image_4.png" />
-        <link rel="preload" as="image" href="/sketches/image_5.png" />
-        <link rel="preload" as="image" href="/sketches/image_6.png" />
-        <link rel="preload" as="image" href="/sketches/image_7.png" />
-        <link rel="preload" as="image" href="/sketches/image_8.png" />
-        <link rel="preload" as="image" href="/sketches/image_9.png" />
-        <link rel="preload" as="image" href="/sketches/image_10.png" />
-        <link rel="preload" as="image" href="/sketches/image_11.png" />
-        <link rel="preload" as="image" href="/sketches/image_12.png" />
-        <link rel="preload" as="image" href="/sketches/image_13.png" />
-        <link rel="preload" as="image" href="/sketches/image_14.png" />
-        <link rel="preload" as="image" href="/sketches/image_15.png" />
-        <link rel="preload" as="image" href="/sketches/image_17.png" />
-        <link rel="preload" as="image" href="/sketches/image_19.png" />
-        <link rel="preload" as="image" href="/sketches/image_21.png" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${poppins.variable} ${caveat.variable} ${specialElite.variable} ${courierPrime.variable} ${cutiveMono.variable} antialiased`}
+        style={{ '--font-active': FONT_VARS[theme.font] || FONT_VARS.geist } as React.CSSProperties}
       >
         <ColorProvider>
           {children}
+          <DebugPanel />
         </ColorProvider>
       </body>
     </html>

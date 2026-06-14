@@ -6,106 +6,48 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { useColors } from './context/ColorContext';
 import Footer from './components/Footer';
+import InstagramEmbed from './components/InstagramEmbed';
 
-const artworks = [
-  {
-    id: 1,
-    title: 'Graceland',
-    year: 2025,
-    category: 'Oil on Canvas 8" x 12"',
-    description: 'Oil on Canvas 8" x 12"',
-    size: 'small',
-    image: '/FinishedPaintings/graceland.jpg',
-    behindTheScenesUrl: '/behind-the-scenes/graceland'
-  },
-  {
-    id: 2,
-    title: '10pm',
-    year: 2025,
-    category: 'Oil on Canvas 8" x 10"',
-    description: 'Oil on Canvas 8 x 10',
-    size: 'large',
-    image: '/FinishedPaintings/bar.jpg',
-    behindTheScenesUrl: '/behind-the-scenes/10pm'
-  },
-  {
-    id: 3,
-    title: 'After School Bike Ride',
-    year: 2025,
-    category: 'Oil on Canvas 9 x 12"',
-    description: 'Oil on Canvas 9" x12"',
-    size: 'small',
-    image: '/FinishedPaintings/bike.jpg',
-    behindTheScenesUrl: '/behind-the-scenes/after-school-bike-ride'
-  },
-  {
-    id: 4,
-    title: 'Bird in Blue',
-    year: 2025,
-    category: 'Oil on Canvas 14" x18"',
-    description: 'Oil on Canvas 14" x18"',
-    size: 'medium',
-    image: '/FinishedPaintings/bird.jpg',
-    behindTheScenesUrl: '/behind-the-scenes/bird-in-blue'
-  },
-  {
-    id: 5,
-    title: 'Sisters',
-    year: 2025,
-    category: 'Oil on Paper 8" x 10"',
-    description: 'Oil on Canvas 8" x10"',
-    size: 'large',
-    image: '/FinishedPaintings/duck.png',
-    behindTheScenesUrl: '/behind-the-scenes/sisters'
-  },
-  {
-    id: 6,
-    title: 'Long way down: Far way forward',
-    year: 2025,
-    category: 'Oil on Wood 8" x 10"',
-    description: 'Oil on Canvas 8" x 10"',
-    size: 'medium',
-    image: '/FinishedPaintings/river.png',
-    behindTheScenesUrl: '/behind-the-scenes/long-way-down'
-  },
-  {
-    id: 7,
-    title: 'Billowing Tree',
-    year: 2025,
-    category: 'Oil on Canvas 24" x 30"',
-    description: 'Oil on Canvas 24 x 30',
-    size: 'large',
-    image: '/FinishedPaintings/tree.jpg',
-    behindTheScenesUrl: '/behind-the-scenes/billowing-tree'
-  },
-  {
-    id: 8,
-    title: 'Le\' Sheep',
-    year: 2025,
-    category: 'Oil on Canvas 8" x 10"',
-    description: 'Oil on Canvas 8 x 10',
-    size: 'large',
-    image: '/FinishedPaintings/sheep.jpg',
-    behindTheScenesUrl: '/behind-the-scenes/le-sheep'
-  }
-];
-
-// Array of finished paintings
+// Array of finished paintings, with title/medium shown on the home page hero
 const finishedPaintings = [
-  '/FinishedPaintings/graceland.jpg',
-  '/FinishedPaintings/bar.jpg',
-  '/FinishedPaintings/bike.jpg',
-  '/FinishedPaintings/bird.jpg',
-  '/FinishedPaintings/duck.png',
-  '/FinishedPaintings/river.png',
-  '/FinishedPaintings/tree.jpg',
-  '/FinishedPaintings/sheep.jpg'
+  { src: '/FinishedPaintings/graceland.jpg', title: 'Graceland', medium: 'Oil on Canvas 8" x 12"' },
+  { src: '/FinishedPaintings/bar.jpg', title: '10pm', medium: 'Oil on Canvas 8" x 10"' },
+  { src: '/FinishedPaintings/bike.jpg', title: 'After School Bike Ride', medium: 'Oil on Canvas 9" x 12"' },
+  { src: '/FinishedPaintings/bird.jpg', title: 'Bird in Blue', medium: 'Oil on Canvas 14" x 18"' },
+  { src: '/FinishedPaintings/duck.png', title: 'Sisters', medium: 'Oil on Paper 8" x 10"' },
+  { src: '/FinishedPaintings/river.png', title: 'Long way down: Far way forward', medium: 'Oil on Wood 8" x 10"' },
+  { src: '/FinishedPaintings/tree.jpg', title: 'Billowing Tree', medium: 'Oil on Canvas 24" x 30"' },
+  { src: '/FinishedPaintings/sheep.jpg', title: "Le' Sheep", medium: 'Oil on Canvas 8" x 10"' },
 ];
 
 // Function to get random painting
 const getRandomPainting = () => {
   return finishedPaintings[Math.floor(Math.random() * finishedPaintings.length)];
 };
+
+// "What I'm Into" sections shown on the home page
+const interests = [
+  {
+    title: 'Painting & Sketching',
+    description: "Most of my time goes into oil painting — small canvases of everyday moments, like a bike ride after school, a quiet bar at 10pm, or a tree caught mid-billow in the wind. I also carry a sketchbook everywhere, filling it with quick studies and ideas."
+  },
+  {
+    title: 'Building Things',
+    description: "When I'm not painting, I'm usually building something — websites, apps, little tools that solve a problem I ran into. This site is one of those projects. I love turning an idea into something real, whether it's made of pixels or paint."
+  },
+  {
+    title: 'Process & Behind the Scenes',
+    description: "I like sharing the messier side of making art — time-lapses, work-in-progress shots, and the occasional studio chaos. You'll find a lot of that on Instagram, with a few favorites below."
+  }
+];
+
+// Instagram post/reel URLs to feature in the Watch section.
+// Add permalinks like: 'https://www.instagram.com/reel/XXXXXXXXXXX/'
+const instagramVideos: string[] = [
+  'https://www.instagram.com/reel/DZbpx8ovmhU/',
+  'https://www.instagram.com/p/DWuo6Rdj5nm/',
+  'https://www.instagram.com/p/DWk4ll2lXlr/',
+];
 
 export default function Home() {
   const {
@@ -116,6 +58,9 @@ export default function Home() {
     darkColors,
     midColors,
     brightColors,
+    bgGradientStart,
+    bgGradientEnd,
+    textColor,
     setButtonColors,
     setAccentColor,
     setDarkGradientColor,
@@ -128,7 +73,8 @@ export default function Home() {
   const [cursorTrail, setCursorTrail] = useState<Array<{ x: number; y: number; id: string }>>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLogoVisible, setIsLogoVisible] = useState(true);
-  const [currentImagePath, setCurrentImagePath] = useState(() => getRandomPainting());
+  const [currentPainting, setCurrentPainting] = useState(() => getRandomPainting());
+  const [mounted, setMounted] = useState(false);
   const [revealPercentage, setRevealPercentage] = useState(0);
   const [isPaintingComplete, setIsPaintingComplete] = useState(false);
   const [scrollY, setScrollY] = useState(0);
@@ -143,11 +89,18 @@ export default function Home() {
   const isTransitioningRef = useRef(false);
   const baselinePixelCountRef = useRef(0);
   const textRef = useRef<HTMLHeadingElement>(null);
+  const tempCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // Avoid SSR/client mismatch: currentPainting starts random, so only
+  // render text that depends on it after the client has mounted.
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Load color image and brushstroke
   useEffect(() => {
     const colorImg = new window.Image();
-    colorImg.src = currentImagePath;
+    colorImg.src = currentPainting.src;
     colorImg.onload = () => {
       colorImageRef.current = colorImg;
       // Reset transitioning flag once image is loaded
@@ -188,6 +141,7 @@ export default function Home() {
       const ctx = canvas.getContext('2d');
       if (ctx) {
         ctx.drawImage(colorImg, 0, 0);
+        const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
         const colors: string[] = [];
         const extractedDarkColors: string[] = [];
         const extractedMidColors: string[] = [];
@@ -212,7 +166,8 @@ export default function Home() {
         while ((colors.length < 4 || !darkColor || !brightColor || extractedDarkColors.length < 5 || extractedMidColors.length < 5 || extractedBrightColors.length < 5) && attempts < 1000) {
           const x = Math.floor(Math.random() * canvas.width);
           const y = Math.floor(Math.random() * canvas.height);
-          const pixel = ctx.getImageData(x, y, 1, 1).data;
+          const idx = (y * canvas.width + x) * 4;
+          const pixel = [pixels[idx], pixels[idx + 1], pixels[idx + 2]];
 
           // Calculate contrast ratio
           const colorLuminance = getLuminance(pixel[0], pixel[1], pixel[2]);
@@ -311,7 +266,7 @@ export default function Home() {
     brushImg.onload = () => {
       brushImageRef.current = brushImg;
     };
-  }, [currentImagePath]);
+  }, [currentPainting]);
 
   // Helper function to calculate cover dimensions (maintains aspect ratio)
   const getCoverDimensions = (img: HTMLImageElement) => {
@@ -338,164 +293,20 @@ export default function Home() {
     return { width, height, offsetX, offsetY };
   };
 
-  // Organic raindrop effect - reveals painting with flowing circles
-  useEffect(() => {
-    if (!revealCanvasRef.current || !colorImageRef.current) return;
-
-    const canvas = revealCanvasRef.current;
-    const ctx = canvas.getContext('2d', { willReadFrequently: false });
-    if (!ctx) return;
-
-    interface Flower {
-      x: number;
-      y: number;
-      stemStartY: number;
-      stemLength: number;
-      maxStemLength: number;
-      stemGrowthRate: number;
-      radius: number;
-      maxRadius: number;
-      growthRate: number;
-      age: number;
-      lifespan: number;
-      petalCount: number;
-      rotationOffset: number;
-      stemCurve: number;
-      isGrowing: boolean;
+  // Reusable offscreen canvas for compositing brush strokes (avoids allocating a new canvas on every mousemove)
+  const getTempCanvas = (size: number) => {
+    let tempCanvas = tempCanvasRef.current;
+    if (!tempCanvas) {
+      tempCanvas = document.createElement('canvas');
+      tempCanvasRef.current = tempCanvas;
     }
+    if (tempCanvas.width !== size || tempCanvas.height !== size) {
+      tempCanvas.width = size;
+      tempCanvas.height = size;
+    }
+    return tempCanvas;
+  };
 
-    const flowers: Flower[] = [];
-    const maxFlowers = 5;
-    const goldenRatio = 1.618033988749895; // Golden ratio for natural spacing
-    let totalFlowersCreated = 0; // Track total flowers created
-
-    const createFlower = () => {
-      const startX = Math.random() * canvas.width;
-      const startY = canvas.height + 50; // Start below screen
-      const stemHeight = 100 + Math.random() * 200;
-
-      return {
-        x: startX,
-        y: startY,
-        stemStartY: startY,
-        stemLength: 0,
-        maxStemLength: stemHeight,
-        stemGrowthRate: 1 + Math.random() * 2,
-        radius: 0, // Start at 0
-        maxRadius: 30 + Math.random() * 40, // Max bloom size
-        growthRate: 0.5 + Math.random() * 0.7, // How fast it blooms
-        age: 0,
-        lifespan: 200 + Math.random() * 150, // How long before fading
-        petalCount: Math.floor(5 + Math.random() * 8), // 5-12 petals
-        rotationOffset: Math.random() * Math.PI * 2,
-        stemCurve: (Math.random() - 0.5) * 30, // Slight curve to stem
-        isGrowing: true
-      };
-    };
-
-    const animateFlowers = () => {
-      if (!colorImageRef.current) return;
-
-      // Add new flower only if we haven't created 5 flowers yet
-      if (totalFlowersCreated < maxFlowers && Math.random() < 0.015) {
-        flowers.push(createFlower());
-        totalFlowersCreated++;
-      }
-
-      // Update and draw flowers
-      flowers.forEach((flower, index) => {
-        // Age the flower
-        flower.age += 1;
-
-        if (ctx && colorImageRef.current) {
-          const { width, height, offsetX, offsetY } = getCoverDimensions(colorImageRef.current);
-
-          // First phase: Grow the stem
-          if (flower.stemLength < flower.maxStemLength) {
-            flower.stemLength += flower.stemGrowthRate;
-
-            // Update flower position as stem grows
-            flower.y = flower.stemStartY - flower.stemLength;
-
-            // Draw stem using curved line with circles
-            const stemSegments = Math.floor(flower.stemLength / 5);
-            for (let i = 0; i < stemSegments; i++) {
-              const progress = i / stemSegments;
-              const segmentY = flower.stemStartY - (progress * flower.stemLength);
-              const segmentX = flower.x + Math.sin(progress * Math.PI) * flower.stemCurve;
-
-              ctx.save();
-              ctx.beginPath();
-              ctx.arc(segmentX, segmentY, 2, 0, Math.PI * 2);
-              ctx.clip();
-              ctx.drawImage(colorImageRef.current, offsetX, offsetY, width, height);
-              ctx.restore();
-            }
-          }
-          // Second phase: Bloom the flower after stem is fully grown
-          else if (flower.radius < flower.maxRadius) {
-            flower.radius += flower.growthRate;
-
-            // Draw the stem (fully grown)
-            const stemSegments = Math.floor(flower.maxStemLength / 5);
-            for (let i = 0; i < stemSegments; i++) {
-              const progress = i / stemSegments;
-              const segmentY = flower.stemStartY - (progress * flower.maxStemLength);
-              const segmentX = flower.x + Math.sin(progress * Math.PI) * flower.stemCurve;
-
-              ctx.save();
-              ctx.beginPath();
-              ctx.arc(segmentX, segmentY, 2, 0, Math.PI * 2);
-              ctx.clip();
-              ctx.drawImage(colorImageRef.current, offsetX, offsetY, width, height);
-              ctx.restore();
-            }
-
-            // Calculate flower position (at top of stem with curve)
-            const flowerX = flower.x + Math.sin(Math.PI) * flower.stemCurve * 0.5;
-            const flowerY = flower.y;
-
-            // Draw center circle
-            ctx.save();
-            ctx.beginPath();
-            ctx.arc(flowerX, flowerY, flower.radius * 0.3, 0, Math.PI * 2);
-            ctx.clip();
-            ctx.drawImage(colorImageRef.current, offsetX, offsetY, width, height);
-            ctx.restore();
-
-            // Draw petals in a circular pattern (Fibonacci spiral arrangement)
-            for (let i = 0; i < flower.petalCount; i++) {
-              const goldenAngle = i * goldenRatio * Math.PI * 2; // Fibonacci arrangement
-
-              // Petal position using golden angle for natural spacing
-              const petalDistance = flower.radius * 0.6;
-              const petalX = flowerX + Math.cos(goldenAngle) * petalDistance;
-              const petalY = flowerY + Math.sin(goldenAngle) * petalDistance;
-
-              // Petal size varies with growth
-              const petalRadius = flower.radius * 0.35 * (1 - i / flower.petalCount * 0.3);
-
-              ctx.save();
-              ctx.beginPath();
-              ctx.arc(petalX, petalY, petalRadius, 0, Math.PI * 2);
-              ctx.clip();
-              ctx.drawImage(colorImageRef.current, offsetX, offsetY, width, height);
-              ctx.restore();
-            }
-          }
-        }
-
-        // Remove flower after lifespan
-        if (flower.age > flower.lifespan) {
-          flowers.splice(index, 1);
-        }
-      });
-
-      requestAnimationFrame(animateFlowers);
-    };
-
-    animateFlowers();
-  }, [colorImageRef.current]);
 
   // Initialize reveal canvas and background canvas
   useEffect(() => {
@@ -510,7 +321,7 @@ export default function Home() {
     bgCanvas.height = window.innerHeight * 0.6667;
 
     // Start with transparent canvas (cream background shows through)
-    const ctx = canvas.getContext('2d', { willReadFrequently: false });
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (ctx) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
@@ -578,17 +389,18 @@ export default function Home() {
 
       // Paint color image using brushstroke alpha as mask (skip if transitioning and only in top 2/3)
       if (e.clientY <= canvasHeight && revealCanvasRef.current && colorImageRef.current && brushImageRef.current && !isTransitioningRef.current) {
-        const ctx = revealCanvasRef.current.getContext('2d', { willReadFrequently: false });
+        const ctx = revealCanvasRef.current.getContext('2d', { willReadFrequently: true });
         if (ctx) {
           const brushSize = Math.min(window.innerWidth, window.innerHeight) * 0.2;
 
-          // Create temporary canvas to compose the brushstroke-shaped color reveal
-          const tempCanvas = document.createElement('canvas');
-          tempCanvas.width = brushSize;
-          tempCanvas.height = brushSize;
+          // Reuse a single offscreen canvas to compose the brushstroke-shaped color reveal
+          const tempCanvas = getTempCanvas(brushSize);
           const tempCtx = tempCanvas.getContext('2d');
 
           if (tempCtx) {
+            tempCtx.globalCompositeOperation = 'source-over';
+            tempCtx.clearRect(0, 0, brushSize, brushSize);
+
             // Calculate cover dimensions to maintain aspect ratio
             const { width, height, offsetX, offsetY } = getCoverDimensions(colorImageRef.current);
 
@@ -649,7 +461,7 @@ export default function Home() {
 
                 setRevealPercentage(0);
                 setIsPaintingComplete(false);
-                setCurrentImagePath(newPainting);
+                setCurrentPainting(newPainting);
                 // Don't reset flag here - wait for image to load (see useEffect above)
               }
             }
@@ -678,7 +490,7 @@ export default function Home() {
       // Only work in the top 2/3
       if (centerY > canvasHeight) return;
 
-      const ctx = revealCanvasRef.current.getContext('2d', { willReadFrequently: false });
+      const ctx = revealCanvasRef.current.getContext('2d', { willReadFrequently: true });
       if (!ctx) return;
 
       const brushSize = Math.min(window.innerWidth, window.innerHeight) * 0.2;
@@ -695,13 +507,14 @@ export default function Home() {
         const x = centerX + Math.cos(angle) * radius;
         const y = centerY + Math.sin(angle) * radius;
 
-        // Paint at this position
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = brushSize;
-        tempCanvas.height = brushSize;
+        // Paint at this position (reuse a single offscreen canvas)
+        const tempCanvas = getTempCanvas(brushSize);
         const tempCtx = tempCanvas.getContext('2d');
 
         if (tempCtx) {
+          tempCtx.globalCompositeOperation = 'source-over';
+          tempCtx.clearRect(0, 0, brushSize, brushSize);
+
           // Calculate cover dimensions to maintain aspect ratio
           const { width, height, offsetX, offsetY } = getCoverDimensions(colorImageRef.current!);
 
@@ -771,7 +584,7 @@ export default function Home() {
 
           setRevealPercentage(0);
           setIsPaintingComplete(false);
-          setCurrentImagePath(newPainting);
+          setCurrentPainting(newPainting);
         }
       }, (maxRadius / spiralSpeed) * 16); // Wait for animation to complete (approx)
     };
@@ -858,30 +671,10 @@ export default function Home() {
 
   // Petal button data
   const petals = [
-    { name: 'Portfolio', href: '#portfolio', angle: 0, image: '/ButtonImages/portfolio.png', hoverImage: '/ButtonImages/portfolio2.png' },
-    { name: 'SketchBook', href: '/sketchbook', angle: 90, image: '/ButtonImages/sketchbook.png', hoverImage: '/ButtonImages/sketchbook2.png' },
-    { name: 'Shop', href: '/shop', angle: 180, image: '/ButtonImages/shop.png', hoverImage: '/ButtonImages/shop2.png' },
+    { name: 'Portfolio', href: '/portfolio', angle: 0, image: '/ButtonImages/portfolio.png', hoverImage: '/ButtonImages/portfolio2.png' },
+    { name: 'SketchBook', href: '/sketchbook', angle: 90, image: '/ButtonImages/sketchbook2.png', hoverImage: '/ButtonImages/sketchbook.png' },
     { name: 'About', href: '/about', angle: 270, image: '/ButtonImages/aboutme.png', hoverImage: '/ButtonImages/aboutme2.png' },
   ];
-
-  const scrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    const portfolioSection = document.getElementById('portfolio');
-    if (portfolioSection) {
-      portfolioSection.scrollIntoView({ behavior: 'smooth' });
-    }
-    setIsMenuOpen(false);
-  };
-
-
-  const getFrameSize = (size: string) => {
-    switch(size) {
-      case 'large': return 'h-[400px] sm:h-[500px]';
-      case 'medium': return 'h-[350px] sm:h-[400px]';
-      case 'small': return 'h-[300px] sm:h-[350px]';
-      default: return 'h-[350px] sm:h-[400px]';
-    }
-  };
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -903,7 +696,7 @@ export default function Home() {
       ))}
 
       {/* Static Background - cream color with canvas overlay */}
-      <div className="fixed inset-0 -z-10 bg-[#fffff7]">
+      <div className="fixed inset-0 -z-10" style={{ backgroundColor: bgGradientStart }}>
         {/* Black and white version of current image - 2/3 height */}
         <div className="absolute inset-x-0 top-0 h-[66.67vh] z-0">
           <canvas
@@ -918,10 +711,29 @@ export default function Home() {
             className="absolute inset-0 pointer-events-none"
           />
         </div>
+        {/* Title & medium for the current painting - bottom left of image */}
+        <div className="absolute inset-x-0 top-0 h-[66.67vh] z-20 pointer-events-none">
+          {mounted && (
+            <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6">
+              <p
+                className="text-base sm:text-lg md:text-xl font-semibold text-white"
+                style={{ textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}
+              >
+                {currentPainting.title}
+              </p>
+              <p
+                className="text-xs sm:text-sm text-white"
+                style={{ textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}
+              >
+                {currentPainting.medium}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Top Navigation Bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md" style={{ backgroundColor: '#fffff7DD' }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md" style={{ backgroundColor: `${bgGradientStart}DD` }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
           {/* Left: Site Name */}
           <Link href="/" className="inline-flex items-center gap-2 pointer-events-auto z-10">
@@ -970,7 +782,8 @@ export default function Home() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-full w-80 bg-[#fffff7] shadow-2xl z-50 flex flex-col"
+              className="fixed right-0 top-0 h-full w-80 shadow-2xl z-50 flex flex-col"
+              style={{ backgroundColor: bgGradientStart }}
             >
               {/* Close Button */}
               <div className="flex justify-start p-6">
@@ -995,8 +808,8 @@ export default function Home() {
                   ))}
                 </Link>
                 <Link
-                  href="#portfolio"
-                  onClick={scrollToPortfolio}
+                  href="/portfolio"
+                  onClick={() => setIsMenuOpen(false)}
                   className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
                   style={{ color: accentColor }}
                 >
@@ -1012,16 +825,6 @@ export default function Home() {
                 >
                   {'sketchbook'.split('').map((letter, i) => (
                     <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, -2, 3, -4, 2, -3, 4, -2][i]}deg)` }}>{letter}</span>
-                  ))}
-                </Link>
-                <Link
-                  href="/shop"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-3xl font-light tracking-wide hover:opacity-70 transition-opacity lowercase flex"
-                  style={{ color: accentColor }}
-                >
-                  {'shop'.split('').map((letter, i) => (
-                    <span key={i} style={{ display: 'inline-block', transform: `rotate(${[-3, 4, -2, 3][i]}deg)` }}>{letter}</span>
                   ))}
                 </Link>
                 <Link
@@ -1043,68 +846,18 @@ export default function Home() {
       {/* Main Content */}
       <main className="relative min-h-screen flex flex-col">
         {/* Top 2/3: Painting Area */}
-        <div className="relative h-[66.67vh] flex items-center justify-center">
-          {/* Center Text - Victor Garcia Art */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="flex items-center justify-center pointer-events-none z-20 px-4"
-          >
-          <div className="relative">
-            {/* Blur background with gradient fade */}
-            <div className="absolute inset-0 backdrop-blur-md" style={{
-              WebkitMaskImage: 'radial-gradient(ellipse at center, black 30%, transparent 70%)',
-              maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 70%)',
-              transform: 'scale(1.2)',
-              zIndex: -1
-            }}></div>
-            <h1 ref={textRef} className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-light lowercase flex gap-0.5 sm:gap-1 md:gap-2 text-center flex-wrap justify-center max-w-full" style={{ filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6))' }}>
-            {'victor garcia art'.split('').map((letter, i) => {
-              // Use gradient from mid to bright colors only (no dark colors)
-              let color = accentColor;
-
-              // Calculate gradient from mid to bright colors as fallback
-              const totalLetters = 'victor garcia art'.length - 2; // subtract spaces
-              const letterIndex = letter === ' ' ? -1 : i - (i > 6 ? 1 : 0) - (i > 13 ? 1 : 0); // adjust for spaces
-
-              if (letterIndex >= 0) {
-                const progress = letterIndex / totalLetters;
-                const allColors = [...midColors, ...brightColors]; // Only use mid and bright colors
-                if (allColors.length > 0) {
-                  const colorIndex = Math.floor(progress * (allColors.length - 1));
-                  color = allColors[colorIndex] || accentColor;
-                }
-              }
-
-              return (
-                <span
-                  key={i}
-                  style={{
-                    display: 'inline-block',
-                    transform: `rotate(${[2, -1, 3, -2, 1, -3, 2, 0, -1, 3, -2, 1, -3, 2, -1, 3, -2][i]}deg)`,
-                    color: color
-                  }}
-                >
-                  {letter}
-                </span>
-              );
-            })}
-          </h1>
-          </div>
-        </motion.div>
-        </div>
+        <div className="relative h-[66.67vh]"></div>
 
         {/* Bottom 1/3: Navigation Buttons */}
-        <div className="relative py-2 md:py-25 flex items-center justify-center bg-[#fffff7]">
+        <div className="relative py-2 md:py-25 flex items-center justify-center" style={{ backgroundColor: bgGradientStart }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 px-4 sm:px-6 select-none max-w-5xl mx-auto"
+            className="flex flex-wrap justify-center gap-6 sm:gap-8 px-4 sm:px-6 select-none max-w-5xl mx-auto"
           >
           {petals.map((petal, index) => (
-            <Link key={petal.name} href={petal.href} onClick={petal.name === 'Portfolio' ? scrollToPortfolio : undefined}>
+            <Link key={petal.name} href={petal.href}>
               <motion.div
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{
@@ -1160,9 +913,9 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Portfolio Section */}
-      <section id="portfolio" className="relative py-10 px-4 sm:px-6" style={{
-        background: `linear-gradient(to bottom, #fffff7, #f5f5ed)`
+      {/* What I'm Into Section */}
+      <section className="relative py-16 px-4 sm:px-6" style={{
+        background: `linear-gradient(to bottom, ${bgGradientStart}, ${bgGradientEnd})`
       }}>
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -1170,107 +923,79 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="mb-16 text-center"
+            className="mb-12 text-center"
           >
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4" style={{ color: darkColors[0] || accentColor }}>
-              Portfolio
+              What I&apos;m Into
             </h2>
             <p className="text-xl" style={{ color: darkColors[1] || accentColor }}>
-              Explore my collection of artwork
+              A few of the things that keep me busy
             </p>
           </motion.div>
 
-          {/* Gallery Wall */}
-          <div className="space-y-16 sm:space-y-24">
-            {artworks.map((art, index) => (
+          <div className="grid md:grid-cols-3 gap-8">
+            {interests.map((interest, index) => (
               <motion.div
-                key={art.id}
-                initial={{ opacity: 0, y: 30 }}
+                key={interest.title}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.2 * index, duration: 0.8 }}
-                className="group"
+                transition={{ delay: 0.15 * index, duration: 0.6 }}
+                className="p-6 sm:p-8 rounded-2xl shadow-xl border"
+                style={{ borderColor: `${accentColor}1A`, backgroundColor: `${bgGradientStart}CC` }}
               >
-                {/* Frame with shadow effect */}
-                <motion.div
-                  className="relative mx-auto max-w-3xl"
-                >
-                  {/* Artwork Frame */}
-                  <div className="relative bg-[#fffff7] p-6 sm:p-8 shadow-2xl">
-                    {/* Inner artwork area */}
-                    <div
-                      className="relative w-full overflow-hidden transition-all duration-300 group-hover:border-4"
-                      style={{
-                        borderColor: darkColors[index % darkColors.length] || darkGradientColor
-                      }}
-                    >
-                      <Image
-                        src={art.image}
-                        alt={art.title}
-                        width={1200}
-                        height={800}
-                        className="w-full h-auto"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
-                      />
-                    </div>
-
-                    {/* Frame shadow/depth effect */}
-                    <div
-                      className="absolute -inset-2 -z-10 shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      style={{
-                        background: `linear-gradient(to bottom, ${midColors[index % midColors.length] || accentColor}CC, ${darkColors[index % darkColors.length] || accentColor})`
-                      }}
-                    ></div>
-                  </div>
-
-                  {/* Spotlight effect on hover */}
-                  <motion.div
-                    className="absolute -inset-12 rounded-full blur-3xl opacity-0 group-hover:opacity-60 transition-opacity duration-500 -z-20"
-                    initial={{ opacity: 0 }}
-                    style={{ backgroundColor: `${darkColors[index % darkColors.length] || darkGradientColor}` }}
-                  />
-                </motion.div>
-
-                {/* Artwork Info Plaque */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2 * index + 0.3 }}
-                  className="mt-8 max-w-2xl mx-auto p-6"
-                >
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-                    {/* Artwork Info */}
-                    <div className="flex-1">
-                      <h3 className="text-xl sm:text-2xl font-bold mb-2" style={{ color: darkColors[0] || accentColor }}>
-                        {art.title}
-                      </h3>
-                      <p className="text-sm" style={{ color: darkColors[1] || accentColor }}>
-                        {art.category} • {art.year}
-                      </p>
-                    </div>
-
-                    {/* Behind the Scenes Button - only for specific artworks */}
-                    {art.behindTheScenesUrl && (
-                      <Link href={art.behindTheScenesUrl}>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="px-4 py-2 rounded-lg font-medium text-sm sm:text-base whitespace-nowrap transition-all duration-300 shadow-md hover:shadow-lg"
-                          style={{
-                            backgroundColor: darkColors[0] || accentColor,
-                            color: '#fffff7'
-                          }}
-                        >
-                          See Behind the Scenes
-                        </motion.button>
-                      </Link>
-                    )}
-                  </div>
-                </motion.div>
+                <h3 className="text-2xl font-bold mb-3" style={{ color: darkColors[0] || accentColor }}>
+                  {interest.title}
+                </h3>
+                <p className="leading-relaxed" style={{ color: textColor }}>
+                  {interest.description}
+                </p>
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Videos Section */}
+      <section className="relative py-16 px-4 sm:px-6" style={{ backgroundColor: bgGradientEnd }}>
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="mb-12 text-center"
+          >
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4" style={{ color: darkColors[0] || accentColor }}>
+              Watch
+            </h2>
+            <p className="text-xl" style={{ color: darkColors[1] || accentColor }}>
+              Process videos and time-lapses from the studio
+            </p>
+          </motion.div>
+
+          {instagramVideos.length > 0 ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {instagramVideos.map((url) => (
+                <InstagramEmbed key={url} url={url} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center">
+              <p className="text-lg mb-6" style={{ color: textColor }}>
+                More videos coming soon — in the meantime, follow along for process clips and time-lapses.
+              </p>
+              <a
+                href="https://instagram.com/vicgarcia.art"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-8 py-4 text-[#fffff7] font-semibold text-lg rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
+                style={{ backgroundColor: accentColor }}
+              >
+                @vicgarcia.art on Instagram
+              </a>
+            </div>
+          )}
         </div>
       </section>
 
