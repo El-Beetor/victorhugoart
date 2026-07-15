@@ -875,7 +875,7 @@ export default function Home() {
               <button
                 onClick={() => goToPainting(-1)}
                 aria-label="Previous painting"
-                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/70 backdrop-blur-sm shadow-lg flex items-center justify-center text-black/80 hover:bg-white hover:scale-110 active:scale-95 transition-all"
+                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/30 backdrop-blur-sm shadow-md flex items-center justify-center text-black/60 hover:bg-white/80 hover:text-black/80 hover:scale-110 active:scale-95 transition-all"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -884,7 +884,7 @@ export default function Home() {
               <button
                 onClick={() => goToPainting(1)}
                 aria-label="Next painting"
-                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/70 backdrop-blur-sm shadow-lg flex items-center justify-center text-black/80 hover:bg-white hover:scale-110 active:scale-95 transition-all"
+                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/30 backdrop-blur-sm shadow-md flex items-center justify-center text-black/60 hover:bg-white/80 hover:text-black/80 hover:scale-110 active:scale-95 transition-all"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
