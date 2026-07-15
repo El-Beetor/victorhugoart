@@ -482,6 +482,9 @@ export default function Home() {
     const handleTouch = (e: TouchEvent) => {
       if (!revealCanvasRef.current || !colorImageRef.current || !brushImageRef.current || isTransitioningRef.current) return;
 
+      // Ignore touches on interactive elements (nav arrows, links, menu)
+      if (e.target instanceof Element && e.target.closest('button, a')) return;
+
       const touch = e.touches[0];
       const centerX = touch.clientX;
       const centerY = touch.clientY;
@@ -669,6 +672,25 @@ export default function Home() {
     // return () => clearInterval(interval);
   }, [darkColors, midColors, brightColors, accentColor]);
 
+  // Manually switch the hero to the previous/next painting (wraps around).
+  // Mirrors the reset in the 100%-revealed transition: clear the reveal
+  // canvas and let the image-load effect finish the swap.
+  const goToPainting = (direction: number) => {
+    if (isTransitioningRef.current) return;
+    const currentIndex = finishedPaintings.findIndex((p) => p.src === currentPainting.src);
+    const nextPainting = finishedPaintings[(currentIndex + direction + finishedPaintings.length) % finishedPaintings.length];
+
+    isTransitioningRef.current = true; // reset by the image onload effect
+    const canvas = revealCanvasRef.current;
+    const ctx = canvas?.getContext('2d', { willReadFrequently: true });
+    if (canvas && ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    baselinePixelCountRef.current = 0;
+    setRevealPercentage(0);
+    setCurrentPainting(nextPainting);
+  };
+
   // Petal button data
   const petals = [
     { name: 'Portfolio', href: '/portfolio', angle: 0, image: '/ButtonImages/portfolio.png', hoverImage: '/ButtonImages/portfolio2.png' },
@@ -846,7 +868,31 @@ export default function Home() {
       {/* Main Content */}
       <main className="relative min-h-screen flex flex-col">
         {/* Top 2/3: Painting Area */}
-        <div className="relative h-[66.67vh]"></div>
+        <div className="relative h-[66.67vh]">
+          {/* Previous / next painting arrows */}
+          {mounted && (
+            <>
+              <button
+                onClick={() => goToPainting(-1)}
+                aria-label="Previous painting"
+                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/70 backdrop-blur-sm shadow-lg flex items-center justify-center text-black/80 hover:bg-white hover:scale-110 active:scale-95 transition-all"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+              </button>
+              <button
+                onClick={() => goToPainting(1)}
+                aria-label="Next painting"
+                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/70 backdrop-blur-sm shadow-lg flex items-center justify-center text-black/80 hover:bg-white hover:scale-110 active:scale-95 transition-all"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+              </button>
+            </>
+          )}
+        </div>
 
         {/* Bottom 1/3: Navigation Buttons */}
         <div className="relative py-6 md:py-25 flex items-center justify-center" style={{ backgroundColor: bgGradientStart }}>
