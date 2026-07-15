@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useColors } from '../context/ColorContext';
@@ -246,10 +247,12 @@ export default function Shop() {
                       onMouseLeave={(e) => e.currentTarget.style.borderColor = `${accentColor}33`}
                     >
                       {product.images && product.images.length > 0 ? (
-                        <img
+                        <Image
                           src={product.images[0]}
                           alt={product.title}
-                          className="w-full h-full object-cover"
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-cover"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-600">
