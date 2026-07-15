@@ -14,8 +14,8 @@ const finishedPaintings = [
   { src: '/FinishedPaintings/bar.jpg', title: '10pm', medium: 'Oil on Canvas 8" x 10"' },
   { src: '/FinishedPaintings/bike.jpg', title: 'After School Bike Ride', medium: 'Oil on Canvas 9" x 12"' },
   { src: '/FinishedPaintings/bird.jpg', title: 'Bird in Blue', medium: 'Oil on Canvas 14" x 18"' },
-  { src: '/FinishedPaintings/duck.png', title: 'Sisters', medium: 'Oil on Paper 8" x 10"' },
-  { src: '/FinishedPaintings/river.png', title: 'Long way down: Far way forward', medium: 'Oil on Wood 8" x 10"' },
+  { src: '/FinishedPaintings/duck.jpg', title: 'Sisters', medium: 'Oil on Paper 8" x 10"' },
+  { src: '/FinishedPaintings/river.jpg', title: 'Long way down: Far way forward', medium: 'Oil on Wood 8" x 10"' },
   { src: '/FinishedPaintings/tree.jpg', title: 'Billowing Tree', medium: 'Oil on Canvas 24" x 30"' },
   { src: '/FinishedPaintings/sheep.jpg', title: "Le' Sheep", medium: 'Oil on Canvas 8" x 10"' },
 ];
@@ -782,7 +782,7 @@ export default function Home() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-full w-80 shadow-2xl z-50 flex flex-col"
+              className="fixed right-0 top-0 h-full w-80 max-w-[85vw] shadow-2xl z-50 flex flex-col"
               style={{ backgroundColor: bgGradientStart }}
             >
               {/* Close Button */}
@@ -796,7 +796,7 @@ export default function Home() {
               </div>
 
               {/* Menu Links */}
-              <nav className="flex flex-col gap-6 px-8 py-4 max-h-[750px]:mt-16">
+              <nav className="flex flex-col gap-6 px-8 py-4">
                 <Link
                   href="/"
                   onClick={() => setIsMenuOpen(false)}
@@ -849,12 +849,12 @@ export default function Home() {
         <div className="relative h-[66.67vh]"></div>
 
         {/* Bottom 1/3: Navigation Buttons */}
-        <div className="relative py-2 md:py-25 flex items-center justify-center" style={{ backgroundColor: bgGradientStart }}>
+        <div className="relative py-6 md:py-25 flex items-center justify-center" style={{ backgroundColor: bgGradientStart }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1 }}
-            className="flex flex-wrap justify-center gap-6 sm:gap-8 px-4 sm:px-6 select-none max-w-5xl mx-auto"
+            className="flex flex-wrap justify-center gap-3 sm:gap-8 px-4 sm:px-6 select-none max-w-5xl mx-auto"
           >
           {petals.map((petal, index) => (
             <Link key={petal.name} href={petal.href}>
@@ -897,11 +897,11 @@ export default function Home() {
                     alt={petal.name}
                     width={200}
                     height={200}
-                    className="w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 object-contain"
+                    className="w-24 h-24 sm:w-48 sm:h-48 md:w-56 md:h-56 object-contain"
                   />
                 </motion.div>
                 <span
-                  className="font-semibold text-base sm:text-lg select-none whitespace-nowrap uppercase"
+                  className="font-semibold text-xs sm:text-lg select-none whitespace-nowrap uppercase"
                   style={{ color: '#000000' }}
                 >
                   {petal.name}

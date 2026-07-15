@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# High-res image originals (converted to public/ via npm run images)
+/image-originals/*
+!/image-originals/README.md
