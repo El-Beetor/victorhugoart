@@ -29,7 +29,7 @@ export default function About() {
 
           {/* Center: Site Name */}
           <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 inline-flex items-center pointer-events-auto z-0">
-            <h1 className="text-2xl sm:text-3xl font-bold lowercase flex gap-1 text-black">
+            <h1 className="text-xl sm:text-3xl font-bold lowercase flex gap-0.5 sm:gap-1 text-black">
               {'vicgarcia.art'.split('').map((letter, i) => (
                 <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, 0, -2, 3, -1, 0, -2, 3, -4, 2, -1][i]}deg)` }}>{letter}</span>
               ))}
@@ -60,7 +60,7 @@ export default function About() {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 h-full w-80 shadow-2xl z-50 flex flex-col"
+              className="fixed left-0 top-0 h-full w-80 max-w-[85vw] shadow-2xl z-50 flex flex-col"
               style={{ backgroundColor: bgGradientStart }}
             >
               {/* Close Button */}
@@ -74,7 +74,7 @@ export default function About() {
               </div>
 
               {/* Menu Links */}
-              <nav className="flex flex-col gap-6 px-8 py-4 max-h-[750px]:mt-16">
+              <nav className="flex flex-col gap-6 px-8 py-4">
                 <Link
                   href="/"
                   onClick={() => setIsMenuOpen(false)}

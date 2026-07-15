@@ -81,7 +81,7 @@ export default function AfterSchoolBikeRideBehindTheScenes() {
               height={32}
               className="w-6 h-6 sm:w-8 sm:h-8"
             />
-            <h1 className="text-2xl sm:text-3xl font-bold lowercase flex gap-1 text-black">
+            <h1 className="text-lg sm:text-3xl font-bold lowercase flex gap-0.5 sm:gap-1 text-black">
               {'vicgarcia.art'.split('').map((letter, i) => (
                 <span key={i} style={{ display: 'inline-block', transform: `rotate(${[2, -3, 4, 0, -2, 3, -1, 0, -2, 3, -4, 2, -1][i]}deg)` }}>{letter}</span>
               ))}
@@ -90,7 +90,7 @@ export default function AfterSchoolBikeRideBehindTheScenes() {
 
           <Link
             href="/"
-            className="px-4 py-2 rounded-lg font-medium text-sm hover:opacity-70 transition-opacity"
+            className="px-2 sm:px-4 py-2 rounded-lg font-medium text-sm hover:opacity-70 transition-opacity whitespace-nowrap shrink-0"
             style={{ color: accentColor }}
           >
             ← Back to Home

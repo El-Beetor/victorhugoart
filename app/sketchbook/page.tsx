@@ -100,7 +100,7 @@ export default function SketchBook() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-full w-80 shadow-2xl z-50 flex flex-col"
+              className="fixed right-0 top-0 h-full w-80 max-w-[85vw] shadow-2xl z-50 flex flex-col"
               style={{ backgroundColor: bgGradientStart }}
             >
               {/* Close Button */}
@@ -114,7 +114,7 @@ export default function SketchBook() {
               </div>
 
               {/* Menu Links */}
-              <nav className="flex flex-col gap-6 px-8 py-4 max-h-[750px]:mt-16">
+              <nav className="flex flex-col gap-6 px-8 py-4">
                 <Link
                   href="/"
                   onClick={() => setIsMenuOpen(false)}
