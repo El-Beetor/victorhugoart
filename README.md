@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# vicgarcia.art
 
-## Getting Started
+Personal art portfolio site — oil paintings, sketchbook, behind-the-scenes
+process pages, and a print shop. Built with Next.js 15 (App Router),
+Tailwind CSS 4, and Framer Motion; deployed on Vercel.
 
-First, run the development server:
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+For the shop to work locally, copy `.env.example` to `.env.local` and fill in
+your Stripe test keys. Everything else runs without env vars.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Adding new artwork / images
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Never put big scans directly into `public/`.** Drop them into
+`image-originals/` instead and run the optimizer:
 
-## Learn More
+1. Put high-resolution scans or photos (1200dpi TIFF/PNG/JPEG — any format)
+   into the subfolder matching where they belong on the site:
 
-To learn more about Next.js, take a look at the following resources:
+   | Drop into                          | Appears in                     | Used by                    |
+   |------------------------------------|--------------------------------|----------------------------|
+   | `image-originals/sketches/`        | `public/sketches/`             | Sketchbook page (automatic)|
+   | `image-originals/FinishedPaintings/` | `public/FinishedPaintings/` | Home hero, portfolio       |
+   | `image-originals/WorkInProgress/<piece>/` | `public/WorkInProgress/<piece>/` | Behind-the-scenes pages |
+   | `image-originals/images/`          | `public/images/`               | Misc (profile photo, etc.) |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. Run:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   npm run images
+   ```
 
-## Deploy on Vercel
+Each image is converted to a web-ready copy in `public/` (max 2400px longest
+edge, compressed JPEG at quality 82; PNG is kept only for images with
+transparency). Re-running is always safe — already-converted images are
+skipped, and your originals are never modified or committed (the folder is
+gitignored).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Sketches are fully automatic:** anything dropped in
+`image-originals/sketches/` shows up on the sketchbook page with no code
+changes — the manifest `app/config/sketches.json` is regenerated on every run.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Finished paintings need one code addition:** add the painting (path, title,
+medium) to the arrays in `app/page.tsx` (home hero rotation) and
+`app/portfolio/page.tsx` (portfolio grid).
+
+Maintenance: if an image ever ends up in `public/` directly, shrink it in
+place with `npm run images:public`.
+
+## Scripts
+
+| Command                | What it does                                          |
+|------------------------|-------------------------------------------------------|
+| `npm run dev`          | Dev server at localhost:3000                          |
+| `npm run build`        | Production build                                      |
+| `npm run lint`         | ESLint                                                |
+| `npm run images`       | Convert `image-originals/` → optimized `public/` + regenerate sketch manifest |
+| `npm run images:public`| Shrink oversized images already in `public/` in place |
+
+## How the site is organized
+
+```
+app/
+  page.tsx                  Home — paint-reveal hero canvas + nav buttons
+  portfolio/                Portfolio grid of finished paintings
+  sketchbook/               Auto-generated from app/config/sketches.json
+  about/                    About page
+  shop/                     Print shop (Stripe; needs .env.local keys)
+  behind-the-scenes/<piece> One page per painting: WIP carousel, color/value
+                            breakdowns, story
+  components/               Footer, DebugPanel (dev-only theme tweaker),
+                            InstagramEmbed
+  context/ColorContext.tsx  Site-wide palette, sampled from the hero painting
+  config/theme.json         Saved theme (font choice etc., via debug panel)
+  api/                      Stripe checkout/products/webhook, save-theme (dev)
+scripts/
+  optimize-images.mjs       The image pipeline (see above)
+image-originals/            Your high-res scans (gitignored, never committed)
+public/                     Web-optimized assets only — keep it light
+```
+
+## Theme / colors
+
+The site's colors are sampled live from whichever painting the home hero
+shows. In development, a debug panel (bottom-right palette button) lets you
+try preset palettes and fonts; "save" writes to `app/config/theme.json`.
+The panel is hidden in production builds.
+
+## Deploying
+
+Pushing `main` to GitHub triggers a Vercel deploy. Stripe keys are configured
+in the Vercel project settings, not in the repo.
+
+---
+
+*Keep this README updated when workflows change (new scripts, new page types,
+changed image process) so future-you doesn't have to rediscover them.*
