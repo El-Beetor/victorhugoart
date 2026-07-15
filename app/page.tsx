@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useAnimationControls } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { useColors } from './context/ColorContext';
 import Footer from './components/Footer';
@@ -81,6 +81,10 @@ export default function Home() {
   const [letterColors, setLetterColors] = useState<string[]>([]);
   const [navBarColor, setNavBarColor] = useState('#ffffff');
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
+  // Snapshot of the outgoing hero (grayscale + revealed paint) that slides
+  // away when the user switches paintings with the arrows
+  const [outgoingSnapshot, setOutgoingSnapshot] = useState<{ src: string; direction: number } | null>(null);
+  const heroSlideControls = useAnimationControls();
   const revealCanvasRef = useRef<HTMLCanvasElement>(null);
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
   const colorImageRef = useRef<HTMLImageElement | null>(null);
@@ -681,10 +685,35 @@ export default function Home() {
     const nextPainting = finishedPaintings[(currentIndex + direction + finishedPaintings.length) % finishedPaintings.length];
 
     isTransitioningRef.current = true; // reset by the image onload effect
-    const canvas = revealCanvasRef.current;
-    const ctx = canvas?.getContext('2d', { willReadFrequently: true });
-    if (canvas && ctx) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Snapshot the current hero so it can slide out while the new one slides in
+    const bgCanvas = bgCanvasRef.current;
+    const revealCanvas = revealCanvasRef.current;
+    if (bgCanvas && revealCanvas && bgCanvas.width > 0) {
+      const snap = document.createElement('canvas');
+      snap.width = bgCanvas.width;
+      snap.height = bgCanvas.height;
+      const snapCtx = snap.getContext('2d');
+      if (snapCtx) {
+        snapCtx.drawImage(bgCanvas, 0, 0);
+        snapCtx.drawImage(revealCanvas, 0, 0);
+        setOutgoingSnapshot({ src: snap.toDataURL('image/jpeg', 0.75), direction });
+      }
+    }
+
+    // Incoming hero starts offscreen on the arrow's side and slides to center
+    heroSlideControls.set({ x: `${direction * 100}%` });
+    heroSlideControls.start({ x: '0%', transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] } });
+
+    // Clear both canvases so the incoming panel is blank until the new
+    // painting's grayscale is drawn (otherwise the old one slides back in)
+    const ctx = revealCanvas?.getContext('2d', { willReadFrequently: true });
+    if (revealCanvas && ctx) {
+      ctx.clearRect(0, 0, revealCanvas.width, revealCanvas.height);
+    }
+    const bgCtx = bgCanvas?.getContext('2d');
+    if (bgCanvas && bgCtx) {
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
     }
     baselinePixelCountRef.current = 0;
     setRevealPercentage(0);
@@ -719,39 +748,57 @@ export default function Home() {
 
       {/* Static Background - cream color with canvas overlay */}
       <div className="fixed inset-0 -z-10" style={{ backgroundColor: bgGradientStart }}>
-        {/* Black and white version of current image - 2/3 height */}
-        <div className="absolute inset-x-0 top-0 h-[66.67vh] z-0">
-          <canvas
-            ref={bgCanvasRef}
-            className="absolute inset-0"
+        {/* Hero wrapper: slides in from the arrow's direction on manual switch */}
+        <motion.div animate={heroSlideControls} className="absolute inset-x-0 top-0 h-[66.67vh]">
+          {/* Black and white version of current image */}
+          <div className="absolute inset-0 z-0">
+            <canvas
+              ref={bgCanvasRef}
+              className="absolute inset-0"
+            />
+          </div>
+          {/* Canvas that reveals color image on mouse move */}
+          <div className="absolute inset-0 z-10">
+            <canvas
+              ref={revealCanvasRef}
+              className="absolute inset-0 pointer-events-none"
+            />
+          </div>
+          {/* Title & medium for the current painting - bottom left of image */}
+          <div className="absolute inset-0 z-20 pointer-events-none">
+            {mounted && (
+              <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6">
+                <p
+                  className="text-base sm:text-lg md:text-xl font-semibold text-white"
+                  style={{ textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}
+                >
+                  {currentPainting.title}
+                </p>
+                <p
+                  className="text-xs sm:text-sm text-white"
+                  style={{ textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}
+                >
+                  {currentPainting.medium}
+                </p>
+              </div>
+            )}
+          </div>
+        </motion.div>
+        {/* Outgoing hero snapshot: slides away opposite the incoming painting */}
+        {outgoingSnapshot && (
+          /* eslint-disable-next-line @next/next/no-img-element -- transient canvas snapshot, not an asset */
+          <motion.img
+            key={outgoingSnapshot.src}
+            src={outgoingSnapshot.src}
+            alt=""
+            aria-hidden
+            className="absolute inset-x-0 top-0 h-[66.67vh] w-full object-cover z-30 pointer-events-none"
+            initial={{ x: '0%' }}
+            animate={{ x: `${outgoingSnapshot.direction * -100}%` }}
+            transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+            onAnimationComplete={() => setOutgoingSnapshot(null)}
           />
-        </div>
-        {/* Canvas that reveals color image on mouse move - 2/3 height */}
-        <div className="absolute inset-x-0 top-0 h-[66.67vh] z-10">
-          <canvas
-            ref={revealCanvasRef}
-            className="absolute inset-0 pointer-events-none"
-          />
-        </div>
-        {/* Title & medium for the current painting - bottom left of image */}
-        <div className="absolute inset-x-0 top-0 h-[66.67vh] z-20 pointer-events-none">
-          {mounted && (
-            <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6">
-              <p
-                className="text-base sm:text-lg md:text-xl font-semibold text-white"
-                style={{ textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}
-              >
-                {currentPainting.title}
-              </p>
-              <p
-                className="text-xs sm:text-sm text-white"
-                style={{ textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}
-              >
-                {currentPainting.medium}
-              </p>
-            </div>
-          )}
-        </div>
+        )}
       </div>
 
       {/* Top Navigation Bar */}
