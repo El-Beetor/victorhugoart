@@ -55,7 +55,7 @@ const artworks = [
     category: 'Oil on Paper 8" x 10"',
     description: 'Oil on Canvas 8" x10"',
     size: 'large',
-    image: '/FinishedPaintings/duck.png',
+    image: '/FinishedPaintings/duck.jpg',
     behindTheScenesUrl: '/behind-the-scenes/sisters'
   },
   {
@@ -65,7 +65,7 @@ const artworks = [
     category: 'Oil on Wood 8" x 10"',
     description: 'Oil on Canvas 8" x 10"',
     size: 'medium',
-    image: '/FinishedPaintings/river.png',
+    image: '/FinishedPaintings/river.jpg',
     behindTheScenesUrl: '/behind-the-scenes/long-way-down'
   },
   {

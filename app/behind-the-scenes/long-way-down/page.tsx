@@ -83,7 +83,7 @@ export default function LongWayDownBehindTheScenes() {
 
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }} className="mb-16">
             <div className="relative max-w-3xl mx-auto bg-[#fffff7] p-6 sm:p-8 shadow-2xl">
-              <Image src="/FinishedPaintings/river.png" alt="Long way down: Far way forward - Finished Painting" width={1200} height={800} className="w-full h-auto" />
+              <Image src="/FinishedPaintings/river.jpg" alt="Long way down: Far way forward - Finished Painting" width={1200} height={800} className="w-full h-auto" />
               <div className="mt-6 text-center">
                 <h2 className="text-2xl font-bold mb-2" style={{ color: darkColors[0] || accentColor }}>Finished Painting</h2>
                 <p className="text-sm" style={{ color: darkColors[1] || accentColor }}>Oil on Wood 8&quot; x 10&quot; • 2025</p>

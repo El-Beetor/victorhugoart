@@ -14,8 +14,8 @@ const finishedPaintings = [
   { src: '/FinishedPaintings/bar.jpg', title: '10pm', medium: 'Oil on Canvas 8" x 10"' },
   { src: '/FinishedPaintings/bike.jpg', title: 'After School Bike Ride', medium: 'Oil on Canvas 9" x 12"' },
   { src: '/FinishedPaintings/bird.jpg', title: 'Bird in Blue', medium: 'Oil on Canvas 14" x 18"' },
-  { src: '/FinishedPaintings/duck.png', title: 'Sisters', medium: 'Oil on Paper 8" x 10"' },
-  { src: '/FinishedPaintings/river.png', title: 'Long way down: Far way forward', medium: 'Oil on Wood 8" x 10"' },
+  { src: '/FinishedPaintings/duck.jpg', title: 'Sisters', medium: 'Oil on Paper 8" x 10"' },
+  { src: '/FinishedPaintings/river.jpg', title: 'Long way down: Far way forward', medium: 'Oil on Wood 8" x 10"' },
   { src: '/FinishedPaintings/tree.jpg', title: 'Billowing Tree', medium: 'Oil on Canvas 24" x 30"' },
   { src: '/FinishedPaintings/sheep.jpg', title: "Le' Sheep", medium: 'Oil on Canvas 8" x 10"' },
 ];
